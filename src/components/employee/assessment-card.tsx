@@ -1,55 +1,67 @@
 "use client";
 
 import { useAssessment } from "@/store/assessment-store";
-import { Button, Card, ConfidencePill, LevelBadge, Pill } from "@/components/ui";
+import { Button, Card, LevelBadge, Pill } from "@/components/ui";
 import { CATEGORY_LABELS } from "@/lib/assessment/roles";
 
 export function AssessmentCard() {
   const { state, assessment, previous, pendingEnrichment, actions } = useAssessment();
   const frozen = state.phase === "frozen";
   const discovering = state.phase === "discovering";
+  const conf = { high: "High", medium: "Medium", low: "Low" }[assessment.confidence];
 
   return (
-    <Card aria-labelledby="assessment-heading" className="p-5">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <Card aria-labelledby="assessment-heading" className="overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-4 px-6 pt-6">
         <div>
-          <h2 id="assessment-heading" className="text-sm font-semibold text-ink">
+          <h2 id="assessment-heading" className="text-base font-semibold">
             Current AI assessment
           </h2>
-          <div className="mt-2 flex flex-wrap items-center gap-3">
-            <LevelBadge level={assessment.level} size="lg" />
-            {frozen && <Pill tone="frozen">Frozen — under review</Pill>}
-            {discovering && <Pill tone="accent">Discovering evidence…</Pill>}
-            {previous && previous.level !== assessment.level && (
-              <span className="text-sm text-ink-muted">
-                was <strong className="font-medium text-ink">{previous.level}</strong>
-              </span>
-            )}
-          </div>
+          <p className="mt-0.5 text-xs text-ink-faint">Computed from indexed evidence · not an employment decision</p>
         </div>
-        <dl className="grid grid-cols-3 gap-x-6 gap-y-1 text-right text-sm">
-          <dt className="text-xs text-ink-faint">Contribution index</dt>
-          <dt className="text-xs text-ink-faint">Evidence coverage</dt>
-          <dt className="text-xs text-ink-faint">Confidence</dt>
-          <dd className="text-xl font-semibold tabular-nums">
-            {assessment.score}
-            <span className="text-sm font-normal text-ink-faint"> / 100</span>
-          </dd>
-          <dd className="text-xl font-semibold tabular-nums">{Math.round(assessment.coverage * 100)}%</dd>
-          <dd className="flex justify-end pt-1">
-            <ConfidencePill confidence={assessment.confidence} />
-          </dd>
-        </dl>
+        <div className="flex items-center gap-2">
+          {frozen && <Pill tone="frozen">Frozen — under review</Pill>}
+          {discovering && <Pill tone="accent">Discovering evidence</Pill>}
+        </div>
       </div>
 
+      <div className="flex flex-wrap items-center gap-6 px-6 py-5">
+        <LevelBadge level={assessment.level} size="lg" />
+        {previous && previous.level !== assessment.level && (
+          <span className="text-sm text-ink-muted">
+            previously <strong className="font-medium text-ink">{previous.level}</strong>
+          </span>
+        )}
+      </div>
+
+      <dl className="grid grid-cols-3 divide-x divide-line border-t border-line bg-canvas/60">
+        <div className="px-6 py-3">
+          <dt className="text-xs text-ink-faint">Contribution index</dt>
+          <dd className="mt-0.5 text-lg font-semibold tabular-nums">
+            {assessment.score}
+            <span className="text-xs font-normal text-ink-faint"> / 100</span>
+          </dd>
+        </div>
+        <div className="px-6 py-3">
+          <dt className="text-xs text-ink-faint">Evidence coverage</dt>
+          <dd className="mt-0.5 text-lg font-semibold tabular-nums">{Math.round(assessment.coverage * 100)}%</dd>
+        </div>
+        <div className="px-6 py-3">
+          <dt className="text-xs text-ink-faint">Confidence</dt>
+          <dd className="mt-0.5 text-lg font-semibold">{conf}</dd>
+        </div>
+      </dl>
+
       {assessment.missingAreas.length > 0 && (
-        <div className="mt-4 rounded-md border border-moderate/30 bg-moderate-soft px-3 py-2 text-sm text-ink">
-          <strong className="font-medium">Incomplete picture.</strong> No evidence found for{" "}
-          {assessment.missingAreas.map((c) => CATEGORY_LABELS[c].toLowerCase()).join(", ")} — areas expected for this role.
+        <div className="border-t border-line px-6 py-3 text-sm">
+          <span className="font-medium text-moderate">Incomplete picture.</span>{" "}
+          <span className="text-ink-muted">
+            No evidence yet for {assessment.missingAreas.map((c) => CATEGORY_LABELS[c].toLowerCase()).join(", ")} — areas expected for this role.
+          </span>
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-4">
+      <div className="flex flex-wrap items-center gap-2 border-t border-line px-6 py-4">
         {state.phase === "initial" && (
           <Button variant="primary" onClick={actions.discover} disabled={pendingEnrichment.length === 0}>
             Discover evidence across connected sources
@@ -64,10 +76,6 @@ export function AssessmentCard() {
           Reset demo
         </Button>
       </div>
-
-      <p className="mt-3 text-xs text-ink-faint">
-        AI assessment ≠ employment decision. This assessment describes the evidence available and requires human review.
-      </p>
     </Card>
   );
 }

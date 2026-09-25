@@ -278,6 +278,103 @@ export const evidence: Evidence[] = [
   },
 ];
 
+const D = "emp-daniel-wong";
+const P = "emp-priya-nair";
+const A = "emp-aisyah-rahman";
+
+/** Thin but real evidence for the other assessed employees. Marcus and Jonathan have none yet. */
+export const otherEvidence: Evidence[] = [
+  // Daniel — Engineering — resolves Low: modest output, a serious reliability concern
+  {
+    id: "EV-D01", employeeId: D, sourceId: "src-github-core", category: "technical_output",
+    summary: "38 merged pull requests to core-platform in H1",
+    detail: "Contributor stats show 38 merged PRs, mostly small fixes and dependency bumps; two medium features. Team median is 41.",
+    excerpt: "daniel.wong — 38 merged PRs · +4,120 −2,870 · team median 41",
+    metrics: [{ label: "Merged PRs", value: "38" }],
+    direction: "strengthens", impact: 1, confidence: "high", discoveredIn: "initial", recordedAt: "2026-06-30T00:00:00+08:00",
+  },
+  {
+    id: "EV-D02", employeeId: D, sourceId: "src-incident-0412", category: "delivery_reliability",
+    summary: "Caused 3h40m outage (INC-0412) via untested migration; rollback delayed",
+    detail: "Post-mortem attributes the Sev-1 incident to a schema migration merged without a staging run. Daniel was author and on-call; rollback took 2h due to missing runbook.",
+    excerpt: "INC-0412 · Sev-1 · Duration 3h40m · Root cause: migration 0419 merged without staging validation · Author: D. Wong",
+    metrics: [{ label: "Outage", value: "3h 40m" }],
+    direction: "weakens", impact: -2, confidence: "high", discoveredIn: "initial", recordedAt: "2026-04-12T03:10:00+08:00",
+  },
+  {
+    id: "EV-D03", employeeId: D, sourceId: "src-sprint-board", category: "cross_functional",
+    summary: "Paired with Product on 2 discovery spikes",
+    detail: "Sprint board shows two discovery spikes co-owned with Marcus Tan (Product).",
+    excerpt: "SPK-114, SPK-121 · owners: M. Tan, D. Wong",
+    direction: "strengthens", impact: 1, confidence: "medium", discoveredIn: "initial", recordedAt: "2026-06-27T18:00:00+08:00",
+  },
+
+  // Priya — Sales — resolves High
+  {
+    id: "EV-P01", employeeId: P, sourceId: "src-crm-priya", category: "revenue_impact",
+    summary: "RM1.9M closed-won in H1, 128% of quota",
+    detail: "CRM closed-won total for H1 is RM1,920,000 against a RM1.5M quota.",
+    excerpt: "P. Nair · Closed-won H1: RM 1,920,000 · Quota: RM 1,500,000 · Attainment: 128%",
+    metrics: [{ label: "Closed-won", value: "RM 1.92M" }, { label: "Quota attainment", value: "128%" }],
+    direction: "strengthens", impact: 2, confidence: "high", discoveredIn: "initial", recordedAt: "2026-06-25T16:00:00+08:00",
+  },
+  {
+    id: "EV-P02", employeeId: P, sourceId: "src-crm-priya", category: "client_impact",
+    summary: "96% gross renewal rate across 23 enterprise accounts",
+    detail: "22 of 23 accounts renewed; one churned on budget grounds.",
+    excerpt: "Renewals H1 · 22/23 · GRR 96% · churn: 1 (budget)",
+    metrics: [{ label: "Accounts", value: "23" }, { label: "Renewal rate", value: "96%" }],
+    direction: "strengthens", impact: 2, confidence: "high", discoveredIn: "initial", recordedAt: "2026-06-25T16:00:00+08:00",
+  },
+  {
+    id: "EV-P03", employeeId: P, sourceId: "src-proj-atlas", category: "cross_functional",
+    summary: "Sales lead on Project Atlas launch",
+    detail: "Listed as Sales lead in the Atlas launch workspace alongside Product and Marketing.",
+    excerpt: "Members: M. Tan (Product) · P. Nair (Sales) · S. Lim (Marketing)",
+    direction: "strengthens", impact: 1, confidence: "high", discoveredIn: "initial", recordedAt: "2026-03-28T18:00:00+08:00",
+  },
+  {
+    id: "EV-P04", employeeId: P, sourceId: "src-review-priya", category: "delivery_reliability",
+    summary: "Forecast accuracy within ±5% for 6 consecutive months",
+    detail: "QBR notes commit-forecast accuracy within 5% every month of H1.",
+    excerpt: "Forecast accuracy: Jan 3% · Feb 4% · Mar 2% · Apr 5% · May 3% · Jun 4%",
+    direction: "strengthens", impact: 1, confidence: "medium", discoveredIn: "initial", recordedAt: "2026-06-18T10:00:00+08:00",
+  },
+  {
+    id: "EV-P05", employeeId: P, sourceId: "src-review-priya", category: "mentoring",
+    summary: "Ramp coach for 2 new account executives",
+    detail: "QBR lists Priya as ramp coach for two Q1 hires; both hit first-quarter targets.",
+    excerpt: "Ramp coach: P. Nair → K. Lim, S. Raj · Q1 target: 2/2 met",
+    direction: "strengthens", impact: 1, confidence: "high", discoveredIn: "initial", recordedAt: "2026-06-18T10:00:00+08:00",
+  },
+
+  // Aisyah — Operations — resolves High
+  {
+    id: "EV-A01", employeeId: A, sourceId: "src-ops-dashboard", category: "delivery_reliability",
+    summary: "On-time fulfilment raised from 91.2% to 97.8%; cost per order down 11%",
+    detail: "H1 KPI report credits the fulfilment team led by Aisyah with a 6.6pt on-time improvement and an 11% unit-cost reduction.",
+    excerpt: "On-time fulfilment: 91.2% → 97.8% · Cost/order: −11% · Owner: A. Rahman",
+    metrics: [{ label: "On-time", value: "97.8%" }, { label: "Cost per order", value: "−11%" }],
+    direction: "strengthens", impact: 2, confidence: "high", discoveredIn: "initial", recordedAt: "2026-06-29T12:00:00+08:00",
+  },
+  {
+    id: "EV-A02", employeeId: A, sourceId: "src-proj-fulfilment", category: "cross_functional",
+    summary: "Operations owner on Fulfilment Re-platform with Engineering and Finance",
+    detail: "Project workspace lists Aisyah as Operations owner; all 4 milestones delivered on schedule.",
+    excerpt: "Owners: A. Rahman (Ops) · F. Ismail (Eng) · Finance PMO · Milestones: 4/4 on time",
+    direction: "strengthens", impact: 2, confidence: "high", discoveredIn: "initial", recordedAt: "2026-05-20T17:00:00+08:00",
+  },
+  {
+    id: "EV-A03", employeeId: A, sourceId: "src-ops-dashboard", category: "client_impact",
+    summary: "Delivery complaints down 34% half-on-half",
+    detail: "Customer complaint volume attributable to delivery fell 34% versus H2 2025.",
+    excerpt: "Delivery complaints: 412 → 271 (−34%)",
+    direction: "strengthens", impact: 1, confidence: "medium", discoveredIn: "initial", recordedAt: "2026-06-29T12:00:00+08:00",
+  },
+];
+
+evidence.push(...otherEvidence);
+
 export function getEvidence(id: string) {
   return evidence.find((e) => e.id === id);
 }

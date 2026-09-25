@@ -30,6 +30,15 @@ export const sources: Source[] = [
   { id: "src-jira-analytics", system: "projects", name: "Web Analytics Backlog", ref: "WEB-1187", timestamp: "2026-02-11T10:00:00+08:00" },
 
   { id: "src-slack-marketing-ops", system: "slack", name: "#marketing-ops", ref: "Message permalink p1708923000", timestamp: "2026-02-26T11:50:00+08:00" },
+
+  // Other employees (thin, but real, evidence so their status is computed — never hardcoded)
+  { id: "src-github-core", system: "github", name: "halcyon/core-platform", ref: "Contributor stats, Jan–Jun 2026", timestamp: "2026-06-30T00:00:00+08:00" },
+  { id: "src-incident-0412", system: "projects", name: "Incident INC-0412 post-mortem", ref: "Ops / incidents / INC-0412", timestamp: "2026-04-12T03:10:00+08:00" },
+  { id: "src-sprint-board", system: "projects", name: "Core Platform Sprint Board", ref: "Sprints 61–72 / velocity & carry-over", timestamp: "2026-06-27T18:00:00+08:00" },
+  { id: "src-crm-priya", system: "crm", name: "Enterprise Accounts — P. Nair", ref: "CRM / closed-won & renewals H1 2026", timestamp: "2026-06-25T16:00:00+08:00" },
+  { id: "src-review-priya", system: "reviews", name: "Sales QBR Q2 2026", ref: "Sales / QBR-2026-Q2 / P. Nair", timestamp: "2026-06-18T10:00:00+08:00" },
+  { id: "src-ops-dashboard", system: "reports", name: "Operations KPI Report H1", ref: "OPS-RPT-2026-H1, p.4", timestamp: "2026-06-29T12:00:00+08:00" },
+  { id: "src-proj-fulfilment", system: "projects", name: "Fulfilment Re-platform", ref: "Project FR-2026 / members & milestones", timestamp: "2026-05-20T17:00:00+08:00" },
 ];
 
 export function getSource(id: string) {

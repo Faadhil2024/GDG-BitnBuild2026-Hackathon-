@@ -45,6 +45,18 @@ test("valid challenge reclassifies the factor but does not change the level", ()
   assert.equal(after.factors.find((f) => f.category === "delivery_reliability")!.status, "concern");
 });
 
+test("other employees resolve to intended levels from their own evidence", () => {
+  const level = (id: string) => {
+    const emp = employees.find((e) => e.id === id)!;
+    return assess(emp, evidence.filter((e) => e.employeeId === id && e.discoveredIn === "initial")).level;
+  };
+  assert.equal(level("emp-daniel-wong"), "Low");
+  assert.equal(level("emp-priya-nair"), "High");
+  assert.equal(level("emp-aisyah-rahman"), "High");
+  assert.equal(evidence.filter((e) => e.employeeId === "emp-marcus-tan").length, 0);
+  assert.equal(evidence.filter((e) => e.employeeId === "emp-jonathan-lee").length, 0);
+});
+
 test("challenge with off-topic evidence is rejected", () => {
   const review = reviewChallenge({ category: "delivery_reliability", evidenceIds: ["EV-107"] }, evidence, {});
   assert.equal(review.outcome, "unchanged");

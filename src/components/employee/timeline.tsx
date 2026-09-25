@@ -1,8 +1,8 @@
 "use client";
 
 import { useAssessment } from "@/store/assessment-store";
-import { Card, SectionTitle, formatTime } from "@/components/ui";
-import type { EventType } from "@/lib/types";
+import { Card, formatTime } from "@/components/ui";
+import type { AssessmentEvent, EventType } from "@/lib/types";
 
 const TONE: Record<EventType, string> = {
   loaded: "bg-ink-faint",
@@ -15,20 +15,38 @@ const TONE: Record<EventType, string> = {
   reclassified: "bg-high",
 };
 
+/** Consecutive "evidence found" events collapse into one entry so the log reads as a story, not a firehose. */
+function groupEvents(events: AssessmentEvent[]): AssessmentEvent[] {
+  const out: AssessmentEvent[] = [];
+  for (const ev of events) {
+    const last = out[out.length - 1];
+    if (ev.type === "evidence_added" && last?.type === "evidence_added") {
+      const ids = [...last.evidenceIds, ...ev.evidenceIds];
+      out[out.length - 1] = { ...last, at: ev.at, title: `${ids.length} evidence items found`, description: "Across Slack, HR, reports, CRM and project sources.", evidenceIds: ids };
+    } else {
+      out.push(ev.type === "evidence_added" ? { ...ev, title: "1 evidence item found", description: ev.description } : ev);
+    }
+  }
+  return out;
+}
+
 export function Timeline() {
   const { state, actions } = useAssessment();
-  const events = [...state.events].reverse();
+  const events = groupEvents(state.events).reverse();
 
   return (
-    <Card aria-labelledby="timeline-heading" className="p-5">
-      <SectionTitle id="timeline-heading" hint={`${state.events.length} events`}>
-        Assessment timeline
-      </SectionTitle>
-      <ol className="relative space-y-3 border-l border-line pl-4">
+    <Card aria-labelledby="timeline-heading" className="p-6">
+      <div className="flex items-baseline justify-between">
+        <h2 id="timeline-heading" className="text-base font-semibold">
+          Assessment timeline
+        </h2>
+        <span className="text-xs text-ink-faint">{events.length} entries</span>
+      </div>
+      <ol className="relative mt-4 space-y-4 border-l border-line pl-4">
         {events.map((ev) => {
           const major = ev.type === "assessment_changed" || ev.type === "challenge_resolved" || ev.type === "assessment_frozen";
           return (
-            <li key={ev.id} className="animate-rise relative">
+            <li key={ev.id} className="relative">
               <span aria-hidden="true" className={`absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full ring-2 ring-surface ${TONE[ev.type]}`} />
               <div className="flex items-baseline justify-between gap-2">
                 <p className={`text-sm ${major ? "font-semibold" : "font-medium"}`}>{ev.title}</p>
@@ -36,9 +54,9 @@ export function Timeline() {
                   {formatTime(ev.at)}
                 </time>
               </div>
-              <p className="mt-0.5 text-xs text-ink-muted">{ev.description}</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-ink-muted">{ev.description}</p>
               {ev.evidenceIds.length > 0 && ev.evidenceIds.length <= 3 && (
-                <div className="mt-1 flex flex-wrap gap-1">
+                <div className="mt-1.5 flex flex-wrap gap-1">
                   {ev.evidenceIds.map((id) => (
                     <button
                       key={id}

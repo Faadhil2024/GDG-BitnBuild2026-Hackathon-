@@ -5,13 +5,6 @@ import { useAssessment } from "@/store/assessment-store";
 import { Card, LevelBadge, Pill } from "@/components/ui";
 import { diff } from "@/lib/assessment/engine";
 
-function WeightedScore({ f }: { f: { weight: number; score: number } }) {
-  const v = f.weight * f.score;
-  return (
-    <span className={`font-mono tabular-nums ${v < 0 ? "text-low" : v > 0 ? "text-ink" : "text-ink-faint"}`}>{v > 0 ? "+" : ""}{v.toFixed(1)}</span>
-  );
-}
-
 /**
  * The centerpiece: before → after. Receives focus when a change lands so
  * keyboard and screen-reader users are taken to the explanation.
@@ -75,45 +68,68 @@ export function ChangePanel() {
         </div>
       </div>
 
-      {/* Factor-level diff — every row is checkable. Changed rows get a tint, not just an icon. */}
-      <div className="px-5 pb-2">
+      {/* Factor-level before/after bars. Changed rows are tinted and marked, not colour-only. */}
+      <div className="px-6 pb-5">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Evidence strength by factor</h3>
+          <ul className="flex items-center gap-4 text-xs text-ink-faint" aria-label="Legend">
+            <li className="flex items-center gap-1.5"><span aria-hidden="true" className="inline-block h-2 w-4 rounded-sm bg-line" /> Before</li>
+            <li className="flex items-center gap-1.5"><span aria-hidden="true" className="inline-block h-2 w-4 rounded-sm bg-high" /> After</li>
+            <li className="flex items-center gap-1.5"><span aria-hidden="true" className="inline-block h-2 w-4 rounded-sm bg-low" /> Concern</li>
+          </ul>
+        </div>
         <table className="w-full text-sm">
-          <caption className="sr-only">Factor scores before and after the correction. Changed rows are tinted.</caption>
-          <thead className="text-left text-xs text-ink-faint">
+          <caption className="sr-only">Evidence strength per factor before and after the correction, on a scale of minus two to plus two.</caption>
+          <thead className="sr-only">
             <tr>
-              <th scope="col" className="py-1.5 pr-4 font-medium">Factor</th>
-              <th scope="col" className="w-20 py-1.5 pr-4 font-medium">Before</th>
-              <th scope="col" className="w-20 py-1.5 font-medium">After</th>
+              <th scope="col">Factor</th>
+              <th scope="col">Before</th>
+              <th scope="col">After</th>
+              <th scope="col">Change</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ before, after, delta }) => (
-              <tr
-                key={after.category}
-                className={
-                  delta > 0
-                    ? "bg-high-soft"
-                    : delta < 0
-                      ? "bg-low-soft"
-                      : after.status === "concern"
-                        ? "bg-moderate-soft/50"
-                        : ""
-                }
-              >
-                <th scope="row" className="py-1.5 pl-2 pr-4 text-left font-normal">
-                  <span className="mr-1.5 inline-block w-4 text-center" aria-hidden="true">
-                    {delta > 0 ? "▲" : delta < 0 ? "▼" : after.status === "concern" ? "●" : "—"}
-                  </span>
-                  {after.label}
-                  {delta === 0 && after.status === "concern" && <span className="sr-only"> — unchanged concern</span>}
-                </th>
-                <td className="py-1.5 pr-4"><WeightedScore f={before} /></td>
-                <td className="py-1.5"><WeightedScore f={after} /></td>
-              </tr>
-            ))}
+            {rows.map(({ before, after, delta }) => {
+              const bar = (f: typeof after, cls: string) => (
+                <div className="h-2 w-full overflow-hidden rounded-full bg-canvas">
+                  <div className={`bar-fill h-full rounded-full ${f.score < 0 ? "bg-low" : cls}`} style={{ width: `${(Math.abs(f.score) / 2) * 100}%` }} />
+                </div>
+              );
+              return (
+                <tr
+                  key={after.category}
+                  className={`border-t border-line ${delta > 0 ? "bg-high-soft/60" : delta < 0 ? "bg-low-soft/60" : ""}`}
+                >
+                  <th scope="row" className="w-[200px] py-2.5 pl-2 pr-4 text-left font-medium">
+                    {after.label}
+                  </th>
+                  <td className="py-2.5 pr-4">
+                    <div className="space-y-1">
+                      {bar(before, "bg-line")}
+                      {bar(after, "bg-high")}
+                    </div>
+                    <span className="sr-only">
+                      before {before.score}, after {after.score}
+                    </span>
+                  </td>
+                  <td className="w-[150px] py-2.5 pr-2 text-right text-xs">
+                    {delta > 0 ? (
+                      <span className="text-high"><span aria-hidden="true">▲ </span>Improved</span>
+                    ) : delta < 0 ? (
+                      <span className="text-low"><span aria-hidden="true">▼ </span>Worsened</span>
+                    ) : after.status === "concern" ? (
+                      <span className="text-low"><span aria-hidden="true">● </span>Concern remains</span>
+                    ) : after.status === "missing" ? (
+                      <span className="text-moderate">Still no evidence</span>
+                    ) : (
+                      <span className="text-ink-faint">No change</span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
-        <p className="mt-1 text-[11px] text-ink-faint">Scores are weight × impact (−2…+2). Click any evidence chip below or in the factor list to inspect the source.</p>
       </div>
 
       {/* AI explanation — constrained line length, honest provenance. */}

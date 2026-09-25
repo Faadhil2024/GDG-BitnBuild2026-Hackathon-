@@ -7,6 +7,7 @@ import { CATEGORY_LABELS } from "@/lib/assessment/roles";
 import type { ExplainInput, ExplanationResult } from "@/lib/ai/schema";
 import { evidenceFor } from "@/data/evidence";
 import { getSource } from "@/data/sources";
+import { SCAN_STEPS, SCAN_STEP_MS } from "@/data/scan-steps";
 import type { Assessment, AssessmentEvent, Challenge, ContributionCategory, Employee, Evidence } from "@/lib/types";
 
 export type Phase = "initial" | "discovering" | "enriched" | "challenging" | "frozen" | "reviewed";
@@ -31,6 +32,8 @@ interface State {
   /** Click coordinates where the evidence was opened from, for drawer origin animation. */
   evidenceOrigin?: { x: number; y: number };
   lastChangeFocusKey: number;
+  /** Index of the scan step currently running; equals SCAN_STEPS.length when all are complete. */
+  scanStep: number;
 }
 
 type Action =
@@ -44,6 +47,7 @@ type Action =
   | { type: "ANNOUNCE"; text: string; priority: "polite" | "assertive" }
   | { type: "SELECT_EVIDENCE"; id?: string; origin?: { x: number; y: number } }
   | { type: "BUMP_FOCUS" }
+  | { type: "SCAN_STEP"; step: number }
   | { type: "RESET"; state: State };
 
 let announceId = 0;
@@ -71,6 +75,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, selectedEvidenceId: action.id, evidenceOrigin: action.id ? action.origin : undefined };
     case "BUMP_FOCUS":
       return { ...state, lastChangeFocusKey: state.lastChangeFocusKey + 1 };
+    case "SCAN_STEP":
+      return { ...state, scanStep: action.step };
     case "RESET":
       return action.state;
   }
@@ -99,6 +105,7 @@ function initialState(employee: Employee, all: Evidence[]): State {
     ],
     explanationLoading: false,
     lastChangeFocusKey: 0,
+    scanStep: 0,
   };
 }
 
@@ -123,7 +130,7 @@ interface StoreValue {
 
 const Ctx = createContext<StoreValue | null>(null);
 
-const SCAN_MS = 900;
+const SCAN_MS = SCAN_STEP_MS * SCAN_STEPS.length + 500;
 
 export function AssessmentProvider({ employee, children }: { employee: Employee; children: ReactNode }) {
   const allEvidence = useMemo(() => evidenceFor(employee.id), [employee.id]);
@@ -181,7 +188,12 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
     const sourcesCount = new Set(queue.map((e) => e.sourceId)).size;
     const before = assessment;
     dispatch({ type: "SET_PHASE", phase: "discovering" });
+    dispatch({ type: "SCAN_STEP", step: 0 });
     announce(`Evidence discovery started. Scanning ${sourcesCount} connected sources for ${employee.name}.`);
+
+    SCAN_STEPS.forEach((_, i) => {
+      timers.current.push(setTimeout(() => dispatch({ type: "SCAN_STEP", step: i + 1 }), SCAN_STEP_MS * (i + 1)));
+    });
 
     timers.current.push(
       setTimeout(() => {
