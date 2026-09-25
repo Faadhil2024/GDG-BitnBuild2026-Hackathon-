@@ -15,9 +15,20 @@ export function EvidenceDrawer() {
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
-    if (ev && !d.open) d.showModal();
+    if (ev && !d.open) {
+      d.showModal();
+      // Anchor the scale-in to the clicked element so the drawer visibly
+      // "comes from" the evidence chip, not from the center of the screen.
+      const o = state.evidenceOrigin;
+      if (o) {
+        const r = d.getBoundingClientRect();
+        d.style.transformOrigin = `${Math.min(Math.max(o.x - r.left, 0), r.width)}px ${Math.min(Math.max(o.y - r.top, 0), r.height)}px`;
+      } else {
+        d.style.transformOrigin = "center";
+      }
+    }
     if (!ev && d.open) d.close();
-  }, [ev]);
+  }, [ev, state.evidenceOrigin]);
 
   const src = ev ? getSource(ev.sourceId) : undefined;
   const weight = ev ? roleProfiles[employee.role].weights[ev.category] : 0;
@@ -29,7 +40,7 @@ export function EvidenceDrawer() {
       ref={ref}
       onClose={() => actions.selectEvidence(undefined)}
       aria-labelledby="evidence-title"
-      className="m-auto w-[min(640px,92vw)] rounded-lg border border-line bg-surface p-0 text-ink shadow-2xl"
+      className="animate-drawer m-auto w-[min(640px,92vw)] rounded-lg border border-line bg-surface p-0 text-ink shadow-2xl"
     >
       {ev && (
         <article className="p-6">
@@ -55,7 +66,7 @@ export function EvidenceDrawer() {
           </div>
 
           <section aria-labelledby="src-h" className="mt-5 rounded-md border border-line bg-canvas p-4">
-            <h3 id="src-h" className="text-xs font-semibold uppercase tracking-wide text-ink-faint">
+            <h3 id="src-h" className="text-xs font-semibold text-ink-muted">
               Source
             </h3>
             <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
@@ -68,16 +79,16 @@ export function EvidenceDrawer() {
               <dt className="text-ink-faint">Recorded</dt>
               <dd>{formatDate(ev.recordedAt)}</dd>
             </dl>
-            <blockquote className="mt-3 border-l-2 border-accent bg-surface p-3 font-mono text-xs leading-relaxed text-ink">
+            <blockquote className="prose-measure mt-3 border-l-2 border-accent bg-surface p-3 font-mono text-xs leading-relaxed text-ink">
               {ev.excerpt}
             </blockquote>
           </section>
 
           <section aria-labelledby="detail-h" className="mt-4">
-            <h3 id="detail-h" className="text-xs font-semibold uppercase tracking-wide text-ink-faint">
+            <h3 id="detail-h" className="text-xs font-semibold text-ink-muted">
               What it shows
             </h3>
-            <p className="mt-1 text-sm text-ink-muted">{ev.detail}</p>
+            <p className="prose-measure mt-1 text-sm text-ink-muted">{ev.detail}</p>
             {ev.metrics && (
               <dl className="mt-3 grid grid-cols-2 gap-2">
                 {ev.metrics.map((m) => (
@@ -91,7 +102,7 @@ export function EvidenceDrawer() {
           </section>
 
           <section aria-labelledby="weigh-h" className="mt-4 rounded-md border border-line p-4">
-            <h3 id="weigh-h" className="text-xs font-semibold uppercase tracking-wide text-ink-faint">
+            <h3 id="weigh-h" className="text-xs font-semibold text-ink-muted">
               How it is weighed for a {employee.title}
             </h3>
             <p className="mt-1 text-sm">

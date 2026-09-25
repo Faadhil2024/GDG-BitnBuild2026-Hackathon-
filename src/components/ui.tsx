@@ -2,13 +2,14 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { Confidence, Direction, Level } from "@/lib/types";
 
 export function LevelBadge({ level, size = "md" }: { level: Level; size?: "sm" | "md" | "lg" }) {
-  const tone = { Low: "bg-low-soft text-low", Moderate: "bg-moderate-soft text-moderate", High: "bg-high-soft text-high" }[level];
-  const glyph = { Low: "▽", Moderate: "◇", High: "△" }[level];
-  const sz = { sm: "text-xs px-2 py-0.5", md: "text-sm px-2.5 py-1", lg: "text-lg px-4 py-1.5" }[size];
+  const tone = { Low: "bg-low text-white", Moderate: "bg-moderate text-white", High: "bg-high text-white" }[level];
+  const sz = { sm: "text-xs px-2.5 py-1", md: "text-sm px-3 py-1.5", lg: "text-xl px-5 py-2.5" }[size];
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-md font-semibold tracking-tight ${tone} ${sz}`}>
-      <span aria-hidden="true">{glyph}</span>
-      {level} contribution
+    <span className={`inline-flex items-center rounded-md font-bold tracking-tight shadow-sm ${tone} ${sz}`}>
+      {level}
+      <span className="ml-2 font-normal opacity-80" style={{ fontSize: "0.62em" }}>
+        contribution
+      </span>
     </span>
   );
 }
@@ -22,7 +23,7 @@ export function Pill({ children, tone = "neutral" }: { children: ReactNode; tone
     high: "bg-high-soft text-high border-transparent",
     frozen: "bg-frozen-soft text-frozen border-transparent",
   }[tone];
-  return <span className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wide ${cls}`}>{children}</span>;
+  return <span className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[11px] font-medium ${cls}`}>{children}</span>;
 }
 
 export function DirectionPill({ direction }: { direction: Direction }) {
@@ -54,7 +55,7 @@ export function Button({
   className = "",
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "ghost" | "danger" }) {
-  const base = "inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50";
+  const base = "pressable inline-flex items-center justify-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100";
   const v = {
     primary: "bg-accent text-white hover:bg-blue-800",
     secondary: "border border-line bg-surface text-ink hover:bg-canvas",
@@ -74,8 +75,8 @@ export function Card({ children, className = "", as: Tag = "section", ...rest }:
 
 export function SectionTitle({ children, id, hint }: { children: ReactNode; id?: string; hint?: string }) {
   return (
-    <div className="mb-3 flex items-baseline justify-between gap-3">
-      <h2 id={id} className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
+    <div className="mb-3 flex items-baseline justify-between gap-3 border-b border-line pb-2">
+      <h2 id={id} className="text-sm font-semibold text-ink">
         {children}
       </h2>
       {hint && <span className="text-xs text-ink-faint">{hint}</span>}

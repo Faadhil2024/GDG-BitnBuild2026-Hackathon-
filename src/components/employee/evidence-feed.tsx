@@ -21,8 +21,8 @@ export function EvidenceFeed() {
             <li key={e.id} className="animate-rise py-2.5">
               <button
                 type="button"
-                onClick={() => actions.selectEvidence(e.id)}
-                className="group flex w-full items-start justify-between gap-3 text-left"
+                onClick={(ev) => actions.selectEvidence(e.id, { x: ev.clientX, y: ev.clientY })}
+                className="pressable group flex w-full items-start justify-between gap-3 text-left"
                 aria-label={`View evidence ${e.id}: ${e.summary}`}
               >
                 <div className="min-w-0">

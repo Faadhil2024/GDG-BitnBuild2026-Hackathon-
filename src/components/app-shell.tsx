@@ -23,10 +23,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="hidden text-sm text-ink-muted sm:inline">{COMPANY.name}</span>
           </div>
           <nav aria-label="Primary" className="flex items-center gap-1 text-sm">
-            <Link href="/" className="rounded-md px-3 py-1.5 text-ink-muted hover:bg-canvas hover:text-ink">
+            <Link href="/" className="pressable rounded-md px-3 py-1.5 text-ink-muted hover:bg-canvas hover:text-ink">
               Appraisal cycle
             </Link>
-            <Link href="/employees/emp-sarah-lim" className="rounded-md px-3 py-1.5 text-ink-muted hover:bg-canvas hover:text-ink">
+            <Link href="/employees/emp-sarah-lim" className="pressable rounded-md px-3 py-1.5 text-ink-muted hover:bg-canvas hover:text-ink">
               Demo case
             </Link>
           </nav>

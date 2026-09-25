@@ -96,7 +96,7 @@ export function ChallengePanel() {
                         {e.discoveredIn === "challenge" ? " · submitted by employee" : ""}
                       </span>
                     </label>
-                    <button type="button" onClick={() => actions.selectEvidence(e.id)} className="text-xs text-accent hover:underline" aria-label={`View evidence ${e.id}`}>
+                    <button type="button" onClick={(ev) => actions.selectEvidence(e.id, { x: ev.clientX, y: ev.clientY })} className="pressable text-xs text-accent hover:underline" aria-label={`View evidence ${e.id}`}>
                       View
                     </button>
                   </li>

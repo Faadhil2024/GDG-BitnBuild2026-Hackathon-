@@ -43,8 +43,8 @@ export function Timeline() {
                     <button
                       key={id}
                       type="button"
-                      onClick={() => actions.selectEvidence(id)}
-                      className="rounded border border-line bg-canvas px-1.5 py-0.5 font-mono text-[10px] text-accent hover:border-accent"
+                      onClick={(e) => actions.selectEvidence(id, { x: e.clientX, y: e.clientY })}
+                      className="pressable rounded border border-line bg-canvas px-1.5 py-0.5 font-mono text-[10px] text-accent hover:border-accent"
                       aria-label={`View evidence ${id}`}
                     >
                       {id}

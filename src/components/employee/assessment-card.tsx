@@ -13,7 +13,7 @@ export function AssessmentCard() {
     <Card aria-labelledby="assessment-heading" className="p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 id="assessment-heading" className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
+          <h2 id="assessment-heading" className="text-sm font-semibold text-ink">
             Current AI assessment
           </h2>
           <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -51,11 +51,11 @@ export function AssessmentCard() {
 
       <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-4">
         {state.phase === "initial" && (
-          <Button variant="primary" onClick={actions.discover} disabled={pendingEnrichment.length === 0} className="pulse-ring">
+          <Button variant="primary" onClick={actions.discover} disabled={pendingEnrichment.length === 0}>
             Discover evidence across connected sources
           </Button>
         )}
-        {(state.phase === "enriched" || state.phase === "reviewed") && !state.challenge && (
+        {(state.phase === "enriched" || state.phase === "reviewed") && (
           <Button variant="secondary" onClick={actions.openChallenge}>
             Challenge a factor
           </Button>

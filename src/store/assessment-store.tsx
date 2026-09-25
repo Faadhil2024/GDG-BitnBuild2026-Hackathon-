@@ -28,6 +28,8 @@ interface State {
   explanationLoading: boolean;
   announcement?: Announcement;
   selectedEvidenceId?: string;
+  /** Click coordinates where the evidence was opened from, for drawer origin animation. */
+  evidenceOrigin?: { x: number; y: number };
   lastChangeFocusKey: number;
 }
 
@@ -40,7 +42,7 @@ type Action =
   | { type: "SET_ADJUSTMENTS"; adjustments: ImpactAdjustments }
   | { type: "SET_EXPLANATION"; explanation?: ExplanationResult; loading: boolean }
   | { type: "ANNOUNCE"; text: string; priority: "polite" | "assertive" }
-  | { type: "SELECT_EVIDENCE"; id?: string }
+  | { type: "SELECT_EVIDENCE"; id?: string; origin?: { x: number; y: number } }
   | { type: "BUMP_FOCUS" }
   | { type: "RESET"; state: State };
 
@@ -66,7 +68,7 @@ function reducer(state: State, action: Action): State {
     case "ANNOUNCE":
       return { ...state, announcement: { id: ++announceId, text: action.text, priority: action.priority } };
     case "SELECT_EVIDENCE":
-      return { ...state, selectedEvidenceId: action.id };
+      return { ...state, selectedEvidenceId: action.id, evidenceOrigin: action.id ? action.origin : undefined };
     case "BUMP_FOCUS":
       return { ...state, lastChangeFocusKey: state.lastChangeFocusKey + 1 };
     case "RESET":
@@ -114,14 +116,14 @@ interface StoreValue {
     openChallenge: () => void;
     cancelChallenge: () => void;
     submitChallenge: (c: { category: ContributionCategory; statement: string; evidenceIds: string[] }) => void;
-    selectEvidence: (id?: string) => void;
+    selectEvidence: (id?: string, origin?: { x: number; y: number }) => void;
     reset: () => void;
   };
 }
 
 const Ctx = createContext<StoreValue | null>(null);
 
-const STEP_MS = 650;
+const SCAN_MS = 900;
 
 export function AssessmentProvider({ employee, children }: { employee: Employee; children: ReactNode }) {
   const allEvidence = useMemo(() => evidenceFor(employee.id), [employee.id]);
@@ -139,7 +141,9 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
   );
   const previous = state.history.length > 1 ? state.history[state.history.length - 2] : undefined;
   const pendingEnrichment = allEvidence.filter((e) => e.discoveredIn === "enrichment" && !state.includedIds.includes(e.id));
-  const submittableEvidence = allEvidence.filter((e) => !state.includedIds.includes(e.id) || e.discoveredIn === "challenge");
+  // A challenge can point at any known evidence — including items already weighed or
+  // rejected by the engine. That's how a bad challenge gets honestly rejected.
+  const submittableEvidence = allEvidence;
 
   const announce = useCallback((text: string, priority: "polite" | "assertive" = "polite") => dispatch({ type: "ANNOUNCE", text, priority }), []);
 
@@ -179,9 +183,10 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
     dispatch({ type: "SET_PHASE", phase: "discovering" });
     announce(`Evidence discovery started. Scanning ${sourcesCount} connected sources for ${employee.name}.`);
 
-    queue.forEach((ev, i) => {
-      timers.current.push(
-        setTimeout(() => {
+    timers.current.push(
+      setTimeout(() => {
+        // All items land in one batch — the result is the reveal, not a card stream.
+        queue.forEach((ev) => {
           dispatch({ type: "ADD_EVIDENCE", id: ev.id, at: new Date().toISOString() });
           const src = getSource(ev.sourceId);
           dispatch({
@@ -193,12 +198,7 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
               evidenceIds: [ev.id],
             }),
           });
-        }, STEP_MS * (i + 1)),
-      );
-    });
-
-    timers.current.push(
-      setTimeout(() => {
+        });
         const ids = [...state.includedIds, ...queue.map((e) => e.id)];
         const after = assess(employee, allEvidence.filter((e) => ids.includes(e.id)), state.adjustments);
         const d = diff(before, after);
@@ -226,21 +226,21 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
         );
         dispatch({ type: "BUMP_FOCUS" });
         void requestExplanation(before, after, queue, "enrichment");
-      }, STEP_MS * (queue.length + 1) + 200),
+      }, SCAN_MS),
     );
   }, [state.phase, state.includedIds, state.adjustments, allEvidence, assessment, employee, announce, requestExplanation]);
 
   const openChallenge = useCallback(() => {
-    if (state.phase !== "enriched") return;
+    if (state.phase !== "enriched" && state.phase !== "reviewed") return;
     dispatch({ type: "SET_PHASE", phase: "challenging" });
     announce("Challenge form opened. Choose the factor you are contesting and attach evidence.");
   }, [state.phase, announce]);
 
   const cancelChallenge = useCallback(() => {
     if (state.phase !== "challenging") return;
-    dispatch({ type: "SET_PHASE", phase: "enriched" });
+    dispatch({ type: "SET_PHASE", phase: state.challenge?.status === "resolved" ? "reviewed" : "enriched" });
     announce("Challenge cancelled.");
-  }, [state.phase, announce]);
+  }, [state.phase, state.challenge?.status, announce]);
 
   const submitChallenge = useCallback(
     (c: { category: ContributionCategory; statement: string; evidenceIds: string[] }) => {
@@ -310,7 +310,10 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
     [state.phase, state.adjustments, state.includedIds, assessment, allEvidence, employee, announce, requestExplanation],
   );
 
-  const selectEvidence = useCallback((id?: string) => dispatch({ type: "SELECT_EVIDENCE", id }), []);
+  const selectEvidence = useCallback(
+    (id?: string, origin?: { x: number; y: number }) => dispatch({ type: "SELECT_EVIDENCE", id, origin }),
+    [],
+  );
   const reset = useCallback(() => {
     timers.current.forEach(clearTimeout);
     dispatch({ type: "RESET", state: initialState(employee, allEvidence) });

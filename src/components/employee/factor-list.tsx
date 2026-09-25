@@ -60,8 +60,8 @@ export function FactorList() {
                 <li key={e.id}>
                   <button
                     type="button"
-                    onClick={() => actions.selectEvidence(e.id)}
-                    className="group inline-flex max-w-full items-center gap-1.5 rounded-md border border-line bg-surface px-2 py-1 text-left text-xs hover:border-accent hover:bg-accent-soft"
+                    onClick={(ev) => actions.selectEvidence(e.id, { x: ev.clientX, y: ev.clientY })}
+                    className="pressable group inline-flex max-w-full items-center gap-1.5 rounded-md border border-line bg-surface px-2 py-1 text-left text-xs hover:border-accent hover:bg-accent-soft"
                     aria-label={`View evidence ${e.id}: ${e.summary}`}
                   >
                     <span className="font-mono text-[10px] text-ink-faint">{e.id}</span>
