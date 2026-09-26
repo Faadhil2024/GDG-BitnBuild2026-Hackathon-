@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useAssessment } from "@/store/assessment-store";
-import { Card, LevelBadge, Pill } from "@/components/ui";
+import { Card, GradeBadge, Pill } from "@/components/ui";
 import { diff } from "@/lib/assessment/engine";
 
 /**
@@ -37,7 +37,7 @@ export function ChangePanel() {
       <div className="border-b border-line px-5 py-3">
         <h2 id="change-heading" ref={headingRef} tabIndex={-1} className="flex flex-wrap items-center gap-3 text-sm font-semibold outline-none">
           Assessment correction
-          {!d.changed && <Pill tone="neutral">Level unchanged</Pill>}
+          {!d.changed && <Pill tone="neutral">Grade unchanged</Pill>}
           <span className="ml-auto text-xs font-normal text-ink-faint">
             {previous.score} → {assessment.score} index · confidence {previous.confidence} → {assessment.confidence}
           </span>
@@ -48,7 +48,7 @@ export function ChangePanel() {
       <div className="grid sm:grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 py-6">
         <div className="rounded-md border border-line bg-canvas p-4 text-center">
           <p className="mb-2 text-xs font-medium text-ink-faint">Before — title-driven signals only</p>
-          <div className="flex justify-center"><LevelBadge level={d.from} size="lg" /></div>
+          <div className="flex justify-center"><GradeBadge grade={d.from} size="lg" label={null} /></div>
           <p className="mt-2 text-xs text-ink-faint">
             {Math.round(previous.coverage * 100)}% coverage · {previous.missingAreas.length} expected areas unproven
           </p>
@@ -61,7 +61,7 @@ export function ChangePanel() {
         </div>
         <div className="rounded-md border border-line bg-surface p-4 text-center">
           <p className="mb-2 text-xs font-medium text-ink-faint">After — {state.challenge?.status === "resolved" && state.phase === "reviewed" ? "reviewed challenge" : "full evidence picture"}</p>
-          <div className="flex justify-center"><LevelBadge level={d.to} size="lg" /></div>
+          <div className="flex justify-center"><GradeBadge grade={d.to} size="lg" label={null} /></div>
           <p className="mt-2 text-xs text-ink-faint">
             {Math.round(assessment.coverage * 100)}% coverage · {assessment.missingAreas.length === 0 ? "all expected areas have evidence" : `${assessment.missingAreas.length} still unproven`}
           </p>

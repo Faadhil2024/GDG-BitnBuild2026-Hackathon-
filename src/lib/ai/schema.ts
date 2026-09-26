@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { AssessmentDiff } from "@/lib/assessment/engine";
-import type { Assessment, Employee, Evidence, Level } from "@/lib/types";
+import type { ContributionCategory, Employee, Evidence, Level } from "@/lib/types";
 
 /** What the model is allowed to return. Nothing else is rendered. */
 export const ExplanationSchema = z.object({
@@ -29,8 +29,8 @@ export interface ExplanationResult extends Explanation {
 
 export interface ExplainInput {
   employee: Pick<Employee, "name" | "title" | "department" | "role">;
-  before: Pick<Assessment, "level" | "score" | "confidence" | "missingAreas">;
-  after: Pick<Assessment, "level" | "score" | "confidence" | "missingAreas">;
+  before: { level: string; score: number; confidence: string; missingAreas: ContributionCategory[] };
+  after: { level: string; score: number; confidence: string; missingAreas: ContributionCategory[] };
   diff: AssessmentDiff;
   /** Evidence that is newly part of the assessment (or newly re-weighted). */
   evidence: Pick<Evidence, "id" | "summary" | "category" | "direction" | "impact" | "confidence" | "mitigates">[];

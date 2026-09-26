@@ -75,11 +75,8 @@ export const DEMO_EMPLOYEE_ID = "emp-sarah-lim";
 
 /** Named people a reviewer can "view as". Cosmetic in this prototype — it does not gate data. */
 export const VIEWERS = [
-  { name: "Jonathan Lee", title: "Marketing Manager" },
-  { name: "Farah Ismail", title: "Head of Engineering & Product" },
-  { name: "Kevin Ong", title: "Head of Sales & Operations" },
-  { name: "Vikram Pillai", title: "HR Business Partner" },
-  { name: "Sarah Lim", title: "Employee view" },
+  { name: "Jonathan Lee", title: "Employer · Marketing Manager" },
+  { name: "Employee", title: "Employee view" },
 ];
 
 export function getEmployee(id: string) {

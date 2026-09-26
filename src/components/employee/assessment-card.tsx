@@ -1,8 +1,9 @@
 "use client";
 
 import { useAssessment } from "@/store/assessment-store";
-import { Button, Card, LevelBadge, Pill } from "@/components/ui";
+import { Button, Card, GradeBadge, Pill } from "@/components/ui";
 import { CATEGORY_LABELS } from "@/lib/assessment/roles";
+import { GRADE_MEANING } from "@/lib/assessment/engine";
 
 export function AssessmentCard() {
   const { state, assessment, previous, pendingEnrichment, actions } = useAssessment();
@@ -26,12 +27,15 @@ export function AssessmentCard() {
       </div>
 
       <div className="flex flex-wrap items-center gap-6 px-6 py-5">
-        <LevelBadge level={assessment.level} size="lg" />
-        {previous && previous.level !== assessment.level && (
-          <span className="text-sm text-ink-muted">
-            previously <strong className="font-medium text-ink">{previous.level}</strong>
-          </span>
-        )}
+        <GradeBadge grade={assessment.grade} size="lg" label={null} />
+        <div>
+          <p className="text-sm font-medium">{GRADE_MEANING[assessment.grade]}</p>
+          {previous && previous.grade !== assessment.grade && (
+            <p className="mt-0.5 text-sm text-ink-muted">
+              previously <strong className="font-medium text-ink">{previous.grade}</strong>
+            </p>
+          )}
+        </div>
       </div>
 
       <dl className="grid grid-cols-3 divide-x divide-line border-t border-line bg-canvas/60">

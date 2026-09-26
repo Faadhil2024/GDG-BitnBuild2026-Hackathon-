@@ -98,8 +98,8 @@ function initialState(employee: Employee, all: Evidence[]): State {
       mkEvent({
         type: "loaded",
         title: "Initial evidence loaded",
-        description: `${initialIds.length} items from HR, activity logs and the project tracker. Assessment: ${first.level}.`,
-        to: first.level,
+        description: `${initialIds.length} items from HR, activity logs and the project tracker. Grade: ${first.grade}.`,
+        to: first.grade,
         evidenceIds: initialIds,
       }),
     ],
@@ -159,8 +159,8 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
       dispatch({ type: "SET_EXPLANATION", loading: true });
       const input: ExplainInput = {
         employee: { name: employee.name, title: employee.title, department: employee.department, role: employee.role },
-        before: { level: before.level, score: before.score, confidence: before.confidence, missingAreas: before.missingAreas },
-        after: { level: after.level, score: after.score, confidence: after.confidence, missingAreas: after.missingAreas },
+        before: { level: before.grade, score: before.score, confidence: before.confidence, missingAreas: before.missingAreas },
+        after: { level: after.grade, score: after.score, confidence: after.confidence, missingAreas: after.missingAreas },
         diff: diff(before, after),
         evidence: evidence.map(({ id, summary, category, direction, impact, confidence, mitigates }) => ({ id, summary, category, direction, impact, confidence, mitigates })),
         context,
@@ -223,7 +223,7 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
           type: "PUSH_EVENT",
           event: mkEvent({
             type: d.changed ? "assessment_changed" : "assessment_unchanged",
-            title: d.changed ? `Assessment changed: ${d.from} → ${d.to}` : `Assessment unchanged: ${d.to}`,
+            title: d.changed ? `Assessment changed: ${d.from} → ${d.to}` : `Grade unchanged: ${d.to}`,
             description: `${queue.length} items found: ${relevant} relevant, ${neutral} neutral, ${irrelevant} not applicable to role. Improved: ${d.improved.map((c) => CATEGORY_LABELS[c]).join(", ") || "none"}. Remaining concerns: ${d.unchangedConcerns.map((c) => CATEGORY_LABELS[c]).join(", ") || "none"}.`,
             from: d.from,
             to: d.to,
@@ -232,8 +232,8 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
         });
         announce(
           d.changed
-            ? `Assessment updated. Previous assessment was ${d.from}. Current assessment is ${d.to}. The change was caused by ${relevant} newly incorporated evidence items, including ${d.newlyCovered.map((c) => CATEGORY_LABELS[c].toLowerCase()).join(", ")}. ${d.unchangedConcerns.length ? `${d.unchangedConcerns.map((c) => CATEGORY_LABELS[c]).join(", ")} remains a concern.` : ""}`
-            : `Discovery complete. ${queue.length} items found. Assessment remains ${d.to}.`,
+            ? `Assessment updated. Previous grade was ${d.from}. Current grade is ${d.to}. The change was caused by ${relevant} newly incorporated evidence items, including ${d.newlyCovered.map((c) => CATEGORY_LABELS[c].toLowerCase()).join(", ")}. ${d.unchangedConcerns.length ? `${d.unchangedConcerns.map((c) => CATEGORY_LABELS[c]).join(", ")} remains a concern.` : ""}`
+            : `Discovery complete. ${queue.length} items found. Grade remains ${d.to}.`,
           "assertive",
         );
         dispatch({ type: "BUMP_FOCUS" });
@@ -293,7 +293,7 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
                   ? "Challenge reviewed — assessment unchanged"
                   : d.changed
                     ? `Challenge upheld — assessment changed: ${d.from} → ${d.to}`
-                    : `Challenge upheld — factor reclassified, level unchanged (${d.to})`,
+                    : `Challenge upheld — factor reclassified, grade unchanged (${d.to})`,
               description: result.resolution,
               from: d.from,
               to: d.to,
@@ -302,10 +302,10 @@ export function AssessmentProvider({ employee, children }: { employee: Employee;
           });
           announce(
             result.outcome === "unchanged"
-              ? `Review complete. Challenge not upheld. Assessment remains ${d.to}. ${result.resolution}`
+              ? `Review complete. Challenge not upheld. Grade remains ${d.to}. ${result.resolution}`
               : d.changed
-                ? `Review complete. Assessment updated from ${d.from} to ${d.to}. ${result.resolution}`
-                : `Review complete. Assessment remains ${d.to}, but the ${CATEGORY_LABELS[c.category]} factor was revised. ${result.resolution}`,
+                ? `Review complete. Grade updated from ${d.from} to ${d.to}. ${result.resolution}`
+                : `Review complete. Grade remains ${d.to}, but the ${CATEGORY_LABELS[c.category]} factor was revised. ${result.resolution}`,
             "assertive",
           );
           dispatch({ type: "BUMP_FOCUS" });

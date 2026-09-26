@@ -10,9 +10,9 @@ export default function OverviewPage() {
   const rows: EmployeeRow[] = employees.map((e) => {
     const ev = evidenceFor(e.id).filter((x) => x.discoveredIn === "initial");
     const a = ev.length ? assess(e, ev) : undefined;
-    return { id: e.id, name: e.name, title: e.title, department: e.department, level: a?.level, confidence: a?.confidence, missing: a?.missingAreas.length ?? 0, count: ev.length };
+    return { id: e.id, name: e.name, title: e.title, department: e.department, grade: a?.grade, confidence: a?.confidence, missing: a?.missingAreas.length ?? 0, count: ev.length };
   });
-  const assessed = rows.filter((r) => r.level);
+  const assessed = rows.filter((r) => r.grade);
   const flagged = assessed.filter((r) => r.confidence === "low" || r.missing > 0);
 
   const groups = SYSTEM_ORDER.map((system) => {

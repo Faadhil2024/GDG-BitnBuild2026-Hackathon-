@@ -35,6 +35,8 @@ export type Direction = "strengthens" | "weakens" | "neutral" | "irrelevant";
 export type Confidence = "high" | "medium" | "low";
 export type DiscoveryStage = "initial" | "enrichment" | "challenge";
 export type Level = "Low" | "Moderate" | "High";
+export type Grade = "A+" | "A" | "B+" | "B" | "C+" | "C" | "D";
+export const GRADES: Grade[] = ["A+", "A", "B+", "B", "C+", "C", "D"];
 
 export interface Employee {
   id: string;
@@ -93,6 +95,7 @@ export interface Factor {
 
 export interface Assessment {
   level: Level;
+  grade: Grade;
   score: number;
   factors: Factor[];
   confidence: Confidence;
@@ -119,8 +122,8 @@ export interface AssessmentEvent {
   type: EventType;
   title: string;
   description: string;
-  from?: Level;
-  to?: Level;
+  from?: Grade;
+  to?: Grade;
   evidenceIds: string[];
 }
 

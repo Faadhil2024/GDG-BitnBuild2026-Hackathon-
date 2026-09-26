@@ -5,6 +5,7 @@ import type {
   Employee,
   Evidence,
   Factor,
+  Grade,
   Level,
 } from "@/lib/types";
 import { CATEGORY_LABELS, roleProfiles } from "./roles";
@@ -23,6 +24,27 @@ export function levelFor(score: number): Level {
   if (score >= LEVEL_THRESHOLDS.moderate) return "Moderate";
   return "Low";
 }
+
+/** Letter grade on the same 0–100 contribution index. What people actually read. */
+export function gradeFor(score: number): Grade {
+  if (score >= 90) return "A+";
+  if (score >= 80) return "A";
+  if (score >= 70) return "B+";
+  if (score >= 60) return "B";
+  if (score >= 50) return "C+";
+  if (score >= 40) return "C";
+  return "D";
+}
+
+export const GRADE_MEANING: Record<Grade, string> = {
+  "A+": "Exceptional, evidenced across every expected area",
+  A: "Strong contribution with broad evidence",
+  "B+": "Solid contribution, minor gaps",
+  B: "Good contribution, some areas unproven or a concern on record",
+  "C+": "Partial picture — meets some expectations",
+  C: "Limited evidence of contribution",
+  D: "Little or no evidence of contribution for this role",
+};
 
 function confidenceFor(coverage: number): Confidence {
   if (coverage >= 0.8) return "high";
@@ -84,6 +106,7 @@ export function assess(
 
   return {
     level: levelFor(score),
+    grade: gradeFor(score),
     score,
     factors,
     confidence: confidenceFor(coverage),
@@ -112,8 +135,8 @@ function summarise(
 }
 
 export interface AssessmentDiff {
-  from: Level;
-  to: Level;
+  from: Grade;
+  to: Grade;
   changed: boolean;
   scoreDelta: number;
   improved: ContributionCategory[];
@@ -137,9 +160,9 @@ export function diff(before: Assessment, after: Assessment): AssessmentDiff {
     else if (a[c].status === "concern") unchangedConcerns.push(c);
   }
   return {
-    from: before.level,
-    to: after.level,
-    changed: before.level !== after.level,
+    from: before.grade,
+    to: after.grade,
+    changed: before.grade !== after.grade,
     scoreDelta: after.score - before.score,
     improved,
     worsened,

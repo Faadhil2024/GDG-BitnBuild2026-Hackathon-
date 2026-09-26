@@ -17,6 +17,7 @@ export function PillNav() {
   const items = [
     { href: "/", label: "Employees", active: path === "/" || path.startsWith("/employees") },
     { href: "/stats", label: "Stats", active: path.startsWith("/stats") },
+    { href: "/self-appraisal", label: "Self appraisal", active: path.startsWith("/self-appraisal") },
   ];
   return (
     <nav aria-label="Primary" className="rounded-full border border-line bg-canvas p-1">
@@ -171,7 +172,7 @@ export function ViewerPill() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const initials = viewer.name.split(" ").map((p) => p[0]).join("");
+  const initials = viewer.name.split(" ").map((p) => p[0]).join("").slice(0, 2);
 
   return (
     <div ref={wrap} className="relative">

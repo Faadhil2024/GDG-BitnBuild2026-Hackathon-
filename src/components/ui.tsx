@@ -1,5 +1,23 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import type { Confidence, Direction, Level } from "@/lib/types";
+import type { Confidence, Direction, Grade, Level } from "@/lib/types";
+
+/** Grade bands share a colour: A = green, B = blue, C = amber, D = red. Colour never appears without the letter. */
+export function gradeTone(grade: Grade) {
+  return grade.startsWith("A") ? "bg-high text-white" : grade.startsWith("B") ? "bg-accent text-white" : grade.startsWith("C") ? "bg-moderate text-white" : "bg-low text-white";
+}
+
+export function GradeBadge({ grade, size = "md", label = "grade" }: { grade: Grade; size?: "sm" | "md" | "lg"; label?: string | null }) {
+  const sz = { sm: "h-7 min-w-7 px-2 text-sm", md: "h-9 min-w-9 px-2.5 text-lg", lg: "h-14 min-w-14 px-4 text-3xl" }[size];
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className={`inline-flex items-center justify-center rounded-md font-bold tabular-nums tracking-tight shadow-sm ${gradeTone(grade)} ${sz}`}>
+        <span className="sr-only">Grade </span>
+        {grade}
+      </span>
+      {label && <span className={`text-ink-muted ${size === "lg" ? "text-base" : "text-xs"}`}>{label}</span>}
+    </span>
+  );
+}
 
 export function LevelBadge({ level, size = "md" }: { level: Level; size?: "sm" | "md" | "lg" }) {
   const tone = { Low: "bg-low text-white", Moderate: "bg-moderate text-white", High: "bg-high text-white" }[level];
