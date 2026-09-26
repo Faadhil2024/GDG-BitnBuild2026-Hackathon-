@@ -42,7 +42,7 @@ export const initialSignals: InitialSignal[] = [
     label: "GitHub commits",
     value: "3 commits",
     status: "weak",
-    note: "Irrelevant signal for a Marketing role — weighted anyway.",
+    note: "Irrelevant signal for a Marketing role, weighted anyway.",
   },
   {
     id: "sig-slack",

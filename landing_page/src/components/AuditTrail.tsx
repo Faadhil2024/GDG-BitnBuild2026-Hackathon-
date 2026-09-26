@@ -11,9 +11,9 @@ const rows = [
   { t: "09:43:52", actor: "Evidence Engine", event: "Collaboration recovered", detail: "Calendar + Docs · 38 workshops · +3", hash: "12f9…6a" },
   { t: "09:44:10", actor: "AI Appraiser", event: "Re-appraisal", detail: "58/100 MODERATE · cov 89% · conf 0.83 · concern retained", hash: "4d21…b7" },
   { t: "09:47:33", actor: "Sarah Lim", event: "Self-appraisal pinned", detail: "74/100 HIGH · vendor-block context on Mar 14", hash: "c8aa…11" },
-  { t: "09:52:04", actor: "Daniel Ong", event: "Challenge attempt 1", detail: "Rejected — vague, ungrounded", hash: "90fe…5c" },
-  { t: "09:55:47", actor: "Daniel Ong", event: "Challenge attempt 2", detail: "Rejected — concern unaddressed", hash: "3b6d…e8" },
-  { t: "10:01:12", actor: "Daniel Ong", event: "Challenge attempt 3", detail: "Accepted — multi-grounded, concern confronted", hash: "f4a2…70" },
+  { t: "09:52:04", actor: "Daniel Ong", event: "Challenge attempt 1", detail: "Rejected, vague, ungrounded", hash: "90fe…5c" },
+  { t: "09:55:47", actor: "Daniel Ong", event: "Challenge attempt 2", detail: "Rejected, concern unaddressed", hash: "3b6d…e8" },
+  { t: "10:01:12", actor: "Daniel Ong", event: "Challenge attempt 3", detail: "Accepted, multi-grounded, concern confronted", hash: "f4a2…70" },
   { t: "10:01:13", actor: "AI Appraiser", event: "Revised proposal", detail: "66/100 HIGH (conditional) · 30-day delivery check-in", hash: "6e19…d3" },
   { t: "10:02:00", actor: "System", event: "Record sealed", detail: "14 events · hash-chained · exportable for review", hash: "sealed" },
 ];
@@ -24,10 +24,7 @@ export default function AuditTrail() {
       <div className="mx-auto max-w-[1240px] px-6 md:px-10">
         <div className="grid md:grid-cols-[190px_1fr] gap-6 md:gap-10 border-t-2 border-[#15181c] pt-7">
           <div>
-            <div className="label text-[9.5px] text-[#1b3a5c]">03 — Auditability</div>
-            <div className="mt-2 text-[11px] text-[#9b9488] leading-[1.5]">
-              Sealed log · 14 entries · chain verified
-            </div>
+            <div className="label text-[9.5px] text-[#1b3a5c]">03, Auditability</div>
           </div>
           <h2 className="text-[30px] md:text-[46px] font-bold tracking-[-0.028em] leading-[1.04] text-[#15181c]">
             Every number has a receipt.
@@ -38,12 +35,12 @@ export default function AuditTrail() {
           <div className="lg:sticky lg:top-24">
             <p className="text-[15px] leading-[1.7] text-[#4a443b]">
               No black-box scores. Each point movement links to its evidence, its challenger and the
-              AI's reasoning — hash-chained so the record can't be quietly rewritten after the fact.
+              AI's reasoning, hash-chained so the record can't be quietly rewritten after the fact.
             </p>
             <div className="mt-6">
               {[
                 { icon: Fingerprint, t: "Hash-chained log", d: "Tamper-evident, exportable for HR review, appeals and regulators." },
-                { icon: ShieldCheck, t: "Dissent is preserved", d: "Rejected challenges and AI objections stay on record — never deleted." },
+                { icon: ShieldCheck, t: "Dissent is preserved", d: "Rejected challenges and AI objections stay on record, never deleted." },
                 { icon: FileCheck2, t: "Human accountability", d: "Overrides require signed attestation: a named human owns the call." },
               ].map((f, i) => (
                 <div key={f.t} className="flex gap-4 border-t border-[#ded8ce] py-4">
@@ -108,7 +105,7 @@ export default function AuditTrail() {
 
             <div className="border-t border-[#15181c] bg-[#b23a2e]/[0.05] px-5 py-3.5 flex items-center gap-2.5 text-[12px] text-[#8e2c22]">
               <ShieldCheck className="h-4 w-4 shrink-0" />
-              Delivery concern (Mar 14) appears in four entries — retained, contextualised, never erased.
+              Delivery concern (Mar 14) appears in four entries, retained, contextualised, never erased.
             </div>
           </motion.div>
         </div>

@@ -22,10 +22,7 @@ export default function EvidenceGap() {
       <div className="mx-auto max-w-[1240px] px-6 md:px-10">
         <div className="grid md:grid-cols-[190px_1fr] gap-6 md:gap-10 border-t-2 border-[#15181c] pt-7">
           <div>
-            <div className="label text-[9.5px] text-[#1b3a5c]">01 — The evidence gap</div>
-            <div className="mt-2 text-[11px] text-[#9b9488] leading-[1.5]">
-              Case EMP-0417 · Sarah Lim · Marketing Executive
-            </div>
+            <div className="label text-[9.5px] text-[#1b3a5c]">01, The evidence gap</div>
           </div>
           <div>
             <h2 className="text-[30px] md:text-[46px] font-bold tracking-[-0.028em] leading-[1.04] text-[#15181c]">
@@ -34,7 +31,7 @@ export default function EvidenceGap() {
               It's that the system hadn't earned it.
             </h2>
             <p className="mt-5 text-[15.5px] md:text-[17px] leading-[1.65] text-[#4a443b] max-w-2xl">
-              Sarah's initial appraisal saw four narrow signals — and none of the work that actually
+              Sarah's initial appraisal saw four narrow signals, and none of the work that actually
               mattered. The evidence engine scans the full work surface to prove whether a label is
               justified before anyone acts on it.
             </p>
@@ -51,7 +48,7 @@ export default function EvidenceGap() {
           >
             <div className="flex items-start justify-between border-b-2 border-[#b23a2e] px-6 py-5">
               <div>
-                <div className="label text-[9.5px] text-[#b23a2e]">Column A — What the initial AI saw</div>
+                <div className="label text-[9.5px] text-[#b23a2e]">Column A, What the initial AI saw</div>
                 <div className="text-[19px] font-semibold tracking-[-0.015em] text-[#15181c] mt-1.5">
                   4 signals · 31% coverage
                 </div>
@@ -91,7 +88,7 @@ export default function EvidenceGap() {
               <div className="text-[12.5px] leading-[1.6] text-[#8e2c22]">
                 <strong className="font-semibold">Verdict basis insufficient.</strong> No revenue,
                 ownership, client, mentoring or collaboration data consulted. Confidence{" "}
-                <span className="font-semibold">0.41</span> — below the contestability threshold.
+                <span className="font-semibold">0.41</span>, below the contestability threshold.
               </div>
             </div>
           </motion.div>
@@ -106,7 +103,7 @@ export default function EvidenceGap() {
           >
             <div className="flex items-start justify-between border-b-2 border-[#3c6b4a] px-6 py-5">
               <div>
-                <div className="label text-[9.5px] text-[#3c6b4a]">Column B — What SkyNet recovered</div>
+                <div className="label text-[9.5px] text-[#3c6b4a]">Column B, What SkyNet recovered</div>
                 <div className="text-[19px] font-semibold tracking-[-0.015em] text-[#15181c] mt-1.5">
                   5 proofs · 89% coverage
                 </div>
@@ -146,7 +143,7 @@ export default function EvidenceGap() {
               <Lock className="h-4 w-4 shrink-0 mt-0.5 text-[#3c6b4a]" />
               <div className="text-[12.5px] leading-[1.6] text-[#2d5239]">
                 <strong className="font-semibold">Delivery concern retained.</strong> The missed
-                deadline stays on record with full context — recovery adds truth, it doesn't erase it.
+                deadline stays on record with full context, recovery adds truth, it doesn't erase it.
               </div>
             </div>
           </motion.div>

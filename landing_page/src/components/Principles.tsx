@@ -1,26 +1,23 @@
 import { motion } from "framer-motion";
-import { ScanSearch, Scale, Gavel, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const rows = [
   {
     n: "01",
-    icon: ScanSearch,
     title: "Evidence before labels",
-    body: "No high-impact label without demonstrated coverage. If the system hasn't seen enough of someone's work, it must say so — and go find the rest before anyone acts on the verdict.",
+    body: "No high-impact label without demonstrated coverage. If the system hasn't seen enough of someone's work, it must say so, and go find the rest before anyone acts on the verdict.",
     tone: "border-[#3c6b4a]",
   },
   {
     n: "02",
-    icon: Scale,
     title: "Two-sided contestability",
     body: "Employees submit a self-appraisal with context; managers can challenge the AI with reason and evidence. Disagreement becomes a structured process instead of an email thread nobody resolves.",
     tone: "border-[#1b3a5c]",
   },
   {
     n: "03",
-    icon: Gavel,
     title: "Humans stay sovereign",
-    body: "Three failed challenge attempts unlock a signed human override. The AI remains accountable to human judgment — it never becomes the final decision-maker.",
+    body: "Three failed challenge attempts unlock a signed human override. The AI remains accountable to human judgment, it never becomes the final decision-maker.",
     tone: "border-[#b23a2e]",
   },
 ];
@@ -31,10 +28,7 @@ export default function Principles({ onRunDemo }: { onRunDemo: () => void }) {
       <div className="mx-auto max-w-[1240px] px-6 md:px-10">
         <div className="grid md:grid-cols-[190px_1fr] gap-6 md:gap-10 border-t-2 border-[#15181c] pt-7">
           <div>
-            <div className="label text-[9.5px] text-[#1b3a5c]">04 — Design principles</div>
-            <div className="mt-2 text-[11px] text-[#9b9488] leading-[1.5]">
-              A trust layer, not another black box
-            </div>
+            <div className="label text-[9.5px] text-[#1b3a5c]">04, Design principles</div>
           </div>
           <h2 className="text-[30px] md:text-[46px] font-bold tracking-[-0.028em] leading-[1.04] text-[#15181c] max-w-2xl">
             What the system must never do, and what it must always do.
@@ -49,13 +43,10 @@ export default function Principles({ onRunDemo }: { onRunDemo: () => void }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ delay: i * 0.08 }}
-              className={`grid md:grid-cols-[110px_300px_1fr] gap-6 md:gap-10 border-t-2 ${c.tone} pt-6 pb-8`}
+              className={`grid md:grid-cols-[110px_300px_1fr] items-center gap-6 md:gap-10 border-t-2 ${c.tone} py-8 md:py-9`}
             >
-              <div>
-                <div className="text-[40px] leading-none font-bold tracking-[-0.04em] text-[#ded8ce]">
-                  {c.n}
-                </div>
-                <c.icon className="h-5 w-5 text-[#15181c] mt-3" strokeWidth={1.8} />
+              <div className="text-[40px] leading-none font-bold tracking-[-0.04em] text-[#ded8ce]">
+                {c.n}
               </div>
               <h3 className="text-[22px] md:text-[26px] font-semibold tracking-[-0.022em] leading-[1.15] text-[#15181c]">
                 {c.title}
@@ -75,7 +66,7 @@ export default function Principles({ onRunDemo }: { onRunDemo: () => void }) {
           <div>
             <div className="label text-[9.5px] text-[#9b9488]">Case note · appended to EMP-0417</div>
             <p className="mt-5 text-[20px] md:text-[27px] leading-[1.38] font-medium tracking-[-0.015em] text-[#15181c] max-w-2xl">
-              "The system changed my Low to Moderate — but what mattered most is that it{" "}
+              "The system changed my Low to Moderate, but what mattered most is that it{" "}
               <span className="text-[#1b3a5c] underline decoration-[#1b3a5c]/35 underline-offset-[6px]">
                 showed its work
               </span>

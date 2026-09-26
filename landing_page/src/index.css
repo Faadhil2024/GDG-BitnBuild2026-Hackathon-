@@ -60,7 +60,7 @@ body {
   mask-image: radial-gradient(ellipse 95% 75% at 50% 0%, black 35%, transparent 100%);
 }
 
-/* hairline card — print-style, no blur */
+/* hairline card, print-style, no blur */
 .panel {
   background: #ffffff;
   border: 1px solid var(--color-rule);
@@ -103,7 +103,7 @@ main .text-\[\#9b9488\] {
   color: #7c7466;
 }
 
-/* keyboard focus — visible on paper */
+/* keyboard focus, visible on paper */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,

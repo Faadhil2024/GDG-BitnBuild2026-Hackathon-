@@ -15,7 +15,7 @@ const fullSignals = [
   { l: "Client saves · 47 touchpoints", v: "+5 pts", s: "pos" },
   { l: "Mentoring · 3 hires onboarded", v: "+4 pts", s: "pos" },
   { l: "Off-channel collaboration", v: "+3 pts", s: "pos" },
-  { l: "Missed deadline (Mar 14) — retained", v: "−6 pts", s: "neg" },
+  { l: "Missed deadline (Mar 14), retained", v: "−6 pts", s: "neg" },
 ];
 
 export default function Hero({ onRunDemo }: { onRunDemo: () => void }) {
@@ -45,7 +45,7 @@ export default function Hero({ onRunDemo }: { onRunDemo: () => void }) {
   }, [showFull]);
 
   return (
-    <section id="top" className="relative overflow-hidden pt-[104px] md:pt-[132px] pb-14">
+    <section id="top" className="relative overflow-hidden pt-[104px] md:pt-[132px] pb-16 md:pb-24">
       <div className="absolute inset-0 grid-bg" />
       <div className="absolute inset-x-0 top-0 h-[520px] ruled opacity-70 pointer-events-none" />
 
@@ -80,7 +80,7 @@ export default function Hero({ onRunDemo }: { onRunDemo: () => void }) {
             >
               <strong className="text-[#15181c] font-semibold">SkyNet</strong> finds the evidence AI
               missed, lets <strong className="text-[#15181c] font-semibold">both employees and managers</strong>{" "}
-              challenge the assessment — and shows exactly{" "}
+              challenge the assessment, and shows exactly{" "}
               <span className="text-[#1b3a5c] font-semibold underline decoration-[#1b3a5c]/35 underline-offset-[5px]">
                 what changed, and why.
               </span>
@@ -128,7 +128,7 @@ export default function Hero({ onRunDemo }: { onRunDemo: () => void }) {
             </motion.div>
           </div>
 
-          {/* RIGHT — assessment card */}
+          {/* RIGHT, assessment card */}
           <motion.div
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
@@ -268,7 +268,7 @@ export default function Hero({ onRunDemo }: { onRunDemo: () => void }) {
                   <>
                     <Check className="h-4 w-4 shrink-0 mt-0.5" strokeWidth={2.5} />
                     <span>
-                      <strong>5 missing proofs recovered.</strong> Delivery concern retained on record — not erased.
+                      <strong>5 missing proofs recovered.</strong> Delivery concern retained on record, not erased.
                     </span>
                   </>
                 ) : (

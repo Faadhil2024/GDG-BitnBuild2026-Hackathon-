@@ -6,17 +6,11 @@ export default function Footer({ onRunDemo }: { onRunDemo: () => void }) {
       <div className="mx-auto max-w-[1240px] px-6 md:px-10">
         <div className="grid md:grid-cols-[1fr_360px] gap-12 py-14 md:py-16 items-start">
           <div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center bg-[#f7f5f1] text-[#15181c]">
-                <span className="text-[13px] font-bold tracking-tight">SN</span>
-              </div>
-              <div className="leading-none">
-                <div className="text-[16px] font-bold">SkyNet.</div>
-                <div className="label text-[9px] text-[#9b9488] mt-[3px]">Evidence &amp; Contestability</div>
-              </div>
+            <div className="text-[32px] font-bold leading-none tracking-[-0.025em]">
+              SkyNet<span className="text-[#b23a2e]">.</span>
             </div>
             <p className="mt-6 max-w-xl text-[17px] md:text-[21px] leading-[1.5] font-medium tracking-[-0.012em] text-[#f7f5f1]">
-              Find what's missing. Challenge what's wrong. Show what changed — and why.
+              Find what's missing. Challenge what's wrong. Show what changed, and why.
             </p>
             <p className="mt-4 max-w-md text-[13.5px] leading-[1.7] text-[#9b9488]">
               A two-sided evidence and contestability layer for AI-assisted appraisal and workforce
@@ -40,7 +34,7 @@ export default function Footer({ onRunDemo }: { onRunDemo: () => void }) {
               incomplete verdicts.
             </h3>
             <p className="mt-3 text-[13px] leading-[1.65] text-[#9b9488]">
-              Run the Sarah Lim case live — from Low on four signals to a fully contested, fully
+              Run the Sarah Lim case live, from Low on four signals to a fully contested, fully
               audited outcome.
             </p>
             <div className="mt-5 flex flex-col gap-2.5">
@@ -60,9 +54,9 @@ export default function Footer({ onRunDemo }: { onRunDemo: () => void }) {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between gap-3 border-t border-[#f7f5f1]/15 py-7 text-[11.5px] text-[#9b9488]">
-          <span>© 2026 SkyNet Contestability Systems · Demo environment — all people and figures illustrative</span>
-          <span className="label text-[9px]">AI proposes · Evidence disposes · Humans decide</span>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-t border-[#f7f5f1]/15 py-7 text-[11.5px] text-[#9b9488]">
+          <span>© 2026 SkyNet</span>
+          <span>Built by Outsider(s)</span>
         </div>
       </div>
     </footer>

@@ -27,16 +27,8 @@ export default function Nav({ onRunDemo }: { onRunDemo: () => void }) {
     >
       <div className="mx-auto max-w-[1240px] px-6 md:px-10">
         <div className="flex h-[68px] items-center justify-between">
-          <a href="#top" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center bg-[#1b3a5c] text-[#f7f5f1]">
-              <span className="text-[13px] font-bold tracking-tight">SN</span>
-            </div>
-            <div className="leading-none">
-              <div className="text-[16px] font-bold tracking-[-0.01em] text-[#15181c]">
-                SkyNet<span className="text-[#b23a2e]">.</span>
-              </div>
-              <div className="label text-[9.5px] text-[#9b9488] mt-[3px]">Evidence & Contestability</div>
-            </div>
+          <a href="#top" className="text-[26px] font-bold leading-none tracking-[-0.025em] text-[#15181c]">
+            SkyNet<span className="text-[#b23a2e]">.</span>
           </a>
 
           <nav className="hidden lg:flex items-center gap-7">

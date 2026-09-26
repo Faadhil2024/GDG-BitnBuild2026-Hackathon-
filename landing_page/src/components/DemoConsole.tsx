@@ -57,7 +57,7 @@ export default function DemoConsole() {
   const [scanning, setScanning] = useState(false);
   const [selfScore, setSelfScore] = useState(74);
   const [selfText, setSelfText] = useState(
-    "I led the Raya campaign end-to-end and co-drove PayLite v3 launch. My Salesforce attribution shows RM800k influenced revenue. I also covered client escalations and onboarded 3 new hires — none of which appears in the initial signals. The Mar 14 delay was a vendor asset block; I flagged it 6 days early and shipped the workaround."
+    "I led the Raya campaign end-to-end and co-drove PayLite v3 launch. My Salesforce attribution shows RM800k influenced revenue. I also covered client escalations and onboarded 3 new hires, none of which appears in the initial signals. The Mar 14 delay was a vendor asset block; I flagged it 6 days early and shipped the workaround."
   );
   const [managerStance, setManagerStance] = useState<"agree" | "challenge" | null>(null);
   const [challengeReason, setChallengeReason] = useState("Incomplete evidence basis");
@@ -73,7 +73,7 @@ export default function DemoConsole() {
       time: "09:41:02",
       actor: "AI Appraiser",
       action: "Initial appraisal issued",
-      detail: "Score 32/100 · LOW — 4 signals, 31% coverage, confidence 0.41",
+      detail: "Score 32/100 · LOW, 4 signals, 31% coverage, confidence 0.41",
       kind: "ai",
     },
   ]);
@@ -135,7 +135,7 @@ export default function DemoConsole() {
             pushAudit({
               actor: "AI Appraiser",
               action: "Re-appraisal issued: 58/100 · MODERATE",
-              detail: "Delivery concern retained on record. Confidence 0.83 — above threshold.",
+              detail: "Delivery concern retained on record. Confidence 0.83, above threshold.",
               kind: "ai",
             });
           }, 500);
@@ -177,7 +177,7 @@ export default function DemoConsole() {
       if (len < 60) {
         feedback = `Attempt ${n} rejected: justification too vague (${len} chars). Cite specific evidence, dates and business impact. Vague disagreement is not contestation.`;
       } else if (evCount < 2) {
-        feedback = `Attempt ${n} rejected: only ${evCount} evidence item attached. A valid challenge must ground itself in ≥2 verified artefacts — CRM, retros, tickets, peer review.`;
+        feedback = `Attempt ${n} rejected: only ${evCount} evidence item attached. A valid challenge must ground itself in ≥2 verified artefacts, CRM, retros, tickets, peer review.`;
       } else if (n === 1 && len < 200) {
         feedback = `Attempt ${n} rejected: partially grounded, but no causal link shown. How does the cited evidence change the contribution assessment? Address the retained delivery concern explicitly.`;
       } else if (n === 2 && !/deadline|mar/i.test(challengeText)) {
@@ -209,7 +209,7 @@ export default function DemoConsole() {
         pushAudit({
           actor: "System",
           action: "Human override unlocked after 3 attempts",
-          detail: "AI remains accountable to human judgment — manager may override with attestation.",
+          detail: "AI remains accountable to human judgment, manager may override with attestation.",
           kind: "system",
         });
       }
@@ -241,7 +241,7 @@ export default function DemoConsole() {
         time: "09:41:02",
         actor: "AI Appraiser",
         action: "Initial appraisal issued",
-        detail: "Score 32/100 · LOW — 4 signals, 31% coverage, confidence 0.41",
+        detail: "Score 32/100 · LOW, 4 signals, 31% coverage, confidence 0.41",
         kind: "ai",
       },
     ]);
@@ -257,10 +257,7 @@ export default function DemoConsole() {
       <div className="mx-auto max-w-[1240px] px-6 md:px-10">
         <div className="grid md:grid-cols-[190px_1fr] gap-6 md:gap-10 border-t-2 border-[#15181c] pt-7">
           <div>
-            <div className="label text-[9.5px] text-[#1b3a5c]">02 — Live case console</div>
-            <div className="mt-2 text-[11px] text-[#9b9488] leading-[1.5]">
-              Interactive · you play all three parties
-            </div>
+            <div className="label text-[9.5px] text-[#1b3a5c]">02, Live case console</div>
           </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -350,7 +347,7 @@ export default function DemoConsole() {
                   </div>
                   <h3 className="mt-3 text-[24px] md:text-[30px] font-bold tracking-[-0.022em] text-[#15181c]">
                     Initial appraisal:{" "}
-                    <span className="text-[#b23a2e]">Low — 32 / 100</span>
+                    <span className="text-[#b23a2e]">Low, 32 / 100</span>
                   </h3>
                   <p className="mt-3 text-[14px] leading-[1.65] text-[#6e675c] max-w-2xl">
                     Generated from HRIS activity exports only. No CRM, ticketing, peer-review or
@@ -492,7 +489,7 @@ export default function DemoConsole() {
                             pushAudit({
                               actor: "AI Appraiser",
                               action: `Re-appraisal issued: ${aiScore}/100 · ${aiBand.label.toUpperCase()}`,
-                              detail: "Delivery concern retained on record. Confidence 0.83 — above threshold.",
+                              detail: "Delivery concern retained on record. Confidence 0.83, above threshold.",
                               kind: "ai",
                             });
                           }
@@ -506,7 +503,7 @@ export default function DemoConsole() {
                   </div>
                   {recovered.size < 3 && (
                     <p className="mt-3 text-[12px] text-[#9a6b1c]">
-                      Recover at least 3 items for a defensible re-appraisal — or run the full auto-scan.
+                      Recover at least 3 items for a defensible re-appraisal, or run the full auto-scan.
                     </p>
                   )}
                 </motion.div>
@@ -581,7 +578,7 @@ export default function DemoConsole() {
 
                   <div className="mt-7">
                     <label className="flex items-center gap-2 text-[12.5px] font-semibold text-[#15181c]">
-                      <FileText className="h-3.5 w-3.5 text-[#6e675c]" /> Your context — visible to manager and AI
+                      <FileText className="h-3.5 w-3.5 text-[#6e675c]" /> Your context, visible to manager and AI
                     </label>
                     <textarea
                       value={selfText}
@@ -622,7 +619,7 @@ export default function DemoConsole() {
                     <Users className="h-3.5 w-3.5 text-[#9a6b1c]" /> Manager side · you are {employee.manager}
                   </div>
                   <h3 className="mt-3 text-[24px] md:text-[30px] font-bold tracking-[-0.022em] text-[#15181c]">
-                    Agree with the AI — or challenge it
+                    Agree with the AI, or challenge it
                   </h3>
 
                   <div className="mt-6 grid grid-cols-3 gap-6">
@@ -651,7 +648,7 @@ export default function DemoConsole() {
                         {selfScore - aiScore}
                       </div>
                       <div className="text-[11.5px] font-semibold text-[#b23a2e] mt-1 uppercase tracking-[0.1em]">
-                        {Math.abs(selfScore - aiScore) >= 10 ? "Material — review" : "Aligned"}
+                        {Math.abs(selfScore - aiScore) >= 10 ? "Material, review" : "Aligned"}
                       </div>
                     </div>
                   </div>
@@ -675,7 +672,7 @@ export default function DemoConsole() {
                       }`}
                     >
                       <div className="flex items-center gap-2 text-[13.5px] font-semibold text-[#15181c]">
-                        <CheckCircle2 className="h-4 w-4 text-[#3c6b4a]" /> Agree — proceed
+                        <CheckCircle2 className="h-4 w-4 text-[#3c6b4a]" /> Agree, proceed
                       </div>
                       <p className="mt-1.5 text-[12px] leading-[1.55] text-[#6e675c]">
                         Accept the AI's reasoning. Assessment finalises as {aiBand.label}.
@@ -690,7 +687,7 @@ export default function DemoConsole() {
                       }`}
                     >
                       <div className="flex items-center gap-2 text-[13.5px] font-semibold text-[#15181c]">
-                        <Gavel className="h-4 w-4 text-[#9a6b1c]" /> Challenge — contest the AI
+                        <Gavel className="h-4 w-4 text-[#9a6b1c]" /> Challenge, contest the AI
                       </div>
                       <p className="mt-1.5 text-[12px] leading-[1.55] text-[#6e675c]">
                         Provide reason and evidence. The AI adjudicates. Three attempts maximum.
@@ -756,7 +753,7 @@ export default function DemoConsole() {
 
                             <div className="mt-5">
                               <label className="label text-[9px] text-[#9b9488] flex items-center gap-1.5">
-                                <Link2 className="h-3 w-3" /> Attach supporting evidence — minimum 2
+                                <Link2 className="h-3 w-3" /> Attach supporting evidence, minimum 2
                               </label>
                               <div className="mt-2 grid sm:grid-cols-2 gap-x-6">
                                 {missedEvidence.map((e) => {
@@ -785,9 +782,9 @@ export default function DemoConsole() {
 
                             <div className="mt-5">
                               <label className="text-[12px] font-semibold text-[#15181c]">
-                                Justification{" "}
+                                Justification
                                 <span className="text-[#9b9488] font-normal">
-                                  — cite evidence, dates and impact, and address the Mar 14 deadline
+                                  , cite evidence, dates and impact, and address the Mar 14 deadline
                                 </span>
                               </label>
                               <textarea
@@ -839,11 +836,11 @@ export default function DemoConsole() {
                                   <Lock className="h-5 w-5 text-[#1b3a5c] shrink-0 mt-0.5" />
                                   <div>
                                     <div className="text-[13.5px] font-semibold text-[#15181c]">
-                                      Three attempts exhausted — human override unlocked
+                                      Three attempts exhausted, human override unlocked
                                     </div>
                                     <p className="mt-1.5 text-[12.5px] leading-[1.6] text-[#6e675c] max-w-2xl">
                                       The AI could not be satisfied, so it steps aside. The manager may
-                                      now override with signed attestation — and the AI's dissent is
+                                      now override with signed attestation, and the AI's dissent is
                                       permanently logged. Humans remain the final decision-maker.
                                     </p>
                                     <button
@@ -909,7 +906,7 @@ export default function DemoConsole() {
                     </div>
                   </div>
                   <h3 className="mt-3 text-[24px] md:text-[30px] font-bold tracking-[-0.022em] text-[#15181c]">
-                    Exactly what changed — and why
+                    Exactly what changed, and why
                   </h3>
 
                   {/* journey */}
@@ -1001,12 +998,12 @@ export default function DemoConsole() {
                             body: (
                               <>
                                 {managerStance === "agree" || (!managerStance && attempts.length === 0)
-                                  ? "Manager agreed — no contest filed"
+                                  ? "Manager agreed, no contest filed"
                                   : challengePassed
-                                  ? `Challenge accepted after ${attempts.length} attempt(s) — adjustment with conditions`
+                                  ? `Challenge accepted after ${attempts.length} attempt(s), adjustment with conditions`
                                   : overrideGranted
-                                  ? "Human override after 3 failed attempts — judgment final, AI dissent logged"
-                                  : "Manager reviewed — see audit trail"}
+                                  ? "Human override after 3 failed attempts, judgment final, AI dissent logged"
+                                  : "Manager reviewed, see audit trail"}
                               </>
                             ),
                           },
@@ -1015,7 +1012,7 @@ export default function DemoConsole() {
                             tone: "text-[#b23a2e]",
                             body: (
                               <>
-                                <strong className="font-semibold">Mar 14 delivery concern retained</strong> —
+                                <strong className="font-semibold">Mar 14 delivery concern retained</strong>,
                                 visible, contextualised, never erased
                               </>
                             ),
@@ -1106,7 +1103,7 @@ export default function DemoConsole() {
                     <span className={`mt-[5px] h-[6px] w-[6px] shrink-0 ${kindTone[a.kind]}`} />
                     <div className="min-w-0">
                       <div className="text-[11.5px] leading-[1.5] text-[#4a443b]">
-                        <span className="font-semibold text-[#15181c]">{a.actor}</span> — {a.action}
+                        <span className="font-semibold text-[#15181c]">{a.actor}</span>, {a.action}
                       </div>
                       <div className="label text-[8px] text-[#9b9488] mt-1">{a.time}</div>
                     </div>
@@ -1119,7 +1116,7 @@ export default function DemoConsole() {
               <div className="flex items-start gap-2.5">
                 <ChevronRight className="h-4 w-4 text-[#9b9488] mt-0.5 shrink-0" />
                 <div className="text-[11.5px] leading-[1.6] text-[#6e675c]">
-                  Try failing the challenge three times to see the human override unlock — the AI
+                  Try failing the challenge three times to see the human override unlock, the AI
                   cannot be the final decision-maker.
                 </div>
               </div>
