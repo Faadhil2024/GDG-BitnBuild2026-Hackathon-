@@ -18,7 +18,7 @@ function subscribe(cb: () => void) {
  * Demo data version. Bumping it wipes every skynet.* key on next load, so the
  * four demo accounts always start the showcase from a clean state.
  */
-const DATA_VERSION = "3";
+const DATA_VERSION = "4";
 let checked = false;
 function resetStaleDemoData() {
   if (checked) return;

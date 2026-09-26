@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowRight } from "@phosphor-icons/react";
 import { useSession } from "@/lib/session";
 import { useDecisions, useSelfAppraisals } from "@/lib/self-appraisal";
 import { PROTOCOLS, PROTOCOLS_MET, protocolLabel } from "@/data/rubric";
@@ -151,11 +149,6 @@ export function StatsView({ rows }: { rows: StatRow[] }) {
           <p className="mt-0.5 text-[17px] font-semibold">{shown ? GRADE_MEANING[shown] : "Pending"}</p>
           <p className="mt-0.5 text-[14px] text-ink-muted">{status}</p>
         </div>
-        {sa?.ai && a.employeeId && (
-          <Link href={`/employees/${a.employeeId}/report`} className="pressable inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-[15px] font-medium text-white hover:bg-blue-800">
-            View report and reasoning <ArrowRight size={16} weight="bold" />
-          </Link>
-        )}
       </Card>
 
       <Card className="p-8">

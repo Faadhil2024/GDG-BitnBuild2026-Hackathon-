@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, Moon, Sun } from "@phosphor-icons/react";
+import { Bell, Moon, Sun, X } from "@phosphor-icons/react";
 import { markVisited, useUpdates, useVisited, type Update } from "@/lib/updates";
 import { useSession } from "@/lib/session";
 import { applyTheme, setTheme, useTheme } from "@/lib/theme";

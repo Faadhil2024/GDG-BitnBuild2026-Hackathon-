@@ -131,7 +131,7 @@ function AccountMenu({ name, title, employeeId }: { name: string; title: string;
             <p className="text-sm font-medium">{name}</p>
             <p className="text-xs text-ink-faint">{title}</p>
           </div>
-          <button type="button" role="menuitem" onClick={signOut} className="pressable flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm hover:bg-canvas">
+          <button type="button" role="menuitem" onClick={() => { signOut(); window.location.assign("/login"); }} className="pressable flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm hover:bg-canvas">
             <SignOut size={16} /> Log out
           </button>
         </div>

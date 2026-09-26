@@ -87,7 +87,8 @@ function mkEvent(partial: Omit<AssessmentEvent, "id" | "at">): AssessmentEvent {
 }
 
 function initialState(employee: Employee, all: Evidence[]): State {
-  const initialIds = all.filter((e) => e.discoveredIn === "initial").map((e) => e.id);
+  // Start from everything indexed (not challenge-only items) so the evidence-based grade always equals the AI grade on the report.
+  const initialIds = all.filter((e) => e.discoveredIn !== "challenge").map((e) => e.id);
   const first = assess(employee, all.filter((e) => initialIds.includes(e.id)));
   return {
     phase: "initial",
