@@ -4,12 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skynet Appraisal Dashboard</title>
+    <!-- Tailwind CSS with Dark Mode Config -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        appleblue: '#F4F7FB', // Custom light, icy blue for containers
+                    }
+                }
+            }
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
         }
         
         /* Navigation & Chart Slider Animation */
@@ -28,6 +40,9 @@
             background-color: #94a3b8;
             border-radius: 4px;
         }
+        .dark textarea::-webkit-scrollbar-thumb {
+            background-color: #475569;
+        }
 
         /* Hide default details marker */
         details > summary {
@@ -38,48 +53,48 @@
         }
     </style>
 </head>
-<body class="text-slate-800 pb-20">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 pb-20 transition-colors duration-300">
 
     <!-- HEADER / NAVIGATION -->
-    <header class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 md:px-8 py-3 flex items-center justify-between sticky top-0 z-40 transition-colors duration-300">
         <!-- Logo Area -->
         <div class="flex items-center space-x-3">
-            <div class="bg-slate-900 text-white p-1.5 rounded-lg" aria-hidden="true">
+            <div class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-1.5 rounded-lg transition-colors duration-300" aria-hidden="true">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
             </div>
             <div>
-                <span class="block font-bold text-sm tracking-wide text-slate-900 leading-tight">SKYNET</span>
-                <span class="block text-[11px] font-medium text-slate-500 leading-tight">Halcyon Digital Sdn Bhd</span>
+                <span class="block font-bold text-sm tracking-wide text-slate-900 dark:text-white leading-tight">SKYNET</span>
+                <span class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">Halcyon Digital Sdn Bhd</span>
             </div>
         </div>
 
         <!-- Animated Navigation -->
-        <nav aria-label="Main Navigation" class="relative bg-slate-100 rounded-full p-1 flex items-center shadow-inner">
-            <!-- The Sliding White Background -->
-            <div id="nav-slider" class="absolute left-1 top-1 bottom-1 bg-white rounded-full shadow-sm border border-slate-200/50" style="width: 0px; transform: translateX(0px);"></div>
+        <nav aria-label="Main Navigation" class="relative bg-slate-100 dark:bg-slate-800 rounded-full p-1 flex items-center shadow-inner transition-colors duration-300">
+            <!-- The Sliding Background -->
+            <div id="nav-slider" class="absolute left-1 top-1 bottom-1 bg-white dark:bg-slate-700 rounded-full shadow-sm border border-slate-200/50 dark:border-slate-600/50" style="width: 0px; transform: translateX(0px);"></div>
             
             <!-- Buttons -->
-            <button id="btn-profile" onclick="switchTab('btn-profile', 'page-profile')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="page">My profile</button>
-            <button id="btn-stats" onclick="switchTab('btn-stats', 'page-stats')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="false">Stats</button>
-            <button id="btn-self" onclick="switchTab('btn-self', 'page-self')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="false">Self appraisal</button>
+            <button id="btn-profile" onclick="switchTab('btn-profile', 'page-profile')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="page">My profile</button>
+            <button id="btn-stats" onclick="switchTab('btn-stats', 'page-stats')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="false">Stats</button>
+            <button id="btn-self" onclick="switchTab('btn-self', 'page-self')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="false">Self appraisal</button>
         </nav>
 
         <!-- User Profile Area -->
         <div class="flex items-center space-x-4">
-            <button class="relative text-slate-500 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full" aria-label="Notifications, 4 unread">
+            <button class="relative text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full transition-colors" aria-label="Notifications, 4 unread">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                <span class="absolute top-0 right-0 block h-4 w-4 bg-blue-600 rounded-full ring-2 ring-white text-[9px] text-white text-center font-bold">4</span>
+                <span class="absolute top-0 right-0 block h-4 w-4 bg-blue-600 rounded-full ring-2 ring-white dark:ring-slate-900 text-[9px] text-white text-center font-bold">4</span>
             </button>
-            <button class="flex items-center space-x-2 border border-slate-200 rounded-full px-3 py-1 cursor-pointer hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" aria-label="User Profile Menu">
-                <div class="bg-slate-900 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">SL</div>
-                <span class="text-sm font-semibold text-slate-800">Sarah Lim</span>
-                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <button class="flex items-center space-x-2 border border-slate-200 dark:border-slate-700 rounded-full px-3 py-1 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-colors" aria-label="User Profile Menu">
+                <div class="bg-slate-900 dark:bg-slate-700 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">SL</div>
+                <span class="text-sm font-semibold text-slate-800 dark:text-slate-200">Sarah Lim</span>
+                <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
         </div>
     </header>
 
     <!-- MAIN CONTAINER -->
-    <main class="max-w-5xl mx-auto mt-12 px-6">
+    <main class="max-w-[1200px] mx-auto mt-12 px-4 md:px-8">
 
         <!-- ========================================== -->
         <!-- PAGE 1: MY PROFILE -->
@@ -88,70 +103,71 @@
             
             <!-- Profile Header -->
             <div class="flex items-center space-x-5 mb-10">
-                <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-900 text-white flex items-center justify-center text-2xl font-bold shrink-0">SL</div>
+                <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center text-2xl font-bold shrink-0 transition-colors duration-300">SL</div>
                 <div>
-                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Sarah Lim</h1>
-                    <p class="text-base text-slate-600 font-medium mt-1">Marketing Executive · Marketing</p>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Sarah Lim</h1>
+                    <p class="text-base text-slate-600 dark:text-slate-400 font-medium mt-1">Marketing Executive · Marketing</p>
                 </div>
             </div>
 
-            <!-- Two Column Layout -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <!-- Stacked Sections -->
+            <div class="flex flex-col gap-6 md:gap-8 mb-8">
                 
-                <!-- Left Card: Profile Details -->
-                <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm h-fit">
-                    <h2 class="text-lg font-bold text-slate-900 mb-6">Profile</h2>
+                <!-- Top Card: Profile Details (2 Column Grid) -->
+                <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Profile</h2>
                     
-                    <dl class="space-y-4 md:space-y-5 text-sm">
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Full name</dt>
-                            <dd class="text-slate-900 font-medium">Sarah Lim</dd>
+                    <!-- Equal width 2-column layout -->
+                    <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Full name</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">Sarah Lim</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Office ID</dt>
-                            <dd class="text-slate-900 font-medium">HD-1042</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Office ID</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">HD-1042</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Title</dt>
-                            <dd class="text-slate-900 font-medium">Marketing Executive</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Title</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">Marketing Executive</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Department</dt>
-                            <dd class="text-slate-900 font-medium">Marketing</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Department</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">Marketing</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Role family</dt>
-                            <dd class="text-slate-900 font-medium">Marketing</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Role family</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">Marketing</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Reports to</dt>
-                            <dd class="text-slate-900 font-medium">Jonathan Lee</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Reports to</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">Jonathan Lee</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Tenure</dt>
-                            <dd class="text-slate-900 font-medium">3.5 years</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Tenure</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">3.5 years</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Location</dt>
-                            <dd class="text-slate-900 font-medium">Kuala Lumpur</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Location</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">Kuala Lumpur</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Company</dt>
-                            <dd class="text-slate-900 font-medium">Halcyon Digital Sdn Bhd</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Company</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">Halcyon Digital Sdn Bhd</dd>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
-                            <dt class="text-slate-500">Appraisal cycle</dt>
-                            <dd class="text-slate-900 font-medium">FY2026 H1 Appraisal Cycle · 1 Jan – 30 Jun 2026</dd>
+                        <div>
+                            <dt class="text-[13px] text-slate-500 dark:text-slate-400 mb-1">Appraisal cycle</dt>
+                            <dd class="text-sm text-slate-900 dark:text-slate-200 font-medium">FY2026 H1 Appraisal Cycle · 1 Jan – 30 Jun 2026</dd>
                         </div>
                     </dl>
                 </div>
 
-                <!-- Right Card: Appraisal Status -->
-                <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm h-fit">
+                <!-- Bottom Card: Appraisal Status (Full width) -->
+                <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
                     
                     <div class="flex justify-between items-center mb-8">
-                        <h2 class="text-lg font-bold text-slate-900">Appraisal status</h2>
-                        <span class="bg-green-50 text-green-700 border border-green-200 text-xs font-bold px-2.5 py-1 rounded-md flex items-center space-x-1">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Appraisal status</h2>
+                        <span class="bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20 text-xs font-bold px-2.5 py-1 rounded-md flex items-center space-x-1">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             <span>Completed</span>
                         </span>
@@ -160,88 +176,88 @@
                     <!-- Timeline -->
                     <div class="relative space-y-6">
                         <!-- Vertical connecting line -->
-                        <div class="absolute left-3 top-3 bottom-8 w-[2px] bg-slate-200 -z-0"></div>
+                        <div class="absolute left-3 top-3 bottom-8 w-[2px] bg-slate-200 dark:bg-slate-800 -z-0"></div>
 
                         <!-- Step 1: Completed -->
                         <div class="relative flex gap-4 z-10">
-                            <div class="w-6 h-6 rounded-full bg-green-700 text-white flex items-center justify-center shrink-0 border-[3px] border-white ring-1 ring-green-700 mt-0.5">
+                            <div class="w-6 h-6 rounded-full bg-green-700 dark:bg-green-600 text-white flex items-center justify-center shrink-0 border-[3px] border-white dark:border-slate-900 ring-1 ring-green-700 dark:ring-green-600 mt-0.5">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                             </div>
                             <div>
-                                <h3 class="text-sm font-bold text-slate-900">Self-appraisal</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-0.5">Submitted 26 Sept 2026 · self-grade A</p>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-200">Self-appraisal</h3>
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">Submitted 26 Sept 2026 · self-grade A</p>
                             </div>
                         </div>
 
                         <!-- Step 2: Active -->
                         <div class="relative flex gap-4 z-10">
-                            <div class="w-6 h-6 rounded-full bg-white border-2 border-slate-300 text-slate-700 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">2</div>
+                            <div class="w-6 h-6 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">2</div>
                             <div>
-                                <h3 class="text-sm font-bold text-slate-900">Manager review</h3>
-                                <p class="text-xs font-medium text-slate-500 mt-0.5">With Jonathan Lee. You will see your grade here once it is decided.</p>
+                                <h3 class="text-sm font-bold text-slate-900 dark:text-slate-200">Manager review</h3>
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-0.5">With Jonathan Lee. You will see your grade here once it is decided.</p>
                             </div>
                         </div>
 
                         <!-- Step 3: Future -->
                         <div class="relative flex gap-4 z-10 opacity-50">
-                            <div class="w-6 h-6 rounded-full bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">3</div>
+                            <div class="w-6 h-6 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">3</div>
                             <div>
-                                <h3 class="text-sm font-bold text-slate-500">Your grade</h3>
-                                <p class="text-xs font-medium text-slate-400 mt-0.5">Shown when the review is complete.</p>
+                                <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400">Your grade</h3>
+                                <p class="text-xs font-medium text-slate-400 dark:text-slate-500 mt-0.5">Shown when the review is complete.</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Accordion Dropdown -->
-                    <details class="group/accordion border-t border-slate-100 pt-6 mt-8">
-                        <summary class="flex items-center cursor-pointer font-semibold text-sm text-slate-600 hover:text-slate-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 -ml-1">
-                            <svg class="w-3.5 h-3.5 mr-2 text-slate-400 transition-transform duration-200 group-open/accordion:rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                    <details class="group/accordion border-t border-slate-100 dark:border-slate-800 pt-6 mt-8">
+                        <summary class="flex items-center cursor-pointer font-semibold text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 -ml-1">
+                            <svg class="w-3.5 h-3.5 mr-2 text-slate-400 dark:text-slate-500 transition-transform duration-200 group-open/accordion:rotate-90" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M14.707 10.707a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L12.586 10l-4.293 4.293a1 1 0 001.414 1.414l5-5z"></path>
                             </svg>
                             Read what you submitted
                         </summary>
                         
-                        <!-- VISUAL SEPARATION: Content blocks with padding and subtle background -->
+                        <!-- VISUAL SEPARATION: Apple style pale blue containers -->
                         <div class="mt-4 space-y-4">
                             
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
-                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What were your most significant contributions this cycle?</h4>
-                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Closed RM1.9M against a RM1.5M quota (128%) and renewed 22 of 23 enterprise accounts. Acted as Sales lead on the Atlas launch and brought forecast accuracy within 5% every month.</p>
+                            <div class="bg-appleblue dark:bg-slate-800/60 px-5 py-4 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                                <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 leading-relaxed">What were your most significant contributions this cycle?</h4>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">Closed RM1.9M against a RM1.5M quota (128%) and renewed 22 of 23 enterprise accounts. Acted as Sales lead on the Atlas launch and brought forecast accuracy within 5% every month.</p>
                             </div>
 
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
-                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">Which of your agreed goals did you meet, and which did you not?</h4>
-                                <p class="text-sm text-slate-800 leading-relaxed font-medium">All quota and renewal goals met. The one churned account left on budget grounds after a leadership change on their side.</p>
+                            <div class="bg-appleblue dark:bg-slate-800/60 px-5 py-4 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                                <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 leading-relaxed">Which of your agreed goals did you meet, and which did you not?</h4>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">All quota and renewal goals met. The one churned account left on budget grounds after a leadership change on their side.</p>
                             </div>
 
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
-                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">Describe how you worked with other teams or departments.</h4>
-                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Worked with Marketing on campaign follow-up and with Product to bring customer requests into the roadmap. Joined Support escalations for my two largest accounts.</p>
+                            <div class="bg-appleblue dark:bg-slate-800/60 px-5 py-4 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                                <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 leading-relaxed">Describe how you worked with other teams or departments.</h4>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">Worked with Marketing on campaign follow-up and with Product to bring customer requests into the roadmap. Joined Support escalations for my two largest accounts.</p>
                             </div>
 
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
-                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What was the biggest obstacle you faced, and how did you handle it?</h4>
-                                <p class="text-sm text-slate-800 leading-relaxed font-medium">A key account threatened to leave over a missed integration date. I brought Engineering into the conversation directly and agreed a phased delivery that kept the renewal.</p>
+                            <div class="bg-appleblue dark:bg-slate-800/60 px-5 py-4 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                                <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 leading-relaxed">What was the biggest obstacle you faced, and how did you handle it?</h4>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">A key account threatened to leave over a missed integration date. I brought Engineering into the conversation directly and agreed a phased delivery that kept the renewal.</p>
                             </div>
 
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
-                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What skills did you develop, and how did you apply them?</h4>
-                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Strengthened negotiation on multi-year contracts and completed the enterprise sales methodology course.</p>
+                            <div class="bg-appleblue dark:bg-slate-800/60 px-5 py-4 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                                <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 leading-relaxed">What skills did you develop, and how did you apply them?</h4>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">Strengthened negotiation on multi-year contracts and completed the enterprise sales methodology course.</p>
                             </div>
 
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
-                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">How did you support colleagues, customers or the wider business?</h4>
-                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Ramp coach for two new account executives; both met their first-quarter targets.</p>
+                            <div class="bg-appleblue dark:bg-slate-800/60 px-5 py-4 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                                <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 leading-relaxed">How did you support colleagues, customers or the wider business?</h4>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">Ramp coach for two new account executives; both met their first-quarter targets.</p>
                             </div>
 
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
-                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What would you do differently next cycle?</h4>
-                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Start renewal conversations a quarter earlier for accounts with leadership changes.</p>
+                            <div class="bg-appleblue dark:bg-slate-800/60 px-5 py-4 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                                <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 leading-relaxed">What would you do differently next cycle?</h4>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">Start renewal conversations a quarter earlier for accounts with leadership changes.</p>
                             </div>
 
-                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
-                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What support do you need from your manager or the company?</h4>
-                                <p class="text-sm text-slate-800 leading-relaxed font-medium">A dedicated solutions consultant for enterprise deals.</p>
+                            <div class="bg-appleblue dark:bg-slate-800/60 px-5 py-4 rounded-lg border border-slate-200/60 dark:border-slate-700/50">
+                                <h4 class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 leading-relaxed">What support do you need from your manager or the company?</h4>
+                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">A dedicated solutions consultant for enterprise deals.</p>
                             </div>
 
                         </div>
@@ -255,34 +271,34 @@
         <!-- ========================================== -->
         <div id="page-stats" class="hidden">
             <!-- H1 Page Title and Intro -->
-            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Where you stand</h1>
-            <p class="text-base text-slate-600 mb-10 w-full leading-relaxed">Final grades in Marketing, as decided by managers this cycle. Your own grade appears once your manager has completed your review.</p>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Where you stand</h1>
+            <p class="text-base text-slate-600 dark:text-slate-400 mb-10 w-full leading-relaxed">Final grades in Marketing, as decided by managers this cycle. Your own grade appears once your manager has completed your review.</p>
 
             <!-- Top Summary Cards -->
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                    <h2 class="text-sm text-slate-500 font-semibold mb-3 uppercase tracking-wider">Your grade</h2>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                    <h2 class="text-sm text-slate-500 dark:text-slate-400 font-semibold mb-3 uppercase tracking-wider">Your grade</h2>
                     <div class="bg-blue-600 text-white font-bold text-2xl rounded-md w-12 h-12 flex items-center justify-center mb-3">B</div>
-                    <p class="text-sm font-medium text-slate-600">3 of 6 protocols met · decided by Jonathan Lee</p>
+                    <p class="text-sm font-medium text-slate-600 dark:text-slate-300">3 of 6 protocols met · decided by Jonathan Lee</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <h2 class="text-sm text-slate-500 font-semibold mb-1 uppercase tracking-wider">Completed in Marketing</h2>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between transition-colors duration-300">
+                    <h2 class="text-sm text-slate-500 dark:text-slate-400 font-semibold mb-1 uppercase tracking-wider">Completed in Marketing</h2>
                     <div class="mb-2">
-                        <span class="text-4xl font-extrabold text-slate-900">3</span><span class="text-xl text-slate-400 font-semibold"> / 9</span>
+                        <span class="text-4xl font-extrabold text-slate-900 dark:text-white">3</span><span class="text-xl text-slate-400 dark:text-slate-500 font-semibold"> / 9</span>
                     </div>
-                    <p class="text-sm font-medium text-slate-600">Colleagues whose reviews are final; the chart below counts only these</p>
+                    <p class="text-sm font-medium text-slate-600 dark:text-slate-300">Colleagues whose reviews are final; the chart below counts only these</p>
                 </div>
             </div>
 
             <!-- Chart Card -->
-            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm mb-8">
-                <h2 class="text-xl font-bold text-slate-900">Marketing: colleagues by final grade</h2>
-                <p class="text-sm text-slate-500 mb-10">Your band is outlined; the others are faded.</p>
+            <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mb-8 transition-colors duration-300">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Marketing: colleagues by final grade</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-10">Your band is outlined; the others are faded.</p>
                 
                 <!-- Chart Area -->
-                <div class="relative h-64 border-b border-slate-200 flex items-end pl-8" aria-hidden="true">
+                <div class="relative h-64 border-b border-slate-200 dark:border-slate-700 flex items-end pl-8" aria-hidden="true">
                     <!-- Y-Axis -->
-                    <div class="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-slate-400 font-bold pb-8">
+                    <div class="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-slate-400 dark:text-slate-500 font-bold pb-8">
                         <span>1</span>
                         <span>1</span>
                         <span>0</span>
@@ -292,40 +308,40 @@
                     <div class="w-full flex justify-around items-end h-[85%] relative z-10 pb-[2px]" id="chart-bars-wrapper">
                         
                         <!-- Dynamic Sliding Outline -->
-                        <div id="chart-outline" class="absolute left-0 bottom-[2px] w-16 rounded-t-md border-2 border-white ring-2 ring-blue-600 pointer-events-none transition-all duration-300 ease-out z-20" style="height: 0px; opacity: 0; transform: translateX(0px);"></div>
+                        <div id="chart-outline" class="absolute left-0 bottom-[2px] w-16 rounded-t-md border-2 border-white dark:border-slate-900 ring-2 ring-blue-600 pointer-events-none transition-all duration-300 ease-out z-20" style="height: 0px; opacity: 0; transform: translateX(0px);"></div>
 
                         <!-- 0 bars -->
                         <div class="chart-col w-16 flex flex-col items-center justify-end h-full cursor-pointer group" data-ring="ring-green-600">
-                            <span class="text-xs text-slate-700 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900">0</span>
+                            <span class="text-xs text-slate-700 dark:text-slate-400 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900 dark:group-hover:text-white">0</span>
                         </div>
                         <div class="chart-col w-16 flex flex-col items-center justify-end h-full cursor-pointer group" data-ring="ring-green-600">
-                            <span class="text-xs text-slate-700 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900">0</span>
+                            <span class="text-xs text-slate-700 dark:text-slate-400 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900 dark:group-hover:text-white">0</span>
                         </div>
                         <div class="chart-col w-16 flex flex-col items-center justify-end h-full cursor-pointer group" data-ring="ring-blue-600">
-                            <span class="text-xs text-slate-700 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900">0</span>
+                            <span class="text-xs text-slate-700 dark:text-slate-400 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900 dark:group-hover:text-white">0</span>
                         </div>
 
                         <!-- B Bar (Highlighted by Default) -->
                         <div class="chart-col w-16 flex flex-col items-center justify-end h-full relative cursor-pointer group" data-ring="ring-blue-600" id="default-chart-col">
-                            <span class="text-sm text-slate-900 font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
+                            <span class="text-sm text-slate-900 dark:text-white font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
                             <div class="w-full h-full bg-blue-600 rounded-t-md bar-fill"></div>
                         </div>
 
                         <!-- 0 bar -->
                         <div class="chart-col w-16 flex flex-col items-center justify-end h-full cursor-pointer group" data-ring="ring-orange-500">
-                            <span class="text-xs text-slate-700 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900">0</span>
+                            <span class="text-xs text-slate-700 dark:text-slate-400 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900 dark:group-hover:text-white">0</span>
                         </div>
 
                         <!-- C Bar (Faded) -->
                         <div class="chart-col w-16 flex flex-col items-center justify-end h-full relative cursor-pointer group" data-ring="ring-orange-500">
-                            <span class="text-sm text-slate-900 font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
-                            <div class="w-full h-full bg-orange-200 rounded-t-md bar-fill transition-colors group-hover:bg-orange-300"></div>
+                            <span class="text-sm text-slate-900 dark:text-white font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
+                            <div class="w-full h-full bg-orange-200 dark:bg-orange-900/40 rounded-t-md bar-fill transition-colors group-hover:bg-orange-300 dark:group-hover:bg-orange-800/60"></div>
                         </div>
 
                         <!-- D Bar (Faded) -->
                         <div class="chart-col w-16 flex flex-col items-center justify-end h-full relative cursor-pointer group" data-ring="ring-red-600">
-                            <span class="text-sm text-slate-900 font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
-                            <div class="w-full h-full bg-red-200 rounded-t-md bar-fill transition-colors group-hover:bg-red-300"></div>
+                            <span class="text-sm text-slate-900 dark:text-white font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
+                            <div class="w-full h-full bg-red-200 dark:bg-red-900/40 rounded-t-md bar-fill transition-colors group-hover:bg-red-300 dark:group-hover:bg-red-800/60"></div>
                         </div>
                     </div>
                 </div>
@@ -334,82 +350,82 @@
                 <div class="w-full flex justify-around mt-4 pl-8" aria-hidden="true">
                     <div class="flex flex-col items-center w-16 text-center">
                         <span class="bg-green-700 text-white text-xs font-bold px-2 py-1 rounded mb-1.5">A+</span>
-                        <span class="text-[11px] font-medium text-slate-500 leading-tight">6 of 6<br>protocols</span>
+                        <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">6 of 6<br>protocols</span>
                     </div>
                     <div class="flex flex-col items-center w-16 text-center">
                         <span class="bg-green-700 text-white text-xs font-bold px-2 py-1 rounded mb-1.5">A</span>
-                        <span class="text-[11px] font-medium text-slate-500 leading-tight">5 of 6<br>protocols</span>
+                        <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">5 of 6<br>protocols</span>
                     </div>
                     <div class="flex flex-col items-center w-16 text-center">
                         <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded mb-1.5">B+</span>
-                        <span class="text-[11px] font-medium text-slate-500 leading-tight">4 of 6<br>protocols</span>
+                        <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">4 of 6<br>protocols</span>
                     </div>
                     <div class="flex flex-col items-center w-16 text-center">
                         <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded mb-1.5">B</span>
-                        <span class="text-[11px] font-medium text-slate-500 leading-tight">3 of 6<br>protocols</span>
+                        <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">3 of 6<br>protocols</span>
                     </div>
                     <div class="flex flex-col items-center w-16 text-center">
                         <span class="bg-orange-600 text-white text-xs font-bold px-2 py-1 rounded mb-1.5">C+</span>
-                        <span class="text-[11px] font-medium text-slate-500 leading-tight">2 of 6<br>protocols</span>
+                        <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">2 of 6<br>protocols</span>
                     </div>
                     <div class="flex flex-col items-center w-16 text-center">
                         <span class="bg-orange-600 text-white text-xs font-bold px-2 py-1 rounded mb-1.5">C</span>
-                        <span class="text-[11px] font-medium text-slate-500 leading-tight">1 of 6<br>protocols</span>
+                        <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">1 of 6<br>protocols</span>
                     </div>
                     <div class="flex flex-col items-center w-16 text-center">
                         <span class="bg-red-700 text-white text-xs font-bold px-2 py-1 rounded mb-1.5">D</span>
-                        <span class="text-[11px] font-medium text-slate-500 leading-tight">0 of 6<br>protocols</span>
+                        <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-tight">0 of 6<br>protocols</span>
                     </div>
                 </div>
-                <p class="text-xs font-medium text-slate-500 mt-8 border-t border-slate-100 pt-4">Each bar counts colleagues. Grades read as how many of the six assessment protocols were met.</p>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-8 border-t border-slate-100 dark:border-slate-800 pt-4">Each bar counts colleagues. Grades read as how many of the six assessment protocols were met.</p>
             </div>
 
             <!-- Rubric Details Card -->
-            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
-                <h2 class="text-xl font-bold text-slate-900 mb-1">What the assessment is based on</h2>
-                <p class="text-sm font-medium text-slate-500 mb-8">Six protocols, checked against indexed records only. This is the rubric, not a score.</p>
+            <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-1">What the assessment is based on</h2>
+                <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-8">Six protocols, checked against indexed records only. This is the rubric, not a score.</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 text-left">
                     <div class="flex gap-4">
-                        <span class="text-sm text-slate-400 font-bold mt-[2px]">01</span>
+                        <span class="text-sm text-slate-400 dark:text-slate-500 font-bold mt-[2px]">01</span>
                         <div>
-                            <h3 class="text-base font-bold text-slate-800">Delivery against commitments</h3>
-                            <p class="text-sm font-medium text-slate-600 mt-1.5 leading-relaxed">Milestones, deadlines and SLAs met as agreed, with slips explained on record.</p>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Delivery against commitments</h3>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">Milestones, deadlines and SLAs met as agreed, with slips explained on record.</p>
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <span class="text-sm text-slate-400 font-bold mt-[2px]">02</span>
+                        <span class="text-sm text-slate-400 dark:text-slate-500 font-bold mt-[2px]">02</span>
                         <div>
-                            <h3 class="text-base font-bold text-slate-800">Measurable business outcomes</h3>
-                            <p class="text-sm font-medium text-slate-600 mt-1.5 leading-relaxed">Revenue, cost, client or service results that can be traced to the person's work.</p>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Measurable business outcomes</h3>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">Revenue, cost, client or service results that can be traced to the person's work.</p>
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <span class="text-sm text-slate-400 font-bold mt-[2px]">03</span>
+                        <span class="text-sm text-slate-400 dark:text-slate-500 font-bold mt-[2px]">03</span>
                         <div>
-                            <h3 class="text-base font-bold text-slate-800">Role-specific output</h3>
-                            <p class="text-sm font-medium text-slate-600 mt-1.5 leading-relaxed">The core work of the job: shipped code, campaigns, closes, analyses, designs, contracts.</p>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Role-specific output</h3>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">The core work of the job: shipped code, campaigns, closes, analyses, designs, contracts.</p>
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <span class="text-sm text-slate-400 font-bold mt-[2px]">04</span>
+                        <span class="text-sm text-slate-400 dark:text-slate-500 font-bold mt-[2px]">04</span>
                         <div>
-                            <h3 class="text-base font-bold text-slate-800">Cross-functional contribution</h3>
-                            <p class="text-sm font-medium text-slate-600 mt-1.5 leading-relaxed">Work done with or for other departments, visible in shared project records.</p>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Cross-functional contribution</h3>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">Work done with or for other departments, visible in shared project records.</p>
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <span class="text-sm text-slate-400 font-bold mt-[2px]">05</span>
+                        <span class="text-sm text-slate-400 dark:text-slate-500 font-bold mt-[2px]">05</span>
                         <div>
-                            <h3 class="text-base font-bold text-slate-800">Supporting others</h3>
-                            <p class="text-sm font-medium text-slate-600 mt-1.5 leading-relaxed">Mentoring, onboarding, coaching or training recorded by People & Culture.</p>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Supporting others</h3>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">Mentoring, onboarding, coaching or training recorded by People & Culture.</p>
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <span class="text-sm text-slate-400 font-bold mt-[2px]">06</span>
+                        <span class="text-sm text-slate-400 dark:text-slate-500 font-bold mt-[2px]">06</span>
                         <div>
-                            <h3 class="text-base font-bold text-slate-800">No unresolved concerns</h3>
-                            <p class="text-sm font-medium text-slate-600 mt-1.5 leading-relaxed">Incidents, audit findings or misses on record are addressed, not outstanding.</p>
+                            <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">No unresolved concerns</h3>
+                            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1.5 leading-relaxed">Incidents, audit findings or misses on record are addressed, not outstanding.</p>
                         </div>
                     </div>
                 </div>
@@ -422,112 +438,112 @@
         <!-- ========================================== -->
         <div id="page-self" class="hidden">
             <!-- H1 Page Title and Intro with Hierarchy -->
-            <span class="text-sm font-bold text-slate-500 mb-2 block uppercase tracking-wider">FY2026 H1 Appraisal Cycle</span>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Self-appraisal</h1>
+            <span class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-2 block uppercase tracking-wider">FY2026 H1 Appraisal Cycle</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Self-appraisal</h1>
             <!-- Removed width constraint to fill width -->
-            <p class="text-base font-medium text-slate-600 mb-10 w-full leading-relaxed">Your account of the cycle, in your own words. It sits alongside the evidence-based assessment so reviewers can see both.</p>
+            <p class="text-base font-medium text-slate-600 dark:text-slate-400 mb-10 w-full leading-relaxed">Your account of the cycle, in your own words. It sits alongside the evidence-based assessment so reviewers can see both.</p>
 
             <!-- Employee Info Card -->
-            <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm mb-8">
+            <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mb-8 transition-colors duration-300">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                     <div>
-                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Employee</p>
+                        <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Employee</p>
                         <!-- Name is distinct (h2, 24px) but clearly smaller than Page Title (h1, 36/48px) -->
                         <div class="flex items-baseline space-x-3 mb-2">
-                            <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Daniel Wong</h2>
-                            <span class="text-lg text-slate-600 font-medium">Software Engineer II</span>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Daniel Wong</h2>
+                            <span class="text-lg text-slate-600 dark:text-slate-300 font-medium">Software Engineer II</span>
                         </div>
-                        <div class="flex items-center text-sm font-medium text-slate-600">
+                        <div class="flex items-center text-sm font-medium text-slate-600 dark:text-slate-400">
                             <span>Engineering · reports to Farah Ismail</span>
-                            <span class="bg-blue-100/70 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-full ml-2">Technical role</span>
+                            <span class="bg-blue-100/70 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs font-bold px-2.5 py-1 rounded-full ml-2">Technical role</span>
                         </div>
                     </div>
                     <div class="flex items-center space-x-3 mt-4 md:mt-0">
-                        <button class="px-4 py-2.5 bg-white border border-slate-300 rounded-md text-sm font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-sm">Pre-seed from sample dataset</button>
-                        <button class="px-3 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 focus:outline-none focus:underline rounded-md transition">Clear</button>
+                        <button class="px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-sm">Pre-seed from sample dataset</button>
+                        <button class="px-3 py-2.5 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white focus:outline-none focus:underline rounded-md transition">Clear</button>
                     </div>
                 </div>
 
-                <div class="bg-green-50 border border-green-200 text-green-800 text-sm font-medium px-4 py-3 rounded-md mb-3" role="alert">
+                <div class="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-green-800 dark:text-green-400 text-sm font-medium px-4 py-3 rounded-md mb-3" role="alert">
                     You submitted your self-appraisal on 26 Sept 2026. Submitting again replaces it.
                 </div>
-                <p class="text-xs font-medium text-slate-500">Pre-seed picks one of 3 sample answers for a non-technical role. Nothing is submitted until you press Submit.</p>
+                <p class="text-xs font-medium text-slate-500 dark:text-slate-500">Pre-seed picks one of 3 sample answers for a non-technical role. Nothing is submitted until you press Submit.</p>
             </div>
 
             <!-- Questions Form Card -->
-            <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm mb-8">
-                <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
-                    <h2 class="text-lg font-bold text-slate-900">Appraisal questions</h2>
-                    <span class="text-sm font-semibold text-slate-500">0 of 8 answered</span>
+            <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mb-8 transition-colors duration-300">
+                <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">Appraisal questions</h2>
+                    <span class="text-sm font-semibold text-slate-500 dark:text-slate-400">0 of 8 answered</span>
                 </div>
 
                 <div class="space-y-10">
                     <!-- Q1 -->
                     <div class="w-full">
                         <label class="flex items-start gap-3 mb-3 cursor-pointer" for="q1-input">
-                            <span class="text-sm font-bold text-slate-400 mt-[1px] w-5 shrink-0" aria-hidden="true">01</span>
+                            <span class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-[1px] w-5 shrink-0" aria-hidden="true">01</span>
                             <div>
-                                <h3 class="text-base font-bold text-slate-800">What were your most significant contributions this cycle?</h3>
-                                <p class="text-sm font-medium text-slate-500 mt-1">Outcomes, not activities. Name the work and what it changed.</p>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">What were your most significant contributions this cycle?</h3>
+                                <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Outcomes, not activities. Name the work and what it changed.</p>
                             </div>
                         </label>
-                        <textarea id="q1-input" class="w-full h-32 border border-slate-300 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition" placeholder="Enter your response..."></textarea>
+                        <textarea id="q1-input" class="w-full h-32 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition-colors duration-300" placeholder="Enter your response..."></textarea>
                     </div>
 
                     <!-- Q2 -->
                     <div class="w-full">
                         <label class="flex items-start gap-3 mb-3 cursor-pointer" for="q2-input">
-                            <span class="text-sm font-bold text-slate-400 mt-[1px] w-5 shrink-0" aria-hidden="true">02</span>
+                            <span class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-[1px] w-5 shrink-0" aria-hidden="true">02</span>
                             <div>
-                                <h3 class="text-base font-bold text-slate-800">Which of your agreed goals did you meet, and which did you not?</h3>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">Which of your agreed goals did you meet, and which did you not?</h3>
                             </div>
                         </label>
-                        <textarea id="q2-input" class="w-full h-32 border border-slate-300 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition"></textarea>
+                        <textarea id="q2-input" class="w-full h-32 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition-colors duration-300"></textarea>
                     </div>
 
                     <!-- Q6 -->
                     <div class="w-full">
                         <label class="flex items-start gap-3 mb-3 cursor-pointer" for="q6-input">
-                            <span class="text-sm font-bold text-slate-400 mt-[1px] w-5 shrink-0" aria-hidden="true">06</span>
+                            <span class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-[1px] w-5 shrink-0" aria-hidden="true">06</span>
                             <div>
-                                <h3 class="text-base font-bold text-slate-800">How did you support colleagues, customers or the wider business?</h3>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">How did you support colleagues, customers or the wider business?</h3>
                             </div>
                         </label>
-                        <textarea id="q6-input" class="w-full h-32 border border-slate-300 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition"></textarea>
+                        <textarea id="q6-input" class="w-full h-32 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition-colors duration-300"></textarea>
                     </div>
 
                     <!-- Q7 -->
                     <div class="w-full">
                         <label class="flex items-start gap-3 mb-3 cursor-pointer" for="q7-input">
-                            <span class="text-sm font-bold text-slate-400 mt-[1px] w-5 shrink-0" aria-hidden="true">07</span>
+                            <span class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-[1px] w-5 shrink-0" aria-hidden="true">07</span>
                             <div>
-                                <h3 class="text-base font-bold text-slate-800">What would you do differently next cycle?</h3>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">What would you do differently next cycle?</h3>
                             </div>
                         </label>
-                        <textarea id="q7-input" class="w-full h-32 border border-slate-300 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition"></textarea>
+                        <textarea id="q7-input" class="w-full h-32 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition-colors duration-300"></textarea>
                     </div>
 
                     <!-- Q8 -->
                     <div class="w-full">
                         <label class="flex items-start gap-3 mb-3 cursor-pointer" for="q8-input">
-                            <span class="text-sm font-bold text-slate-400 mt-[1px] w-5 shrink-0" aria-hidden="true">08</span>
+                            <span class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-[1px] w-5 shrink-0" aria-hidden="true">08</span>
                             <div>
-                                <h3 class="text-base font-bold text-slate-800">What support do you need from your manager or the company?</h3>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">What support do you need from your manager or the company?</h3>
                             </div>
                         </label>
-                        <textarea id="q8-input" class="w-full h-32 border border-slate-300 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition"></textarea>
+                        <textarea id="q8-input" class="w-full h-32 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-md p-4 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-y shadow-sm transition-colors duration-300"></textarea>
                     </div>
 
                     <!-- Q9 Select -->
-                    <div class="w-full border-t border-slate-100 pt-8">
+                    <div class="w-full border-t border-slate-100 dark:border-slate-800 pt-8">
                         <label class="flex items-start gap-3 mb-3 cursor-pointer" for="q9-input">
-                            <span class="text-sm font-bold text-slate-400 mt-[1px] w-5 shrink-0" aria-hidden="true">09</span>
+                            <span class="text-sm font-bold text-slate-400 dark:text-slate-500 mt-[1px] w-5 shrink-0" aria-hidden="true">09</span>
                             <div>
-                                <h3 class="text-base font-bold text-slate-800">What grade would you give yourself for this cycle?</h3>
+                                <h3 class="text-base font-bold text-slate-800 dark:text-slate-200">What grade would you give yourself for this cycle?</h3>
                             </div>
                         </label>
                         <div class="relative w-full">
-                            <select id="q9-input" class="w-full border border-slate-300 rounded-md p-3.5 pr-10 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-700 font-medium appearance-none shadow-sm cursor-pointer outline-none">
+                            <select id="q9-input" class="w-full bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-md p-3.5 pr-10 text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-700 dark:text-slate-200 font-medium appearance-none shadow-sm cursor-pointer outline-none transition-colors duration-300">
                                 <option>Select a grade</option>
                                 <option>A+</option>
                                 <option>A</option>
@@ -537,7 +553,7 @@
                                 <option>C</option>
                                 <option>D</option>
                             </select>
-                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 dark:text-slate-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </div>
                         </div>
@@ -547,15 +563,15 @@
 
             <!-- Footer Submit Area -->
             <div class="flex flex-col md:flex-row items-center justify-between pb-8 gap-4">
-                <p class="text-sm font-medium text-slate-500">Your self-appraisal is recorded alongside the evidence-based assessment. It does not replace it.</p>
-                <button class="w-full md:w-auto bg-indigo-400 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 text-white font-bold text-base px-8 py-3 rounded-md shadow-sm transition">
+                <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Your self-appraisal is recorded alongside the evidence-based assessment. It does not replace it.</p>
+                <button class="w-full md:w-auto bg-indigo-400 dark:bg-indigo-500 hover:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 text-white font-bold text-base px-8 py-3 rounded-md shadow-sm transition">
                     Submit self-appraisal
                 </button>
             </div>
         </div>
 
         <!-- Global Footer Disclaimer -->
-        <p class="text-xs font-medium text-slate-400 text-center pb-8 border-t border-slate-200 pt-8 mt-6 w-full">
+        <p class="text-xs font-medium text-slate-400 dark:text-slate-500 text-center pb-8 border-t border-slate-200 dark:border-slate-800 pt-8 mt-6 w-full">
             Prototype. Uses simulated workplace data only — no real employee accounts, messages or systems are connected. AI output is an assessment aid and is not an employment decision.
         </p>
 
@@ -563,24 +579,30 @@
 
     <!-- FLOATING OVERLAYS -->
     
-    <!-- Dark Issue Button (Left Edge based on new screenshot) -->
-    <div class="fixed top-1/2 -translate-y-1/2 left-0 z-50">
-        <button class="bg-slate-800 text-white flex items-center justify-center w-8 h-8 rounded-r-full shadow-lg hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-600 transition" aria-label="1 Issue">
-            <span class="text-xs font-bold" aria-hidden="true">N</span>
-        </button>
-    </div>
+    <!-- Theme Toggle Button (Bottom Left) -->
+    <button id="theme-toggle" class="fixed bottom-6 left-6 z-50 w-12 h-12 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all hover:scale-105" aria-label="Toggle Dark Mode">
+        <!-- Sun Icon (Hidden in Dark Mode) -->
+        <svg id="sun-icon" class="w-6 h-6 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <!-- Moon Icon (Hidden in Light Mode) -->
+        <svg id="moon-icon" class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+        </svg>
+    </button>
 
-    <!-- Decision Update Notification (Bottom Right) -->
-    <div class="fixed bottom-6 right-6 z-50 w-80 bg-[#edf2fa] border border-blue-200 p-4 rounded-xl shadow-xl hidden" role="status"> <!-- Added hidden class so it doesn't overlap randomly during testing, remove 'hidden' to show -->
-        <h4 class="text-[11px] font-extrabold text-blue-700 mb-1.5 tracking-wider uppercase">Decision Update</h4>
-        <p class="text-sm font-medium text-slate-800 leading-relaxed">
-            Human override recorded for Kenneth Lee: final grade B+ set by Jonathan Lee after 3 review rounds.
-        </p>
-    </div>
-
-
-    <!-- JAVASCRIPT FOR NAVIGATION & TABS -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
+        // -----------------------
+        // Theme Toggle Logic
+        // -----------------------
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+        });
+
         // -----------------------
         // Top Navigation Logic
         // -----------------------
@@ -593,12 +615,16 @@
             slider.style.transform = `translateX(${activeBtn.offsetLeft - 4}px)`; // -4 accounts for parent padding
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-slate-900');
-                btn.classList.add('text-slate-500');
+                // Remove active classes
+                btn.classList.remove('text-slate-900', 'dark:text-white');
+                // Ensure inactive classes
+                btn.classList.add('text-slate-500', 'dark:text-slate-400');
                 btn.setAttribute('aria-current', 'false');
             });
-            activeBtn.classList.remove('text-slate-500');
-            activeBtn.classList.add('text-slate-900');
+            
+            // Set active class on clicked
+            activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+            activeBtn.classList.add('text-slate-900', 'dark:text-white');
             activeBtn.setAttribute('aria-current', 'page');
 
             if(targetPageId) {
@@ -638,12 +664,12 @@
             chartOutline.style.transform = `translateX(${left}px)`;
             chartOutline.style.height = `${height}px`;
             
-            // If the bar has 0 height, visually hide the ring outline so it doesn't look squished
+            // If the bar has 0 height, visually hide the ring outline
             chartOutline.style.opacity = height === 0 ? '0' : '1';
 
             // Inherit dynamic color (defaults to blue)
             const ringColor = col.dataset.ring || 'ring-blue-600';
-            chartOutline.className = `absolute left-0 bottom-[2px] w-16 rounded-t-md border-2 border-white pointer-events-none transition-all duration-300 ease-out z-20 ring-2 ${ringColor}`;
+            chartOutline.className = `absolute left-0 bottom-[2px] w-16 rounded-t-md border-2 border-white dark:border-slate-900 pointer-events-none transition-all duration-300 ease-out z-20 ring-2 ${ringColor}`;
         }
 
         if(chartCols.length > 0) {
@@ -660,7 +686,7 @@
         // Initialization & Resize
         // -----------------------
         window.addEventListener('DOMContentLoaded', () => {
-            // Default to 'My Profile' page based on requested addition
+            // Default to 'My Profile' page
             setTimeout(() => {
                 switchTab('btn-profile', 'page-profile');
                 if (defaultChartCol) moveChartOutline(defaultChartCol);
