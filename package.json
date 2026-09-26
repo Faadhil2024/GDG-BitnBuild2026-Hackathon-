@@ -25,5 +25,7 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
-  }
+  },
+  "author": "Faadhil2024 <faadhil2024@gmail.com> (https://github.com/Faadhil2024)",
+  "license": "MIT"
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useAssessment } from "@/store/assessment-store";
 import { SCAN_STEPS } from "@/data/scan-steps";
 import { SYSTEM_LABELS } from "@/data/sources";
@@ -15,11 +16,18 @@ export function DiscoveryScanner() {
   const step = state.scanStep;
   const total = SCAN_STEPS.length;
   const done = step >= total;
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // Bring the scanner into view and hand it focus so the sequence is seen and heard.
+  useEffect(() => {
+    headingRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+    headingRef.current?.focus({ preventScroll: true });
+  }, []);
 
   return (
-    <Card aria-labelledby="scan-heading" className="p-6">
+    <Card aria-labelledby="scan-heading" className="animate-rise border-ink/30 p-6">
       <div className="flex items-baseline justify-between">
-        <h2 id="scan-heading" className="text-base font-semibold">
+        <h2 id="scan-heading" ref={headingRef} tabIndex={-1} className="text-base font-semibold outline-none">
           {done ? "Evidence collected" : "Discovering evidence"}
         </h2>
         <span className="font-mono text-xs tabular-nums text-ink-faint">
