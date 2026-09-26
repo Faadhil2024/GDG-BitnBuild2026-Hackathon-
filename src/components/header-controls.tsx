@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { VIEWERS } from "@/data/employees";
+import { setViewer, useViewer } from "@/lib/viewer";
+import { CaretDown, MagnifyingGlass } from "@phosphor-icons/react";
 
 export interface EmployeeIndexItem {
   id: string;
@@ -78,10 +80,7 @@ export function EmployeeSearch({ index }: { index: EmployeeIndexItem[] }) {
         Search employees
       </label>
       <div className="flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 focus-within:border-accent">
-        <svg aria-hidden="true" className="h-4 w-4 text-ink-faint" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <circle cx="9" cy="9" r="5.5" />
-          <path d="M13.5 13.5L17 17" strokeLinecap="round" />
-        </svg>
+        <MagnifyingGlass aria-hidden="true" size={16} className="text-ink-faint" />
         <input
           id="emp-search"
           role="combobox"
@@ -140,27 +139,9 @@ export function EmployeeSearch({ index }: { index: EmployeeIndexItem[] }) {
   );
 }
 
-const KEY = "wp.viewer";
-
-/** "Viewing as" — a named reviewer context. Cosmetic in this prototype; it does not change data access. */
-const listeners = new Set<() => void>();
-const subscribe = (cb: () => void) => {
-  listeners.add(cb);
-  window.addEventListener("storage", cb);
-  return () => {
-    listeners.delete(cb);
-    window.removeEventListener("storage", cb);
-  };
-};
-const readViewer = () => window.localStorage.getItem(KEY) ?? VIEWERS[0].name;
-const writeViewer = (name: string) => {
-  window.localStorage.setItem(KEY, name);
-  listeners.forEach((cb) => cb());
-};
 
 export function ViewerPill() {
-  const viewerName = useSyncExternalStore(subscribe, readViewer, () => VIEWERS[0].name);
-  const viewer = VIEWERS.find((v) => v.name === viewerName) ?? VIEWERS[0];
+  const { viewer } = useViewer();
   const [open, setOpen] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -188,9 +169,7 @@ export function ViewerPill() {
         </span>
         <span className="text-ink-faint">Viewing as</span>
         <span className="font-medium">{viewer.name}</span>
-        <svg aria-hidden="true" className="h-3 w-3 text-ink-faint" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6">
-          <path d="M3 4.5l3 3 3-3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <CaretDown aria-hidden="true" size={12} weight="bold" className="text-ink-faint" />
       </button>
       {open && (
         <ul role="listbox" aria-label="View as" className="animate-rise absolute right-0 top-full z-50 mt-2 w-72 overflow-hidden rounded-lg border border-line bg-surface shadow-lg">
@@ -200,7 +179,7 @@ export function ViewerPill() {
               role="option"
               aria-selected={v.name === viewer.name}
               onClick={() => {
-                writeViewer(v.name);
+                setViewer(v.name);
                 setOpen(false);
               }}
               className={`cursor-pointer px-3 py-2 hover:bg-canvas ${v.name === viewer.name ? "bg-canvas" : ""}`}
@@ -210,7 +189,7 @@ export function ViewerPill() {
             </li>
           ))}
           <li className="border-t border-line px-3 py-2 text-[11px] text-ink-faint" aria-hidden="true">
-            Prototype: changes the reviewer label only.
+            Prototype: switches the point of view, not data access.
           </li>
         </ul>
       )}

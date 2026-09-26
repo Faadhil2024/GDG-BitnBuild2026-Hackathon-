@@ -2,9 +2,12 @@ import { COMPANY, employees } from "@/data/employees";
 import { evidence, evidenceFor } from "@/data/evidence";
 import { sources, SYSTEM_LABELS, SYSTEM_ORDER } from "@/data/sources";
 import { assess } from "@/lib/assessment/engine";
-import { Card, Pill } from "@/components/ui";
-import { EmployeeTable, type EmployeeRow } from "@/components/employee-table";
+import { Pill } from "@/components/ui";
+import type { EmployeeRow } from "@/components/employee-table";
+import type { EmployerRow } from "@/components/employer-table";
+import { HomeView } from "@/components/home-view";
 import { SourcePeek } from "@/components/source-peek";
+import { fullAssessment } from "@/lib/appraisal-review";
 
 export default function OverviewPage() {
   const rows: EmployeeRow[] = employees.map((e) => {
@@ -12,6 +15,7 @@ export default function OverviewPage() {
     const a = ev.length ? assess(e, ev) : undefined;
     return { id: e.id, name: e.name, title: e.title, department: e.department, grade: a?.grade, confidence: a?.confidence, missing: a?.missingAreas.length ?? 0, count: ev.length };
   });
+  const employerRows: EmployerRow[] = employees.map((e) => ({ id: e.id, name: e.name, title: e.title, department: e.department, aiGrade: fullAssessment(e)?.grade }));
   const assessed = rows.filter((r) => r.grade);
   const flagged = assessed.filter((r) => r.confidence === "low" || r.missing > 0);
 
@@ -57,9 +61,7 @@ export default function OverviewPage() {
         ))}
       </dl>
 
-      <Card className="overflow-hidden">
-        <EmployeeTable rows={rows} />
-      </Card>
+      <HomeView employeeRows={rows} employerRows={employerRows} />
     </div>
   );
 }

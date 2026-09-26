@@ -6,7 +6,9 @@ import { NON_TECHNICAL_SEEDS, pickSeed, QUESTIONS, TECHNICAL_ROLES, TECHNICAL_SE
 import { GRADES, type Grade } from "@/lib/types";
 import { GRADE_MEANING } from "@/lib/assessment/engine";
 import { saveSelfAppraisal, useSelfAppraisals } from "@/lib/self-appraisal";
+import { reviewSelfAppraisal, type AiReview } from "@/lib/appraisal-review";
 import { Button, Card, GradeBadge, Pill, formatDate } from "@/components/ui";
+import { Check } from "@phosphor-icons/react";
 
 const blank = () => Object.fromEntries(QUESTIONS.map((q) => [q.id, ""]));
 
@@ -17,7 +19,7 @@ export function SelfAppraisalForm() {
   const [grade, setGrade] = useState<Grade | "">("");
   const [seedLabel, setSeedLabel] = useState<string | null>(null);
   const [status, setStatus] = useState("");
-  const [confirm, setConfirm] = useState<{ name: string; at: string; grade: Grade } | null>(null);
+  const [confirm, setConfirm] = useState<{ name: string; at: string; grade: Grade; ai?: AiReview } | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const submitted = useSelfAppraisals()[employeeId];
   const technical = TECHNICAL_ROLES.includes(employee.role);
@@ -51,9 +53,11 @@ export function SelfAppraisalForm() {
     e.preventDefault();
     if (!complete) return;
     const at = new Date().toISOString();
-    saveSelfAppraisal({ employeeId, answers, grade: grade as Grade, submittedAt: at });
-    setConfirm({ name: employee.name, at, grade: grade as Grade });
-    setStatus(`Self-appraisal for ${employee.name} submitted.`);
+    // The AI review runs immediately on submission, from indexed evidence only.
+    const ai = reviewSelfAppraisal(employee, answers, grade as Grade);
+    saveSelfAppraisal({ employeeId, answers, grade: grade as Grade, submittedAt: at, ai });
+    setConfirm({ name: employee.name, at, grade: grade as Grade, ai });
+    setStatus(`Self-appraisal for ${employee.name} submitted${ai ? ` and reviewed: evidence-based grade ${ai.grade}` : ""}.`);
   };
 
   const field = "w-full rounded-md border border-line bg-surface px-3 py-2 text-sm leading-relaxed focus:border-accent";
@@ -161,17 +165,26 @@ export function SelfAppraisalForm() {
         {confirm && (
           <div className="text-center">
             <span aria-hidden="true" className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-high text-white">
-              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12.5l4.5 4.5L19 7.5" />
-              </svg>
+              <Check size={24} weight="bold" />
             </span>
             <h2 id="sa-confirm-title" className="mt-4 text-lg font-semibold">
               Self-appraisal submitted
             </h2>
             <p className="mt-1 text-sm text-ink-muted">
-              {confirm.name} · {formatDate(confirm.at)} · self-grade {confirm.grade}
+              {confirm.name} · {formatDate(confirm.at)}
             </p>
-            <p className="mt-3 text-xs text-ink-faint">The status on the Employees page now shows this submission.</p>
+            <div className="mt-4 grid grid-cols-2 gap-3 text-left">
+              <div className="rounded-md border border-line p-3">
+                <p className="text-xs text-ink-faint">Self-grade</p>
+                <div className="mt-1"><GradeBadge grade={confirm.grade} size="sm" label={null} /></div>
+              </div>
+              <div className="rounded-md border border-line p-3">
+                <p className="text-xs text-ink-faint">AI grade from evidence</p>
+                <div className="mt-1">{confirm.ai ? <GradeBadge grade={confirm.ai.grade} size="sm" label={null} /> : <span className="text-sm text-ink-faint">No evidence indexed</span>}</div>
+              </div>
+            </div>
+            {confirm.ai && <p className="prose-measure mt-3 text-left text-xs text-ink-muted">{confirm.ai.summary}</p>}
+            <p className="mt-3 text-xs text-ink-faint">Your manager will see both grades and can agree or open a review.</p>
             <Button type="button" variant="primary" className="mt-5" onClick={() => setConfirm(null)} autoFocus>
               Done
             </Button>

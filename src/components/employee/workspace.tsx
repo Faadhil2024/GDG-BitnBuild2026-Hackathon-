@@ -10,6 +10,7 @@ import { EvidenceDrawer } from "./evidence-drawer";
 import { ChallengePanel } from "./challenge-panel";
 import { EvidenceFeed } from "./evidence-feed";
 import { DiscoveryScanner } from "./discovery-scanner";
+import { SelfAppraisalCard } from "./self-appraisal-card";
 
 export function EmployeeWorkspace() {
   const { employee, state } = useAssessment();
@@ -62,6 +63,7 @@ export function EmployeeWorkspace() {
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_520px]">
         <div className="space-y-8">
           <AssessmentCard />
+          <SelfAppraisalCard />
           {scanning ? (
             <DiscoveryScanner />
           ) : (

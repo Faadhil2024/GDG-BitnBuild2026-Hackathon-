@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Check } from "@phosphor-icons/react";
 import { useAssessment } from "@/store/assessment-store";
 import { SCAN_STEPS } from "@/data/scan-steps";
 import { SYSTEM_LABELS } from "@/data/sources";
@@ -50,9 +51,7 @@ export function DiscoveryScanner() {
                 data-state={st}
                 aria-hidden="true"
               >
-                <svg className="scan-check h-3 w-3 text-white" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2.5 6.5l2.5 2.5 4.5-5" />
-                </svg>
+                <Check className="scan-check text-white" size={12} weight="bold" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className={`text-sm ${st === "pending" ? "text-ink-faint" : "text-ink"}`}>{s.label(employee.name)}</p>

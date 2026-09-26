@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { Eye } from "@phosphor-icons/react";
 
 export interface SourceGroup {
   system: string;
@@ -25,10 +26,7 @@ export function SourcePeek({ groups }: { groups: SourceGroup[] }) {
         onClick={() => setOpen((o) => !o)}
         className="pressable grid h-7 w-7 place-items-center rounded-full text-ink-faint hover:bg-canvas hover:text-ink"
       >
-        <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
-          <path d="M1.5 10s3-5.5 8.5-5.5S18.5 10 18.5 10s-3 5.5-8.5 5.5S1.5 10 1.5 10z" strokeLinejoin="round" />
-          <circle cx="10" cy="10" r="2.5" />
-        </svg>
+        <Eye aria-hidden="true" size={16} />
       </button>
       {open && (
         <div
