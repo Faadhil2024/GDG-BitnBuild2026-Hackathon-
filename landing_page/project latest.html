@@ -12,7 +12,7 @@
             background-color: #f8fafc;
         }
         
-        /* Navigation Slider Animation */
+        /* Navigation & Chart Slider Animation */
         #nav-slider {
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -27,6 +27,14 @@
         textarea::-webkit-scrollbar-thumb {
             background-color: #94a3b8;
             border-radius: 4px;
+        }
+
+        /* Hide default details marker */
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
         }
     </style>
 </head>
@@ -51,8 +59,8 @@
             <div id="nav-slider" class="absolute left-1 top-1 bottom-1 bg-white rounded-full shadow-sm border border-slate-200/50" style="width: 0px; transform: translateX(0px);"></div>
             
             <!-- Buttons -->
-            <button id="btn-profile" onclick="switchTab('btn-profile', null)" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="false">My profile</button>
-            <button id="btn-stats" onclick="switchTab('btn-stats', 'page-stats')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="page">Stats</button>
+            <button id="btn-profile" onclick="switchTab('btn-profile', 'page-profile')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="page">My profile</button>
+            <button id="btn-stats" onclick="switchTab('btn-stats', 'page-stats')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="false">Stats</button>
             <button id="btn-self" onclick="switchTab('btn-self', 'page-self')" class="nav-btn relative z-10 px-4 py-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-full transition-colors" aria-current="false">Self appraisal</button>
         </nav>
 
@@ -74,9 +82,178 @@
     <main class="max-w-5xl mx-auto mt-12 px-6">
 
         <!-- ========================================== -->
-        <!-- PAGE 1: STATS -->
+        <!-- PAGE 1: MY PROFILE -->
         <!-- ========================================== -->
-        <div id="page-stats">
+        <div id="page-profile">
+            
+            <!-- Profile Header -->
+            <div class="flex items-center space-x-5 mb-10">
+                <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-900 text-white flex items-center justify-center text-2xl font-bold shrink-0">SL</div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">Sarah Lim</h1>
+                    <p class="text-base text-slate-600 font-medium mt-1">Marketing Executive · Marketing</p>
+                </div>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                
+                <!-- Left Card: Profile Details -->
+                <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm h-fit">
+                    <h2 class="text-lg font-bold text-slate-900 mb-6">Profile</h2>
+                    
+                    <dl class="space-y-4 md:space-y-5 text-sm">
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Full name</dt>
+                            <dd class="text-slate-900 font-medium">Sarah Lim</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Office ID</dt>
+                            <dd class="text-slate-900 font-medium">HD-1042</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Title</dt>
+                            <dd class="text-slate-900 font-medium">Marketing Executive</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Department</dt>
+                            <dd class="text-slate-900 font-medium">Marketing</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Role family</dt>
+                            <dd class="text-slate-900 font-medium">Marketing</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Reports to</dt>
+                            <dd class="text-slate-900 font-medium">Jonathan Lee</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Tenure</dt>
+                            <dd class="text-slate-900 font-medium">3.5 years</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Location</dt>
+                            <dd class="text-slate-900 font-medium">Kuala Lumpur</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Company</dt>
+                            <dd class="text-slate-900 font-medium">Halcyon Digital Sdn Bhd</dd>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-4">
+                            <dt class="text-slate-500">Appraisal cycle</dt>
+                            <dd class="text-slate-900 font-medium">FY2026 H1 Appraisal Cycle · 1 Jan – 30 Jun 2026</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Right Card: Appraisal Status -->
+                <div class="bg-white p-6 md:p-8 rounded-xl border border-slate-200 shadow-sm h-fit">
+                    
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-lg font-bold text-slate-900">Appraisal status</h2>
+                        <span class="bg-green-50 text-green-700 border border-green-200 text-xs font-bold px-2.5 py-1 rounded-md flex items-center space-x-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Completed</span>
+                        </span>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="relative space-y-6">
+                        <!-- Vertical connecting line -->
+                        <div class="absolute left-3 top-3 bottom-8 w-[2px] bg-slate-200 -z-0"></div>
+
+                        <!-- Step 1: Completed -->
+                        <div class="relative flex gap-4 z-10">
+                            <div class="w-6 h-6 rounded-full bg-green-700 text-white flex items-center justify-center shrink-0 border-[3px] border-white ring-1 ring-green-700 mt-0.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900">Self-appraisal</h3>
+                                <p class="text-xs font-medium text-slate-500 mt-0.5">Submitted 26 Sept 2026 · self-grade A</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Active -->
+                        <div class="relative flex gap-4 z-10">
+                            <div class="w-6 h-6 rounded-full bg-white border-2 border-slate-300 text-slate-700 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">2</div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900">Manager review</h3>
+                                <p class="text-xs font-medium text-slate-500 mt-0.5">With Jonathan Lee. You will see your grade here once it is decided.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Future -->
+                        <div class="relative flex gap-4 z-10 opacity-50">
+                            <div class="w-6 h-6 rounded-full bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">3</div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-500">Your grade</h3>
+                                <p class="text-xs font-medium text-slate-400 mt-0.5">Shown when the review is complete.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Dropdown -->
+                    <details class="group/accordion border-t border-slate-100 pt-6 mt-8">
+                        <summary class="flex items-center cursor-pointer font-semibold text-sm text-slate-600 hover:text-slate-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1 -ml-1">
+                            <svg class="w-3.5 h-3.5 mr-2 text-slate-400 transition-transform duration-200 group-open/accordion:rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M14.707 10.707a1 1 0 000-1.414l-5-5a1 1 0 00-1.414 1.414L12.586 10l-4.293 4.293a1 1 0 001.414 1.414l5-5z"></path>
+                            </svg>
+                            Read what you submitted
+                        </summary>
+                        
+                        <!-- VISUAL SEPARATION: Content blocks with padding and subtle background -->
+                        <div class="mt-4 space-y-4">
+                            
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
+                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What were your most significant contributions this cycle?</h4>
+                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Closed RM1.9M against a RM1.5M quota (128%) and renewed 22 of 23 enterprise accounts. Acted as Sales lead on the Atlas launch and brought forecast accuracy within 5% every month.</p>
+                            </div>
+
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
+                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">Which of your agreed goals did you meet, and which did you not?</h4>
+                                <p class="text-sm text-slate-800 leading-relaxed font-medium">All quota and renewal goals met. The one churned account left on budget grounds after a leadership change on their side.</p>
+                            </div>
+
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
+                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">Describe how you worked with other teams or departments.</h4>
+                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Worked with Marketing on campaign follow-up and with Product to bring customer requests into the roadmap. Joined Support escalations for my two largest accounts.</p>
+                            </div>
+
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
+                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What was the biggest obstacle you faced, and how did you handle it?</h4>
+                                <p class="text-sm text-slate-800 leading-relaxed font-medium">A key account threatened to leave over a missed integration date. I brought Engineering into the conversation directly and agreed a phased delivery that kept the renewal.</p>
+                            </div>
+
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
+                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What skills did you develop, and how did you apply them?</h4>
+                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Strengthened negotiation on multi-year contracts and completed the enterprise sales methodology course.</p>
+                            </div>
+
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
+                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">How did you support colleagues, customers or the wider business?</h4>
+                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Ramp coach for two new account executives; both met their first-quarter targets.</p>
+                            </div>
+
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
+                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What would you do differently next cycle?</h4>
+                                <p class="text-sm text-slate-800 leading-relaxed font-medium">Start renewal conversations a quarter earlier for accounts with leadership changes.</p>
+                            </div>
+
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-100/50">
+                                <h4 class="text-xs font-semibold text-slate-500 mb-2 leading-relaxed">What support do you need from your manager or the company?</h4>
+                                <p class="text-sm text-slate-800 leading-relaxed font-medium">A dedicated solutions consultant for enterprise deals.</p>
+                            </div>
+
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PAGE 2: STATS (Hidden by default) -->
+        <!-- ========================================== -->
+        <div id="page-stats" class="hidden">
             <!-- H1 Page Title and Intro -->
             <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Where you stand</h1>
             <p class="text-base text-slate-600 mb-10 w-full leading-relaxed">Final grades in Marketing, as decided by managers this cycle. Your own grade appears once your manager has completed your review.</p>
@@ -112,31 +289,43 @@
                     </div>
 
                     <!-- Bars Container -->
-                    <div class="w-full flex justify-around items-end h-[85%] relative z-10 pb-[2px]">
-                        <!-- 0 bars -->
-                        <div class="w-16 flex flex-col items-center justify-end h-full"><span class="text-xs text-slate-700 font-bold mb-2">0</span></div>
-                        <div class="w-16 flex flex-col items-center justify-end h-full"><span class="text-xs text-slate-700 font-bold mb-2">0</span></div>
-                        <div class="w-16 flex flex-col items-center justify-end h-full"><span class="text-xs text-slate-700 font-bold mb-2">0</span></div>
+                    <div class="w-full flex justify-around items-end h-[85%] relative z-10 pb-[2px]" id="chart-bars-wrapper">
+                        
+                        <!-- Dynamic Sliding Outline -->
+                        <div id="chart-outline" class="absolute left-0 bottom-[2px] w-16 rounded-t-md border-2 border-white ring-2 ring-blue-600 pointer-events-none transition-all duration-300 ease-out z-20" style="height: 0px; opacity: 0; transform: translateX(0px);"></div>
 
-                        <!-- B Bar (Highlighted) -->
-                        <div class="w-16 flex flex-col items-center justify-end h-full relative">
-                            <span class="text-sm text-slate-900 font-bold absolute -top-6">1</span>
-                            <div class="w-full h-full bg-blue-600 rounded-t-md border-2 border-white ring-2 ring-blue-600"></div>
+                        <!-- 0 bars -->
+                        <div class="chart-col w-16 flex flex-col items-center justify-end h-full cursor-pointer group" data-ring="ring-green-600">
+                            <span class="text-xs text-slate-700 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900">0</span>
+                        </div>
+                        <div class="chart-col w-16 flex flex-col items-center justify-end h-full cursor-pointer group" data-ring="ring-green-600">
+                            <span class="text-xs text-slate-700 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900">0</span>
+                        </div>
+                        <div class="chart-col w-16 flex flex-col items-center justify-end h-full cursor-pointer group" data-ring="ring-blue-600">
+                            <span class="text-xs text-slate-700 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900">0</span>
+                        </div>
+
+                        <!-- B Bar (Highlighted by Default) -->
+                        <div class="chart-col w-16 flex flex-col items-center justify-end h-full relative cursor-pointer group" data-ring="ring-blue-600" id="default-chart-col">
+                            <span class="text-sm text-slate-900 font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
+                            <div class="w-full h-full bg-blue-600 rounded-t-md bar-fill"></div>
                         </div>
 
                         <!-- 0 bar -->
-                        <div class="w-16 flex flex-col items-center justify-end h-full"><span class="text-xs text-slate-700 font-bold mb-2">0</span></div>
+                        <div class="chart-col w-16 flex flex-col items-center justify-end h-full cursor-pointer group" data-ring="ring-orange-500">
+                            <span class="text-xs text-slate-700 font-bold mb-2 transition-transform group-hover:-translate-y-1 group-hover:text-slate-900">0</span>
+                        </div>
 
                         <!-- C Bar (Faded) -->
-                        <div class="w-16 flex flex-col items-center justify-end h-full relative">
-                            <span class="text-sm text-slate-900 font-bold absolute -top-6">1</span>
-                            <div class="w-full h-full bg-orange-200 rounded-t-md"></div>
+                        <div class="chart-col w-16 flex flex-col items-center justify-end h-full relative cursor-pointer group" data-ring="ring-orange-500">
+                            <span class="text-sm text-slate-900 font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
+                            <div class="w-full h-full bg-orange-200 rounded-t-md bar-fill transition-colors group-hover:bg-orange-300"></div>
                         </div>
 
                         <!-- D Bar (Faded) -->
-                        <div class="w-16 flex flex-col items-center justify-end h-full relative">
-                            <span class="text-sm text-slate-900 font-bold absolute -top-6">1</span>
-                            <div class="w-full h-full bg-red-200 rounded-t-md"></div>
+                        <div class="chart-col w-16 flex flex-col items-center justify-end h-full relative cursor-pointer group" data-ring="ring-red-600">
+                            <span class="text-sm text-slate-900 font-bold absolute -top-6 group-hover:scale-110 transition-transform">1</span>
+                            <div class="w-full h-full bg-red-200 rounded-t-md bar-fill transition-colors group-hover:bg-red-300"></div>
                         </div>
                     </div>
                 </div>
@@ -229,7 +418,7 @@
 
 
         <!-- ========================================== -->
-        <!-- PAGE 2: SELF APPRAISAL -->
+        <!-- PAGE 3: SELF APPRAISAL (Hidden by default) -->
         <!-- ========================================== -->
         <div id="page-self" class="hidden">
             <!-- H1 Page Title and Intro with Hierarchy -->
@@ -249,7 +438,7 @@
                             <span class="text-lg text-slate-600 font-medium">Software Engineer II</span>
                         </div>
                         <div class="flex items-center text-sm font-medium text-slate-600">
-                            <span>Engineering · reports to Farah Ismail ·</span>
+                            <span>Engineering · reports to Farah Ismail</span>
                             <span class="bg-blue-100/70 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-full ml-2">Technical role</span>
                         </div>
                     </div>
@@ -374,17 +563,15 @@
 
     <!-- FLOATING OVERLAYS -->
     
-    <!-- Red Issue Button (Bottom Left) -->
-    <div class="fixed bottom-4 left-4 z-50">
-        <button class="bg-red-600 text-white flex items-center space-x-2 px-4 py-2 rounded-full shadow-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 transition" aria-label="1 Issue">
-            <span class="bg-white/20 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold" aria-hidden="true">N</span>
-            <span class="text-sm font-bold">1 Issue</span>
-            <span class="text-xs ml-1 opacity-70 hover:opacity-100" aria-hidden="true">✕</span>
+    <!-- Dark Issue Button (Left Edge based on new screenshot) -->
+    <div class="fixed top-1/2 -translate-y-1/2 left-0 z-50">
+        <button class="bg-slate-800 text-white flex items-center justify-center w-8 h-8 rounded-r-full shadow-lg hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-600 transition" aria-label="1 Issue">
+            <span class="text-xs font-bold" aria-hidden="true">N</span>
         </button>
     </div>
 
     <!-- Decision Update Notification (Bottom Right) -->
-    <div class="fixed bottom-6 right-6 z-50 w-80 bg-[#edf2fa] border border-blue-200 p-4 rounded-xl shadow-xl" role="status">
+    <div class="fixed bottom-6 right-6 z-50 w-80 bg-[#edf2fa] border border-blue-200 p-4 rounded-xl shadow-xl hidden" role="status"> <!-- Added hidden class so it doesn't overlap randomly during testing, remove 'hidden' to show -->
         <h4 class="text-[11px] font-extrabold text-blue-700 mb-1.5 tracking-wider uppercase">Decision Update</h4>
         <p class="text-sm font-medium text-slate-800 leading-relaxed">
             Human override recorded for Kenneth Lee: final grade B+ set by Jonathan Lee after 3 review rounds.
@@ -394,16 +581,17 @@
 
     <!-- JAVASCRIPT FOR NAVIGATION & TABS -->
     <script>
+        // -----------------------
+        // Top Navigation Logic
+        // -----------------------
         function switchTab(buttonId, targetPageId) {
-            // 1. Handle Navigation Sliding Animation
             const activeBtn = document.getElementById(buttonId);
             const slider = document.getElementById('nav-slider');
             
-            // Set slider width and position to match the clicked button
+            // Slide to matching button width & left offset
             slider.style.width = activeBtn.offsetWidth + 'px';
             slider.style.transform = `translateX(${activeBtn.offsetLeft - 4}px)`; // -4 accounts for parent padding
 
-            // 2. Update button text colors & aria-current
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-slate-900');
                 btn.classList.add('text-slate-500');
@@ -413,36 +601,91 @@
             activeBtn.classList.add('text-slate-900');
             activeBtn.setAttribute('aria-current', 'page');
 
-            // 3. Switch Page Content
             if(targetPageId) {
+                // Hide all pages
+                document.getElementById('page-profile').classList.add('hidden');
                 document.getElementById('page-stats').classList.add('hidden');
                 document.getElementById('page-self').classList.add('hidden');
+                
+                // Show target
                 document.getElementById(targetPageId).classList.remove('hidden');
+
+                // If switching to stats, make sure chart outline aligns
+                if (targetPageId === 'page-stats') {
+                    setTimeout(() => moveChartOutline(currentChartActiveCol || defaultChartCol), 50);
+                }
             }
         }
 
-        // Initialize on load to set the slider position to the 'Stats' tab
+        // -----------------------
+        // Chart Hover Slider Logic
+        // -----------------------
+        const chartOutline = document.getElementById('chart-outline');
+        const chartCols = document.querySelectorAll('.chart-col');
+        const chartContainer = document.getElementById('chart-bars-wrapper');
+        const defaultChartCol = document.getElementById('default-chart-col');
+        let currentChartActiveCol = defaultChartCol;
+
+        function moveChartOutline(col) {
+            if (!col || !chartOutline) return;
+            currentChartActiveCol = col;
+            
+            const barFill = col.querySelector('.bar-fill');
+            const height = barFill ? barFill.offsetHeight : 0;
+            const left = col.offsetLeft;
+            
+            // Slide outline
+            chartOutline.style.transform = `translateX(${left}px)`;
+            chartOutline.style.height = `${height}px`;
+            
+            // If the bar has 0 height, visually hide the ring outline so it doesn't look squished
+            chartOutline.style.opacity = height === 0 ? '0' : '1';
+
+            // Inherit dynamic color (defaults to blue)
+            const ringColor = col.dataset.ring || 'ring-blue-600';
+            chartOutline.className = `absolute left-0 bottom-[2px] w-16 rounded-t-md border-2 border-white pointer-events-none transition-all duration-300 ease-out z-20 ring-2 ${ringColor}`;
+        }
+
+        if(chartCols.length > 0) {
+            // Track hovered column
+            chartCols.forEach(col => {
+                col.addEventListener('mouseenter', () => moveChartOutline(col));
+            });
+            
+            // Snap back to default column when mouse leaves the chart area
+            chartContainer.addEventListener('mouseleave', () => moveChartOutline(defaultChartCol));
+        }
+
+        // -----------------------
+        // Initialization & Resize
+        // -----------------------
         window.addEventListener('DOMContentLoaded', () => {
-            // Small delay ensures DOM has painted layout widths correctly before calculating offset
+            // Default to 'My Profile' page based on requested addition
             setTimeout(() => {
-                switchTab('btn-stats', 'page-stats');
+                switchTab('btn-profile', 'page-profile');
+                if (defaultChartCol) moveChartOutline(defaultChartCol);
             }, 50);
         });
 
-        // Reposition slider on window resize to keep it accurately behind the active button
         window.addEventListener('resize', () => {
-            const activeBtn = document.querySelector('button[aria-current="page"]');
-            if (activeBtn) {
-                const slider = document.getElementById('nav-slider');
-                slider.style.transition = 'none'; // Temporarily disable animation during resize
-                slider.style.width = activeBtn.offsetWidth + 'px';
-                slider.style.transform = `translateX(${activeBtn.offsetLeft - 4}px)`;
-                
-                // Re-enable animation
+            // Re-calculate Navigation slider positioning instantly
+            const activeNavBtn = document.querySelector('button[aria-current="page"]');
+            if (activeNavBtn) {
+                const navSlider = document.getElementById('nav-slider');
+                navSlider.style.transition = 'none';
+                navSlider.style.width = activeNavBtn.offsetWidth + 'px';
+                navSlider.style.transform = `translateX(${activeNavBtn.offsetLeft - 4}px)`;
                 requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        slider.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-                    });
+                    requestAnimationFrame(() => navSlider.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1)');
+                });
+            }
+
+            // Re-calculate Chart outline positioning instantly if visible
+            if (chartOutline && !document.getElementById('page-stats').classList.contains('hidden')) {
+                chartOutline.style.transition = 'none';
+                moveChartOutline(currentChartActiveCol);
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => chartOutline.style.transition = 'all 0.3s ease-out');
                 });
             }
         });
