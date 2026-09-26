@@ -6,10 +6,10 @@ export function SkynetMark({ size = 32, className = "" }: { size?: number; class
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" className={className} fill="none">
       <rect width="32" height="32" rx="8" fill="currentColor" />
-      <g stroke="white" strokeWidth="1.6" strokeLinecap="round">
+      <g className="stroke-surface" strokeWidth="1.6" strokeLinecap="round">
         <path d="M16 16L8.5 9.5M16 16l7.5-6.5M16 16l-6 8M16 16l6 8" />
       </g>
-      <g fill="white">
+      <g className="fill-surface">
         <circle cx="16" cy="16" r="3.2" />
         <circle cx="8.5" cy="9.5" r="1.9" />
         <circle cx="23.5" cy="9.5" r="1.9" />

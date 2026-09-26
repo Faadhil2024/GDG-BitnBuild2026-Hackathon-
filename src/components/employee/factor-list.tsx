@@ -16,7 +16,7 @@ function statusText(f: Factor, n: number) {
   return `${f.score >= 2 ? "Strong" : "Some"} evidence · ${n} item${n === 1 ? "" : "s"}`;
 }
 
-export function FactorList() {
+export function FactorList({ viewer = "employer" }: { viewer?: "employer" | "employee" } = {}) {
   const { assessment, allEvidence, state, actions, employee } = useAssessment();
   const weighted = assessment.factors.filter((f) => f.weight > 0).sort((a, b) => b.weight - a.weight || b.score - a.score);
   const ignored = assessment.factors.filter((f) => f.weight === 0 && f.evidenceIds.length > 0);
@@ -93,9 +93,9 @@ export function FactorList() {
     <Card aria-labelledby="factors-heading" className="p-6">
       <div className="flex items-baseline justify-between">
         <h2 id="factors-heading" className="text-base font-semibold">
-          What the assessment is based on
+          {viewer === "employee" ? "How your grade was built" : "What the assessment is based on"}
         </h2>
-        <span className="text-xs text-ink-faint">Sorted by importance for a {employee.title}</span>
+        <span className="text-xs text-ink-faint">{viewer === "employee" ? `Weighted by what matters for a ${employee.title}` : `Sorted by importance for a ${employee.title}`}</span>
       </div>
       <ul className="mt-3">{weighted.map(renderFactor)}</ul>
       {ignored.length > 0 && (

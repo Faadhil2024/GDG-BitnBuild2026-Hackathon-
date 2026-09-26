@@ -118,11 +118,10 @@ function AccountMenu({ name, title, employeeId }: { name: string; title: string;
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
-  const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
   return (
     <div ref={wrap} className="relative">
       <button type="button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)} className="pressable flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1 pr-3 text-[15px] hover:bg-canvas">
-        {employeeId ? <Avatar employee={{ id: employeeId, name }} size={28} /> : <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[11px] font-semibold text-white">{initials}</span>}
+        <Avatar employee={{ id: employeeId ?? `mgr-${name.toLowerCase().replace(/\s+/g, "-")}`, name }} size={28} />
         <span className="font-medium">{name}</span>
         <CaretDown aria-hidden="true" size={12} weight="bold" className="text-ink-faint" />
       </button>

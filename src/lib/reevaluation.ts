@@ -10,7 +10,8 @@ import { fullAssessment } from "./appraisal-review";
  *     record, thin evidence, or a concern the new record can put in context.
  *     (Areas already evidenced, or not applicable to the job, cannot be "re-found".)
  *  2. The explanation must point at where the record lives — a connected system —
- *     and carry an identifier or date so the record can be located.
+ *     and carry an identifier or date so the record can be located. One system counts
+ *     as a lead (+1); two or more corroborating systems count as a record (+2).
  * When both hold, the record is admitted and the engine re-runs. The grade moves
  * only if the engine says so. No text is ever graded on its own.
  */
@@ -72,8 +73,9 @@ export function reevaluate(employee: Employee, categories: ContributionCategory[
       detail: statement.slice(0, 240),
       excerpt: statement.slice(0, 160),
       direction: "strengthens",
-      impact: 2,
-      confidence: "medium",
+      // Fair weighting: one system named is a lead (+1); two or more corroborating systems is a record (+2).
+      impact: Math.min(2, systems.length),
+      confidence: systems.length >= 2 ? "high" : "medium",
       discoveredIn: "challenge",
       recordedAt: at,
     });

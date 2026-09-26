@@ -18,6 +18,7 @@ function hash(s: string) {
 
 export function avatarUrl(e: Pick<Employee, "id" | "name">): string {
   if (e.id === "emp-sarah-lim") return "/images/sarah.jpg";
+  if (e.id === "mgr-jonathan-lee") return "https://randomuser.me/api/portraits/men/32.jpg";
   const first = e.name.split(" ")[0];
   const sex = FEMALE.has(first) ? "women" : "men";
   return `https://randomuser.me/api/portraits/${sex}/${hash(e.id) % 99}.jpg`;

@@ -92,7 +92,13 @@ export function ReportSheet({ viewer = "employer" }: { viewer?: "employer" | "em
           </dd>
         </dl>
         <div className="flex items-center justify-end gap-4 self-center">
-          {ai ? <GradeBox grade={ai.grade} label="AI grade" /> : <p className="text-sm text-ink-faint">No evidence indexed</p>}
+          {sa.reevaluation && sa.reevaluation.to !== sa.reevaluation.from && (
+            <div className="flex items-center gap-3 opacity-60">
+              <GradeBox grade={sa.reevaluation.from} label="Previous AI grade" />
+              <span aria-hidden="true" className="text-[22px] text-ink-faint">→</span>
+            </div>
+          )}
+          {ai ? <GradeBox grade={ai.grade} label={sa.reevaluation && sa.reevaluation.to !== sa.reevaluation.from ? "AI grade · re-evaluated" : "AI grade"} /> : <p className="text-sm text-ink-faint">No evidence indexed</p>}
           <GradeBox grade={sa.grade} label="Self-appraisal" />
         </div>
       </div>

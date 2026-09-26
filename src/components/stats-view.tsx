@@ -118,7 +118,7 @@ export function StatsView({ rows }: { rows: StatRow[] }) {
     );
   }
 
-  // Employee: no colleague grades. A team trend, then their own grade and report, then the grade ladder.
+  // Employee: no colleague data. Their own grade and report, then the grade ladder.
   const me = rows.find((r) => r.id === a.employeeId);
   const myDecision = a.employeeId ? decisions[a.employeeId] : undefined;
   const sa = appraisals[a.employeeId ?? ""];
@@ -229,8 +229,8 @@ function TeamTrend({ department }: { department: string }) {
           ))}
         </svg>
         <figcaption className="mt-3 flex flex-wrap items-center gap-6 text-[13px] text-ink-muted">
-          <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="inline-block h-[3px] w-6 rounded bg-accent" /> {department} average</span>
-          <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="inline-block h-0 w-6 border-t-2 border-dashed border-ink-faint" /> Company average</span>
+          <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="inline-block h-[3px] w-6 rounded bg-accent" /> {department} · verified average</span>
+          <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="inline-block h-0 w-6 border-t-2 border-dashed border-ink-faint" /> Sector benchmark</span>
           <span className="ml-auto text-ink-faint">Y axis: protocols met out of {N} · X axis: appraisal cycle</span>
         </figcaption>
       </figure>

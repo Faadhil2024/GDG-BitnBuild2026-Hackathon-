@@ -5,6 +5,7 @@ import { ArrowsClockwise, Check, EnvelopeSimple, Warning, X } from "@phosphor-ic
 import type { ContributionCategory, Employee } from "@/lib/types";
 import { CATEGORY_LABELS, roleProfiles } from "@/lib/assessment/roles";
 import { fullAssessment } from "@/lib/appraisal-review";
+import { evidenceFor } from "@/data/evidence";
 import { MANAGER_EMAIL, REEVAL_SAMPLES, reevaluate, type ReevaluationResult } from "@/lib/reevaluation";
 import { recordReevaluation, type SelfAppraisal } from "@/lib/self-appraisal";
 import { TECHNICAL_ROLES } from "@/data/self-appraisal";
@@ -32,7 +33,11 @@ export function ReevaluationPanel({ employee, sa }: { employee: Employee; sa: Se
 
   const base = fullAssessment(employee);
   const expected = roleProfiles[employee.role].expected;
-  const candidates = (base?.factors ?? []).filter((f) => expected.includes(f.category) && f.weight > 0);
+  // Every weighted area for the role. Ones outside the role's expected set are shown but will be refused with a reason.
+  const candidates = (base?.factors ?? []).filter((f) => f.weight > 0).sort((a, b) => Number(expected.includes(b.category)) - Number(expected.includes(a.category)) || b.weight - a.weight);
+  const all = candidates.map((f) => f.category);
+  const allOn = picked.length === all.length;
+  const indexed = evidenceFor(employee.id).filter((e) => e.discoveredIn !== "challenge");
   const samples = TECHNICAL_ROLES.includes(employee.role) ? REEVAL_SAMPLES.technical : REEVAL_SAMPLES.nonTechnical;
 
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
@@ -109,10 +114,14 @@ export function ReevaluationPanel({ employee, sa }: { employee: Employee; sa: Se
       {failures >= 2 && <p className="mt-3 rounded-md border border-moderate/30 bg-moderate-soft px-3 py-2 text-[14px]">Two attempts did not locate records. Please contact {employee.manager} at <a className="underline" href={`mailto:${MANAGER_EMAIL(employee.manager)}`}>{MANAGER_EMAIL(employee.manager)}</a>.</p>}
 
       {open && (
-        <div className="animate-rise mt-6 space-y-5">
+        <div className="animate-rise mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="space-y-5">
           <fieldset disabled={!!running}>
             <legend className="text-[14px] font-medium">Which areas were missed?</legend>
             <div className="mt-2 flex flex-wrap gap-2">
+              <button type="button" aria-pressed={allOn} onClick={() => setPicked(allOn ? [] : all)} className={`pressable rounded-full border px-3.5 py-1.5 text-[14px] font-medium ${allOn ? "border-ink bg-ink text-surface" : "border-line bg-surface text-ink hover:bg-canvas"}`}>
+                All areas <span className="ml-1 text-[12px] opacity-70">recheck everything</span>
+              </button>
               {candidates.map((f) => {
                 const on = picked.includes(f.category);
                 return (
@@ -189,6 +198,24 @@ export function ReevaluationPanel({ employee, sa }: { employee: Employee; sa: Se
               </Button>
             </div>
           )}
+        </div>
+
+        {/* What is already on record, so the note can point at what is missing rather than repeat what exists */}
+        <aside className="self-start rounded-md border border-line bg-canvas/60 p-4 text-[13px]" aria-label="Indexed evidence">
+          <p className="font-semibold">Indexed evidence for {employee.name.split(" ")[0]}</p>
+          <p className="mt-1 text-ink-faint">Already on record. Point the engine at what is not here.</p>
+          <ul className="mt-3 space-y-2">
+            {indexed.map((e) => (
+              <li key={e.id} className="flex gap-2 leading-snug">
+                <span className="shrink-0 font-mono text-accent">{e.id}</span>
+                <span className="text-ink-muted">{e.summary} <span className="text-ink-faint">· {CATEGORY_LABELS[e.category]}</span></span>
+              </li>
+            ))}
+            {indexed.length === 0 && <li className="text-ink-faint">Nothing indexed yet.</li>}
+          </ul>
+          <p className="mt-4 font-semibold">Systems the engine can check</p>
+          <p className="mt-1 text-ink-muted">Slack · Project tracker · GitHub · CRM · HR records · Documents</p>
+        </aside>
         </div>
       )}
 
