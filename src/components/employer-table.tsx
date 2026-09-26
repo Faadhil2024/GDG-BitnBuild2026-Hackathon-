@@ -85,7 +85,7 @@ export function EmployerTable({ rows }: { rows: EmployerRow[] }) {
       <div className="flex flex-wrap items-center gap-3 px-6 py-4">
         <h2 className="text-[17px] font-semibold">Team review</h2>
         <span className="text-[13px] text-ink-faint" role="status" aria-live="polite">
-          {sorted.length} of -- {awaiting} awaiting your decision
+          {sorted.length} of {rows.length} · {awaiting} awaiting your decision
         </span>
         <div className="ml-auto flex flex-wrap items-center gap-2">
           <label className="sr-only" htmlFor="er-q">Filter</label>
