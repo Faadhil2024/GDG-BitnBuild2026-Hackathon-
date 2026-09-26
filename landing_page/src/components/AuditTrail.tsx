@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileCheck2, Fingerprint, Download, ShieldCheck } from "lucide-react";
+import { FileCheck2, Fingerprint, ShieldCheck } from "lucide-react";
 
 const rows = [
   { t: "09:41:02", actor: "AI Appraiser", event: "Initial appraisal", detail: "32/100 LOW · 4 signals · cov 31% · conf 0.41", hash: "9f2c…a1" },
@@ -57,9 +57,6 @@ export default function AuditTrail() {
                 </div>
               ))}
             </div>
-            <button className="mt-6 inline-flex items-center gap-2 border border-[#15181c] bg-[#15181c] px-5 py-2.5 text-[12.5px] font-semibold text-[#f7f5f1] hover:bg-[#1b3a5c] transition-colors">
-              <Download className="h-4 w-4" /> Export case bundle (.pdf + .json)
-            </button>
           </div>
 
           <motion.div

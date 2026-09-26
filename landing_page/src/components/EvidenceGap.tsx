@@ -41,7 +41,7 @@ export default function EvidenceGap() {
           </div>
         </div>
 
-        <div className="mt-11 grid lg:grid-cols-2 gap-8">
+        <div className="mt-11 grid lg:grid-cols-2 gap-8 items-start">
           {/* LEFT: what AI saw */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -56,7 +56,7 @@ export default function EvidenceGap() {
                   4 signals · 31% coverage
                 </div>
               </div>
-              <div className="stamp text-[10px] text-[#b23a2e]">Low</div>
+              <div className="stamp text-[15px] px-3.5 py-1.5 text-[#b23a2e]">Low</div>
             </div>
 
             <div className="px-6 py-2">
@@ -111,7 +111,7 @@ export default function EvidenceGap() {
                   5 proofs · 89% coverage
                 </div>
               </div>
-              <div className="stamp text-[10px] text-[#3c6b4a]">Moderate</div>
+              <div className="stamp text-[15px] px-3.5 py-1.5 text-[#3c6b4a]">Moderate</div>
             </div>
 
             <div className="px-6 py-2">

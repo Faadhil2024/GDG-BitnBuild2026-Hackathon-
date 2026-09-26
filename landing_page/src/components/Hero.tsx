@@ -50,37 +50,14 @@ export default function Hero({ onRunDemo }: { onRunDemo: () => void }) {
       <div className="absolute inset-x-0 top-0 h-[520px] ruled opacity-70 pointer-events-none" />
 
       <div className="relative mx-auto max-w-[1240px] px-6 md:px-10">
-        {/* file header */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-[#ded8ce] py-2.5"
-        >
-          <span className="label text-[9.5px] text-[#9b9488]">Case file</span>
-          <span className="label text-[9.5px] text-[#1b3a5c]">EMP-0417 / H1 2026</span>
-          <span className="label text-[9.5px] text-[#9b9488]">Classification: High-impact workforce decision</span>
-          <span className="label text-[9.5px] text-[#b23a2e] ml-auto">Status: Contested</span>
-        </motion.div>
-
         <div className="grid lg:grid-cols-[1.02fr_0.98fr] gap-12 lg:gap-14 items-start pt-10 md:pt-14">
           {/* LEFT */}
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2.5 border border-[#1b3a5c]/25 bg-white px-3 py-1.5"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#1b3a5c]" />
-              <span className="label text-[9.5px] text-[#1b3a5c]">
-                Two-sided evidence &amp; contestability layer
-              </span>
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.07 }}
-              className="mt-6 text-[42px] leading-[0.98] md:text-[68px] font-bold tracking-[-0.032em] text-[#15181c]"
+              className="text-[42px] leading-[0.98] md:text-[68px] font-bold tracking-[-0.032em] text-[#15181c]"
             >
               What if AI judged you{" "}
               <span className="relative inline-block">
@@ -305,12 +282,6 @@ export default function Hero({ onRunDemo }: { onRunDemo: () => void }) {
               </div>
             </div>
 
-            {/* side annotations */}
-            <div className="absolute -left-3 top-[128px] hidden xl:block">
-              <div className="rotate-[-90deg] origin-right translate-x-[-18px] label text-[8.5px] text-[#b23a2e]">
-                {showFull ? "89% observed" : "31% observed"}
-              </div>
-            </div>
           </motion.div>
         </div>
 
