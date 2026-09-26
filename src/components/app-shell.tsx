@@ -7,6 +7,7 @@ import { CaretDown, SignOut } from "@phosphor-icons/react";
 import { COMPANY } from "@/data/employees";
 import { signOut, useSession } from "@/lib/session";
 import { Login } from "./login";
+import { Landing } from "./landing/landing";
 import { SkynetMark } from "./brand";
 import { GlobalAnnouncer, UpdatesMenu } from "./announcer";
 
@@ -17,18 +18,30 @@ export function AppShell({ children }: { children: ReactNode }) {
   const path = usePathname();
   const router = useRouter();
 
-  // Route scoping: an employee only ever sees their own profile; an employer never sees the self-appraisal form.
+  const onLogin = path === "/login";
+
+  // Route scoping. Signed out: the landing page at "/", the sign-in at "/login", everything else goes to sign-in.
+  // Signed in: an employee only ever sees their own profile; an employer never sees the self-appraisal form.
   useEffect(() => {
-    if (session.status !== "in") return;
+    if (session.status === "loading") return;
+    if (session.status === "out") {
+      if (path !== "/" && !onLogin) router.replace("/login");
+      return;
+    }
     const a = session.account;
+    if (onLogin) {
+      router.replace(a.role === "employer" ? "/" : `/employees/${a.employeeId}`);
+      return;
+    }
     if (a.role === "employee") {
       const own = `/employees/${a.employeeId}`;
       if (path === "/" || (path.startsWith("/employees/") && path !== own)) router.replace(own);
     } else if (path.startsWith("/self-appraisal")) router.replace("/");
-  }, [session, path, router]);
+  }, [session, path, onLogin, router]);
 
   if (session.status === "loading") return <div className="min-h-[100dvh]" aria-busy="true" />;
-  if (session.status === "out") return <Login />;
+  if (session.status === "out") return onLogin ? <Login /> : path === "/" ? <Landing /> : <div className="min-h-[100dvh]" aria-busy="true" />;
+  if (onLogin) return <div className="min-h-[100dvh]" aria-busy="true" />;
 
   const a = session.account;
   const employer = a.role === "employer";
