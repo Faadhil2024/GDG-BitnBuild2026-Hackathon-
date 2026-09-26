@@ -10,6 +10,7 @@ import { CHALLENGEABLE } from "@/lib/assessment/challenge";
 import { evaluateDisagreement, gradeIndex } from "@/lib/appraisal-review";
 import { saveDecision, useDecisions, useSelfAppraisals, type Decision, type ReviewRound } from "@/lib/self-appraisal";
 import { GRADES, type ContributionCategory, type Grade } from "@/lib/types";
+import { useSession } from "@/lib/session";
 import { Button, GradeBadge, Pill, formatDate } from "@/components/ui";
 
 export interface EmployerRow {
@@ -24,27 +25,38 @@ type SortKey = "name" | "department" | "self" | "ai" | "status";
 
 const MAX_ROUNDS = 3;
 
-export function EmployerTable({ rows, reviewer }: { rows: EmployerRow[]; reviewer: string }) {
+type StatusFilter = "all" | "completed" | "awaiting" | "not_submitted";
+
+export function EmployerTable({ rows }: { rows: EmployerRow[] }) {
+  const session = useSession();
+  const reviewer = session.status === "in" ? session.account.name : "Reviewer";
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const appraisals = useSelfAppraisals();
   const decisions = useDecisions();
   const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({ key: "status", dir: 1 });
   const [q, setQ] = useState("");
-  const [dept, setDept] = useState("All");
+  const [dept, setDept] = useState("");
   const [reviewing, setReviewing] = useState<EmployerRow | null>(null);
 
-  const depts = useMemo(() => ["All", ...Array.from(new Set(rows.map((r) => r.department))).sort()], [rows]);
+  const depts = useMemo(() => Array.from(new Set(rows.map((r) => r.department))).sort(), [rows]);
 
   const statusRank = (r: EmployerRow) => (decisions[r.id] ? 2 : appraisals[r.id] ? 0 : 1); // awaiting decision first
 
   const sorted = useMemo(() => {
     const s = q.trim().toLowerCase();
-    const list = rows.filter((r) => (dept === "All" || r.department === dept) && (!s || r.name.toLowerCase().includes(s) || r.title.toLowerCase().includes(s)));
+    const statusOf = (r: EmployerRow): StatusFilter => (decisions[r.id] ? "completed" : appraisals[r.id] ? "awaiting" : "not_submitted");
+    const list = rows.filter(
+      (r) =>
+        (!dept || dept === "All" || r.department === dept) &&
+        (statusFilter === "all" || statusOf(r) === statusFilter) &&
+        (!s || r.name.toLowerCase().includes(s) || r.title.toLowerCase().includes(s)),
+    );
     const val = (r: EmployerRow) => {
       switch (sort.key) {
         case "name": return r.name;
         case "department": return r.department;
         case "self": return appraisals[r.id] ? gradeIndex(appraisals[r.id].grade) : 99;
-        case "ai": return r.aiGrade ? gradeIndex(r.aiGrade) : 99;
+        case "ai": return appraisals[r.id] && r.aiGrade ? gradeIndex(r.aiGrade) : 99;
         case "status": return statusRank(r);
       }
     };
@@ -54,7 +66,7 @@ export function EmployerTable({ rows, reviewer }: { rows: EmployerRow[]; reviewe
       return (c || a.name.localeCompare(b.name)) * sort.dir;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, q, dept, sort, appraisals, decisions]);
+  }, [rows, q, dept, statusFilter, sort, appraisals, decisions]);
 
   const toggle = (key: SortKey) => setSort((s) => (s.key === key ? { key, dir: s.dir === 1 ? -1 : 1 } : { key, dir: 1 }));
 
@@ -65,26 +77,36 @@ export function EmployerTable({ rows, reviewer }: { rows: EmployerRow[]; reviewe
 
   const th = (k: SortKey, label: string, className = "") => <SortTh k={k} sort={sort} onToggle={toggle} className={className}>{label}</SortTh>;
 
+  const select = "rounded-md border border-line bg-surface px-2.5 py-1.5 text-[14px]";
   const awaiting = rows.filter((r) => appraisals[r.id] && !decisions[r.id]).length;
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-3 px-5 py-4">
-        <h2 className="text-base font-semibold">Team review</h2>
-        <span className="text-xs text-ink-faint" role="status" aria-live="polite">
-          {sorted.length} of {rows.length} · {awaiting} awaiting your decision
+      <div className="flex flex-wrap items-center gap-3 px-6 py-4">
+        <h2 className="text-[17px] font-semibold">Team review</h2>
+        <span className="text-[13px] text-ink-faint" role="status" aria-live="polite">
+          {sorted.length} of -- {awaiting} awaiting your decision
         </span>
         <div className="ml-auto flex flex-wrap items-center gap-2">
           <label className="sr-only" htmlFor="er-q">Filter</label>
-          <input id="er-q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter by name or title" className="w-56 rounded-md border border-line bg-surface px-2.5 py-1.5 text-sm" autoComplete="off" />
+          <input id="er-q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter by name or title" className={select + " w-56"} autoComplete="off" />
           <label className="sr-only" htmlFor="er-dept">Department</label>
-          <select id="er-dept" value={dept} onChange={(e) => setDept(e.target.value)} className="rounded-md border border-line bg-surface px-2.5 py-1.5 text-sm">
-            {depts.map((d) => <option key={d}>{d}</option>)}
+          <select id="er-dept" value={dept} onChange={(e) => setDept(e.target.value)} className={select}>
+            <option value="" disabled>Departments</option>
+            <option value="All">All departments</option>
+            {depts.map((d) => <option key={d} value={d}>{d}</option>)}
+          </select>
+          <label className="sr-only" htmlFor="er-status">Status</label>
+          <select id="er-status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)} className={select}>
+            <option value="all">All statuses</option>
+            <option value="completed">Completed</option>
+            <option value="awaiting">Not reviewed</option>
+            <option value="not_submitted">Not submitted</option>
           </select>
         </div>
       </div>
 
-      <table className="w-full text-sm">
+      <table className="w-full text-[15px]">
         <caption className="sr-only">Employees with self-grade, AI grade and review decision</caption>
         <thead className="border-y border-line bg-canvas text-left text-xs text-ink-faint">
           <tr>
@@ -103,14 +125,14 @@ export function EmployerTable({ rows, reviewer }: { rows: EmployerRow[]; reviewe
             return (
               <tr key={r.id} className="row-link border-t border-line first:border-t-0">
                 <th scope="row" className="whitespace-nowrap px-5 py-3 text-left font-medium">
-                  <Link href={`/employees/${r.id}`} className="pressable inline-block text-accent underline-offset-2 hover:underline" title="View report and AI reasoning">
+                  <Link href={`/employees/${r.id}`} className="pressable inline-block text-accent underline-offset-2 hover:underline" title="Open report">
                     {r.name}
                   </Link>
                 </th>
                 <td className="whitespace-nowrap px-5 py-3 text-ink-muted">{r.department}</td>
                 <td className="whitespace-nowrap px-5 py-3 text-ink-muted">{r.title}</td>
-                <td className="px-5 py-3">{sa ? <GradeBadge grade={sa.grade} size="sm" label={null} /> : <span className="text-xs text-ink-faint">Not submitted</span>}</td>
-                <td className="px-5 py-3">{r.aiGrade ? <GradeBadge grade={r.aiGrade} size="sm" label={null} /> : <span className="text-xs text-ink-faint">No evidence</span>}</td>
+                <td className="px-5 py-3">{sa ? <GradeBadge grade={sa.grade} size="sm" label={null} /> : <span className="text-[13px] text-ink-faint">Not submitted</span>}</td>
+                <td className="px-5 py-3">{sa && r.aiGrade ? <GradeBadge grade={r.aiGrade} size="sm" label={null} /> : <span className="text-[13px] text-ink-faint">{sa ? "No evidence indexed" : "Graded on submission"}</span>}</td>
                 <td className="px-5 py-3">
                   {d ? (
                     <DecisionPill d={d} />
@@ -126,11 +148,6 @@ export function EmployerTable({ rows, reviewer }: { rows: EmployerRow[]; reviewe
                       <Button variant="secondary" onClick={() => setReviewing(r)} className="py-1.5">
                         <X size={14} weight="bold" /> Disagree
                       </Button>
-                      {sa.ai && sa.ai.gap !== 0 && (
-                        <span className="text-xs text-ink-faint">
-                          {Math.abs(sa.ai.gap)} step{Math.abs(sa.ai.gap) > 1 ? "s" : ""} apart
-                        </span>
-                      )}
                     </div>
                   )}
                 </td>

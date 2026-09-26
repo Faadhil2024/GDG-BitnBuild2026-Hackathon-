@@ -9,16 +9,17 @@ export function AssessmentCard() {
   const { state, assessment, previous, pendingEnrichment, actions } = useAssessment();
   const frozen = state.phase === "frozen";
   const discovering = state.phase === "discovering";
-  const conf = { high: "High", medium: "Medium", low: "Low" }[assessment.confidence];
+  // Confidence is about the evidence, not the person: shown as strength of the record so it never reads as a second grade.
+  const strength = { high: { label: "Strong", dots: 3 }, medium: { label: "Fair", dots: 2 }, low: { label: "Thin", dots: 1 } }[assessment.confidence];
 
   return (
     <Card aria-labelledby="assessment-heading" className="overflow-hidden">
       <div className="flex flex-wrap items-center justify-between gap-4 px-6 pt-6">
         <div>
-          <h2 id="assessment-heading" className="text-base font-semibold">
-            Current AI assessment
+          <h2 id="assessment-heading" className="text-[17px] font-semibold">
+            Evidence-based grade
           </h2>
-          <p className="mt-0.5 text-xs text-ink-faint">Computed from indexed evidence · not an employment decision</p>
+          <p className="mt-0.5 text-[13px] text-ink-faint">Computed from indexed records only · not an employment decision</p>
         </div>
         <div className="flex items-center gap-2">
           {frozen && <Pill tone="frozen">Frozen — under review</Pill>}
@@ -51,8 +52,13 @@ export function AssessmentCard() {
           <dd className="mt-0.5 text-lg font-semibold tabular-nums">{Math.round(assessment.coverage * 100)}%</dd>
         </div>
         <div className="px-6 py-3">
-          <dt className="text-xs text-ink-faint">Confidence</dt>
-          <dd className="mt-0.5 text-lg font-semibold">{conf}</dd>
+          <dt className="text-xs text-ink-faint">Evidence strength</dt>
+          <dd className="mt-0.5 flex items-center gap-2 text-lg font-semibold">
+            <span aria-hidden="true" className="flex gap-0.5">
+              {[1, 2, 3].map((i) => <span key={i} className={`h-2.5 w-2.5 rounded-full ${i <= strength.dots ? "bg-ink" : "bg-line"}`} />)}
+            </span>
+            {strength.label}
+          </dd>
         </div>
       </dl>
 
@@ -68,7 +74,7 @@ export function AssessmentCard() {
       <div className="flex flex-wrap items-center gap-2 border-t border-line px-6 py-4">
         {state.phase === "initial" && (
           <Button variant="primary" onClick={actions.discover} disabled={pendingEnrichment.length === 0}>
-            Discover evidence across connected sources
+            AI reasoning · Model verification
           </Button>
         )}
         {(state.phase === "enriched" || state.phase === "reviewed") && (

@@ -27,6 +27,8 @@
 
 html {
   color-scheme: light;
+  /* One step up from the browser default so 14px utility text lands at ~15px and body at ~17px. */
+  font-size: 106.25%;
 }
 
 body {

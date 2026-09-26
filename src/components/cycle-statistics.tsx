@@ -18,7 +18,7 @@ function Bar({ value, max, className }: { value: number; max: number; className:
 }
 
 /**
- * Detailed cycle statistics. Intentionally not rendered on any route right now —
+ * Detailed cycle statistics. Intentionally not rendered on any route --
  * kept for a later phase. Import <CycleStatistics /> to bring it back.
  */
 export function CycleStatistics() {

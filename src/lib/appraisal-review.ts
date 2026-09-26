@@ -44,7 +44,7 @@ export interface AiReview {
  * from the evidence engine; the narrative compares what the employee claims
  * against what is indexed. It never invents evidence.
  */
-export function reviewSelfAppraisal(employee: Employee, answers: Record<string, string>, selfGrade: Grade): AiReview | undefined {
+export function reviewSelfAppraisal(employee: Employee, answers: Record<string, string>, selfGrade: Grade, reviewedAt = new Date().toISOString()): AiReview | undefined {
   const a = fullAssessment(employee);
   if (!a) return undefined;
   const text = Object.values(answers).join(" ").toLowerCase();
@@ -88,8 +88,44 @@ export function reviewSelfAppraisal(employee: Employee, answers: Record<string, 
     concerns,
     summary: parts.join(" "),
     provenance: "deterministic",
-    reviewedAt: new Date().toISOString(),
+    reviewedAt,
   };
+}
+
+/** Per-question reasoning shown to the employer beside each answer. Evidence-bound: cites IDs or says nothing is indexed. */
+export interface QuestionReasoning {
+  questionId: string;
+  claimed: ContributionCategory[];
+  backed: { category: ContributionCategory; evidenceIds: string[] }[];
+  unbacked: ContributionCategory[];
+  contradicted: { category: ContributionCategory; evidenceIds: string[] }[];
+  note: string;
+}
+
+export function reasonPerQuestion(employee: Employee, answers: Record<string, string>): QuestionReasoning[] {
+  const a = fullAssessment(employee);
+  const ev = evidenceFor(employee.id).filter((e) => e.discoveredIn !== "challenge");
+  const byCat = (c: ContributionCategory) => ev.filter((e) => e.category === c);
+  return Object.entries(answers).map(([questionId, text]) => {
+    const t = text.toLowerCase();
+    const claimed = (Object.keys(CLAIM_WORDS) as ContributionCategory[]).filter((c) => CLAIM_WORDS[c].some((w) => w && t.includes(w)));
+    const backed = claimed
+      .map((c) => ({ category: c, evidenceIds: byCat(c).filter((e) => e.direction === "strengthens").map((e) => e.id) }))
+      .filter((x) => x.evidenceIds.length);
+    const contradicted = claimed
+      .map((c) => ({ category: c, evidenceIds: byCat(c).filter((e) => e.direction === "weakens" && !e.mitigates).map((e) => e.id) }))
+      .filter((x) => x.evidenceIds.length);
+    const unbacked = claimed.filter((c) => !backed.some((b) => b.category === c) && !contradicted.some((b) => b.category === c) && c !== "internal_activity");
+    const L = (c: ContributionCategory) => CATEGORY_LABELS[c].toLowerCase();
+    const parts: string[] = [];
+    if (!text.trim()) parts.push("No answer given.");
+    else if (!claimed.length) parts.push("This answer is context, not a contribution claim — it does not move the grade either way.");
+    for (const b of backed) parts.push(`The ${L(b.category)} claim is supported by ${b.evidenceIds.join(", ")}.`);
+    for (const c of contradicted) parts.push(`On ${L(c.category)}, the record also shows a concern (${c.evidenceIds.join(", ")}), which the answer does not address.`);
+    if (unbacked.length) parts.push(`Nothing indexed yet for ${unbacked.map(L).join(", ")} — the claim stands on the employee's word alone and did not raise the grade.`);
+    if (a && claimed.some((c) => a.missingAreas.includes(c))) parts.push("This is one of the areas the evidence picture is missing for this role.");
+    return { questionId, claimed, backed, unbacked, contradicted, note: parts.join(" ") };
+  });
 }
 
 export interface DisagreementInput {

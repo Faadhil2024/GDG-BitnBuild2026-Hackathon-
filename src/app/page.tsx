@@ -1,23 +1,14 @@
 import { COMPANY, employees } from "@/data/employees";
-import { evidence, evidenceFor } from "@/data/evidence";
+import { evidence } from "@/data/evidence";
 import { sources, SYSTEM_LABELS, SYSTEM_ORDER } from "@/data/sources";
-import { assess } from "@/lib/assessment/engine";
-import { Pill } from "@/components/ui";
-import type { EmployeeRow } from "@/components/employee-table";
-import type { EmployerRow } from "@/components/employer-table";
-import { HomeView } from "@/components/home-view";
-import { SourcePeek } from "@/components/source-peek";
+import { Card, Pill } from "@/components/ui";
+import { EmployerTable, type EmployerRow } from "@/components/employer-table";
+import { CycleSummary } from "@/components/cycle-summary";
 import { fullAssessment } from "@/lib/appraisal-review";
 
+/** Employer home. Employees are routed to their own profile by the shell. */
 export default function OverviewPage() {
-  const rows: EmployeeRow[] = employees.map((e) => {
-    const ev = evidenceFor(e.id).filter((x) => x.discoveredIn === "initial");
-    const a = ev.length ? assess(e, ev) : undefined;
-    return { id: e.id, name: e.name, title: e.title, department: e.department, grade: a?.grade, confidence: a?.confidence, missing: a?.missingAreas.length ?? 0, count: ev.length };
-  });
-  const employerRows: EmployerRow[] = employees.map((e) => ({ id: e.id, name: e.name, title: e.title, department: e.department, aiGrade: fullAssessment(e)?.grade }));
-  const assessed = rows.filter((r) => r.grade);
-  const flagged = assessed.filter((r) => r.confidence === "low" || r.missing > 0);
+  const rows: EmployerRow[] = employees.map((e) => ({ id: e.id, name: e.name, title: e.title, department: e.department, aiGrade: fullAssessment(e)?.grade }));
 
   const groups = SYSTEM_ORDER.map((system) => {
     const ofSystem = sources.filter((s) => s.system === system);
@@ -29,39 +20,22 @@ export default function OverviewPage() {
     };
   }).filter((g) => g.count > 0);
 
-  const stats = [
-    { k: "Employees in cycle", v: employees.length, s: `${assessed.length} assessed · ${rows.length - assessed.length} awaiting evidence` },
-    { k: "Flagged for review", v: flagged.length, s: "Expected evidence areas missing or low confidence" },
-    { k: "Evidence items indexed", v: evidence.length, s: `${groups.length} connected sources`, peek: true },
-  ];
-
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm text-ink-faint">{COMPANY.name}</p>
-          <h1 className="mt-0.5 text-[28px] font-semibold tracking-tight">{COMPANY.cycle}</h1>
-          <p className="mt-1.5 text-sm text-ink-muted">{COMPANY.cycleWindow} · every assessment is evidence-based and requires human review before any decision.</p>
+          <p className="text-[15px] text-ink-faint">{COMPANY.name}</p>
+          <h1 className="mt-0.5 text-[30px] font-semibold tracking-tight">{COMPANY.cycle}</h1>
+          <p className="mt-1.5 text-[15px] text-ink-muted">{COMPANY.cycleWindow} · every grade is evidence-based and needs your decision before it is final.</p>
         </div>
         <Pill tone="accent">Simulated data</Pill>
       </div>
 
-      <dl className="grid grid-cols-1 divide-y divide-line rounded-lg border border-line bg-surface md:grid-cols-3 md:divide-x md:divide-y-0">
-        {stats.map((x) => (
-          <div key={x.k} className="relative px-6 py-5">
-            {x.peek && (
-              <div className="absolute right-4 top-4">
-                <SourcePeek groups={groups} />
-              </div>
-            )}
-            <dt className="text-xs text-ink-faint">{x.k}</dt>
-            <dd className="mt-1 text-3xl font-semibold tabular-nums">{x.v}</dd>
-            <dd className="mt-1 text-xs text-ink-muted">{x.s}</dd>
-          </div>
-        ))}
-      </dl>
+      <CycleSummary total={employees.length} evidenceCount={evidence.length} groups={groups} />
 
-      <HomeView employeeRows={rows} employerRows={employerRows} />
+      <Card className="overflow-hidden">
+        <EmployerTable rows={rows} />
+      </Card>
     </div>
   );
 }

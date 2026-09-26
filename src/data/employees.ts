@@ -73,11 +73,6 @@ export const employees: Employee[] = [
 
 export const DEMO_EMPLOYEE_ID = "emp-sarah-lim";
 
-/** Named people a reviewer can "view as". Cosmetic in this prototype — it does not gate data. */
-export const VIEWERS = [
-  { name: "Jonathan Lee", title: "Employer · Marketing Manager" },
-  { name: "Employee", title: "Employee view" },
-];
 
 export function getEmployee(id: string) {
   return employees.find((e) => e.id === id);

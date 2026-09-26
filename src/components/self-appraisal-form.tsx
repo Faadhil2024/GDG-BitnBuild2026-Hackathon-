@@ -2,24 +2,27 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DEMO_EMPLOYEE_ID, employees } from "@/data/employees";
+import { useSession } from "@/lib/session";
 import { NON_TECHNICAL_SEEDS, pickSeed, QUESTIONS, TECHNICAL_ROLES, TECHNICAL_SEEDS } from "@/data/self-appraisal";
 import { GRADES, type Grade } from "@/lib/types";
 import { GRADE_MEANING } from "@/lib/assessment/engine";
 import { saveSelfAppraisal, useSelfAppraisals } from "@/lib/self-appraisal";
-import { reviewSelfAppraisal, type AiReview } from "@/lib/appraisal-review";
+import { reviewSelfAppraisal } from "@/lib/appraisal-review";
 import { Button, Card, GradeBadge, Pill, formatDate } from "@/components/ui";
 import { Check } from "@phosphor-icons/react";
 
 const blank = () => Object.fromEntries(QUESTIONS.map((q) => [q.id, ""]));
 
 export function SelfAppraisalForm() {
-  const [employeeId, setEmployeeId] = useState(DEMO_EMPLOYEE_ID);
+  const session = useSession();
+  // Bound to the signed-in employee. There is no picking someone else.
+  const employeeId = (session.status === "in" && session.account.employeeId) || DEMO_EMPLOYEE_ID;
   const employee = employees.find((e) => e.id === employeeId)!;
   const [answers, setAnswers] = useState<Record<string, string>>(blank);
   const [grade, setGrade] = useState<Grade | "">("");
   const [seedLabel, setSeedLabel] = useState<string | null>(null);
   const [status, setStatus] = useState("");
-  const [confirm, setConfirm] = useState<{ name: string; at: string; grade: Grade; ai?: AiReview } | null>(null);
+  const [confirm, setConfirm] = useState<{ at: string } | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const submitted = useSelfAppraisals()[employeeId];
   const technical = TECHNICAL_ROLES.includes(employee.role);
@@ -56,8 +59,8 @@ export function SelfAppraisalForm() {
     // The AI review runs immediately on submission, from indexed evidence only.
     const ai = reviewSelfAppraisal(employee, answers, grade as Grade);
     saveSelfAppraisal({ employeeId, answers, grade: grade as Grade, submittedAt: at, ai });
-    setConfirm({ name: employee.name, at, grade: grade as Grade, ai });
-    setStatus(`Self-appraisal for ${employee.name} submitted${ai ? ` and reviewed: evidence-based grade ${ai.grade}` : ""}.`);
+    setConfirm({ at });
+    setStatus("Self-appraisal submitted.");
   };
 
   const field = "w-full rounded-md border border-line bg-surface px-3 py-2 text-sm leading-relaxed focus:border-accent";
@@ -67,17 +70,10 @@ export function SelfAppraisalForm() {
       <Card className="p-6">
         <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
           <div>
-            <label htmlFor="sa-emp" className="text-sm font-medium">
-              Employee
-            </label>
-            <select id="sa-emp" value={employeeId} onChange={(e) => { setEmployeeId(e.target.value); reset(); }} className={`${field} mt-1 max-w-md`}>
-              {employees.map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.name} — {e.title}
-                </option>
-              ))}
-            </select>
-            <p className="mt-1.5 text-xs text-ink-faint">
+            <p className="text-[13px] text-ink-faint">Employee</p>
+            <p className="mt-0.5 text-[17px] font-semibold">{employee.name}</p>
+            <p className="mt-1 text-[15px] text-ink-muted">{employee.title}</p>
+            <p className="mt-1.5 text-[13px] text-ink-faint">
               {employee.department} · reports to {employee.manager} ·{" "}
               <Pill tone={technical ? "accent" : "neutral"}>{technical ? "Technical role" : "Non-technical role"}</Pill>
             </p>
@@ -93,7 +89,7 @@ export function SelfAppraisalForm() {
         </div>
         {submitted && (
           <p className="mt-4 rounded-md border border-high/30 bg-high-soft px-3 py-2 text-sm">
-            A self-appraisal for {employee.name} was submitted on {formatDate(submitted.submittedAt)} with self-grade {submitted.grade}. Submitting again replaces it.
+            You submitted your self-appraisal on {formatDate(submitted.submittedAt)}. Submitting again replaces it.
           </p>
         )}
         <p role="status" aria-live="polite" className={`mt-3 text-xs ${status ? "text-ink-muted" : "sr-only"}`}>
@@ -160,31 +156,16 @@ export function SelfAppraisalForm() {
         ref={dialog}
         onClose={() => setConfirm(null)}
         aria-labelledby="sa-confirm-title"
-        className="animate-drawer m-auto w-[min(440px,92vw)] rounded-lg border border-line bg-surface p-6 text-ink shadow-2xl"
+        className="animate-drawer m-auto w-[min(400px,92vw)] rounded-lg border border-line bg-surface p-8 text-ink shadow-2xl"
       >
         {confirm && (
           <div className="text-center">
             <span aria-hidden="true" className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-high text-white">
               <Check size={24} weight="bold" />
             </span>
-            <h2 id="sa-confirm-title" className="mt-4 text-lg font-semibold">
-              Self-appraisal submitted
-            </h2>
-            <p className="mt-1 text-sm text-ink-muted">
-              {confirm.name} · {formatDate(confirm.at)}
-            </p>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-left">
-              <div className="rounded-md border border-line p-3">
-                <p className="text-xs text-ink-faint">Self-grade</p>
-                <div className="mt-1"><GradeBadge grade={confirm.grade} size="sm" label={null} /></div>
-              </div>
-              <div className="rounded-md border border-line p-3">
-                <p className="text-xs text-ink-faint">AI grade from evidence</p>
-                <div className="mt-1">{confirm.ai ? <GradeBadge grade={confirm.ai.grade} size="sm" label={null} /> : <span className="text-sm text-ink-faint">No evidence indexed</span>}</div>
-              </div>
-            </div>
-            {confirm.ai && <p className="prose-measure mt-3 text-left text-xs text-ink-muted">{confirm.ai.summary}</p>}
-            <p className="mt-3 text-xs text-ink-faint">Your manager will see both grades and can agree or open a review.</p>
+            <h2 id="sa-confirm-title" className="mt-4 text-[22px] font-semibold">Completed</h2>
+            <p className="mt-1 text-[15px] text-ink-muted">Your self-appraisal was submitted on {formatDate(confirm.at)}.</p>
+            <p className="mt-3 text-[13px] text-ink-faint">It is now with {employee.manager}. You can read what you submitted from your profile.</p>
             <Button type="button" variant="primary" className="mt-5" onClick={() => setConfirm(null)} autoFocus>
               Done
             </Button>

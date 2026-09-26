@@ -1,12 +1,46 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { COMPANY, employees } from "@/data/employees";
-import { EmployeeSearch, PillNav, ViewerPill } from "./header-controls";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { CaretDown, SignOut } from "@phosphor-icons/react";
+import { COMPANY } from "@/data/employees";
+import { signOut, useSession } from "@/lib/session";
+import { Login } from "./login";
+import { SkynetMark } from "./brand";
 
 const CONTAINER = "mx-auto w-full max-w-[1480px] px-8";
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const index = employees.map(({ id, name, title, department }) => ({ id, name, title, department }));
+  const session = useSession();
+  const path = usePathname();
+  const router = useRouter();
+
+  // Route scoping: an employee only ever sees their own profile; an employer never sees the self-appraisal form.
+  useEffect(() => {
+    if (session.status !== "in") return;
+    const a = session.account;
+    if (a.role === "employee") {
+      const own = `/employees/${a.employeeId}`;
+      if (path === "/" || (path.startsWith("/employees/") && path !== own)) router.replace(own);
+    } else if (path.startsWith("/self-appraisal")) router.replace("/");
+  }, [session, path, router]);
+
+  if (session.status === "loading") return <div className="min-h-[100dvh]" aria-busy="true" />;
+  if (session.status === "out") return <Login />;
+
+  const a = session.account;
+  const employer = a.role === "employer";
+  const nav = employer
+    ? [
+        { href: "/", label: "Employees", active: path === "/" || path.startsWith("/employees") },
+        { href: "/stats", label: "Stats", active: path.startsWith("/stats") },
+      ]
+    : [
+        { href: `/employees/${a.employeeId}`, label: "My profile", active: path.startsWith("/employees") },
+        { href: "/stats", label: "Stats", active: path.startsWith("/stats") },
+        { href: "/self-appraisal", label: "Self appraisal", active: path.startsWith("/self-appraisal") },
+      ];
 
   return (
     <>
@@ -15,19 +49,30 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
       <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
         <div className={`${CONTAINER} grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-6`}>
-          <Link href="/" className="pressable flex w-fit items-center gap-2.5 font-semibold tracking-tight">
-            <span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-lg bg-ink text-sm font-bold text-white">
-              W
-            </span>
-            <span>
-              WholePicture
-              <span className="ml-2 hidden text-sm font-normal text-ink-faint lg:inline">{COMPANY.name}</span>
+          <Link href={employer ? "/" : `/employees/${a.employeeId}`} className="pressable flex w-fit items-center gap-2.5">
+            <SkynetMark size={32} className="text-ink" />
+            <span className="leading-none">
+              <span className="block text-[15px] font-semibold tracking-[0.12em]">SKYNET</span>
+              <span className="mt-0.5 hidden text-[11px] text-ink-faint lg:block">{COMPANY.name}</span>
             </span>
           </Link>
-          <PillNav />
-          <div className="flex items-center justify-end gap-3">
-            <EmployeeSearch index={index} />
-            <ViewerPill />
+          <nav aria-label="Primary" className="rounded-full border border-line bg-canvas p-1">
+            <ul className="flex items-center gap-1">
+              {nav.map((it) => (
+                <li key={it.href}>
+                  <Link
+                    href={it.href}
+                    aria-current={it.active ? "page" : undefined}
+                    className={`pressable inline-block rounded-full px-4 py-1.5 text-[15px] ${it.active ? "bg-surface font-semibold text-ink shadow-sm" : "text-ink-muted hover:text-ink"}`}
+                  >
+                    {it.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div className="flex justify-end">
+            <AccountMenu name={a.name} title={employer ? "Employer" : a.title} />
           </div>
         </div>
       </header>
@@ -36,10 +81,42 @@ export function AppShell({ children }: { children: ReactNode }) {
       </main>
       <footer className="border-t border-line bg-surface">
         <p className={`${CONTAINER} py-4 text-xs text-ink-faint`}>
-          Prototype. Uses simulated workplace data only — no real employee accounts, messages or systems are connected. AI output is an
-          assessment aid and is not an employment decision.
+          Prototype. Uses simulated workplace data only — no real employee accounts, messages or systems are connected. AI output is an assessment aid and is not an employment decision.
         </p>
       </footer>
     </>
+  );
+}
+
+function AccountMenu({ name, title }: { name: string; title: string }) {
+  const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!wrap.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+  const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
+  return (
+    <div ref={wrap} className="relative">
+      <button type="button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)} className="pressable flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1 pr-3 text-[15px] hover:bg-canvas">
+        <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[11px] font-semibold text-white">{initials}</span>
+        <span className="font-medium">{name}</span>
+        <CaretDown aria-hidden="true" size={12} weight="bold" className="text-ink-faint" />
+      </button>
+      {open && (
+        <div role="menu" className="animate-rise absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-lg border border-line bg-surface shadow-lg">
+          <div className="border-b border-line px-3 py-2.5">
+            <p className="text-sm font-medium">{name}</p>
+            <p className="text-xs text-ink-faint">{title}</p>
+          </div>
+          <button type="button" role="menuitem" onClick={signOut} className="pressable flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm hover:bg-canvas">
+            <SignOut size={16} /> Log out
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

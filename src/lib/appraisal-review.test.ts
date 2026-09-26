@@ -32,6 +32,20 @@ test("disagreement gate: too far, no citation, then accepted", () => {
   assert.deepEqual(ok.citedEvidenceIds, ["EV-201"]);
 });
 
+test("seeded mid-cycle state: demo accounts untouched, sensible completion mix", async () => {
+  const { SEEDED_APPRAISALS, SEEDED_DECISIONS } = await import("@/data/seeded-appraisals");
+  const { FRESH_EMPLOYEE_IDS } = await import("@/data/accounts");
+  for (const id of FRESH_EMPLOYEE_IDS) {
+    assert.equal(SEEDED_APPRAISALS[id], undefined, `${id} must start without a submission`);
+    assert.equal(SEEDED_DECISIONS[id], undefined);
+  }
+  const submitted = Object.keys(SEEDED_APPRAISALS).length;
+  const decided = Object.keys(SEEDED_DECISIONS).length;
+  assert.ok(submitted >= 30 && submitted <= 65, `submitted: ${submitted}`);
+  assert.ok(decided >= 10 && decided < submitted, `decided: ${decided}`);
+  for (const d of Object.values(SEEDED_DECISIONS)) assert.ok(SEEDED_APPRAISALS[d.employeeId], "every decision has a submission");
+});
+
 test("disagreement gate rejects evidence IDs belonging to another employee", () => {
   const ai = fullAssessment(sarah)!.grade;
   const r = evaluateDisagreement(sarah, ai, { proposedGrade: "B+", reason: "EV-P01 shows strong closed-won revenue that should lift the grade here." });

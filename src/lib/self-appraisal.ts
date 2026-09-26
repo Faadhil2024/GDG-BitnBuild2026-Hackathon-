@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import type { Grade } from "@/lib/types";
 import type { AiReview, DisagreementVerdict } from "./appraisal-review";
+import { SEEDED_APPRAISALS, SEEDED_DECISIONS } from "@/data/seeded-appraisals";
 
 export interface SelfAppraisal {
   employeeId: string;
@@ -29,20 +30,33 @@ export interface Decision {
   decidedBy: string;
 }
 
-function makeStore<T>(key: string) {
+/** Local overrides layered over the seeded mid-cycle state. A tombstone (null) hides a seeded entry. */
+function makeStore<T>(key: string, seeded: Record<string, T>) {
   const listeners = new Set<() => void>();
-  let cache: { raw: string | null; value: Record<string, T> } = { raw: null, value: {} };
-  const EMPTY: Record<string, T> = {};
+  let cache: { raw: string | null; value: Record<string, T> } = { raw: null, value: seeded };
+  const readLocal = (): Record<string, T | null> => {
+    const raw = window.localStorage.getItem(key);
+    try {
+      return raw ? (JSON.parse(raw) as Record<string, T | null>) : {};
+    } catch {
+      return {};
+    }
+  };
   const read = (): Record<string, T> => {
-    if (typeof window === "undefined") return EMPTY;
+    if (typeof window === "undefined") return seeded;
     const raw = window.localStorage.getItem(key);
     if (raw === cache.raw) return cache.value;
-    try {
-      cache = { raw, value: raw ? (JSON.parse(raw) as Record<string, T>) : {} };
-    } catch {
-      cache = { raw, value: {} };
+    const merged: Record<string, T> = { ...seeded };
+    for (const [id, v] of Object.entries(readLocal())) {
+      if (v === null) delete merged[id];
+      else merged[id] = v;
     }
+    cache = { raw, value: merged };
     return cache.value;
+  };
+  const write = (next: Record<string, T | null>) => {
+    window.localStorage.setItem(key, JSON.stringify(next));
+    listeners.forEach((cb) => cb());
   };
   const subscribe = (cb: () => void) => {
     listeners.add(cb);
@@ -53,22 +67,14 @@ function makeStore<T>(key: string) {
     };
   };
   return {
-    use: () => useSyncExternalStore(subscribe, read, () => EMPTY),
-    save: (id: string, value: T) => {
-      window.localStorage.setItem(key, JSON.stringify({ ...read(), [id]: value }));
-      listeners.forEach((cb) => cb());
-    },
-    remove: (id: string) => {
-      const next = { ...read() };
-      delete next[id];
-      window.localStorage.setItem(key, JSON.stringify(next));
-      listeners.forEach((cb) => cb());
-    },
+    use: () => useSyncExternalStore(subscribe, read, () => seeded),
+    save: (id: string, value: T) => write({ ...readLocal(), [id]: value }),
+    remove: (id: string) => write({ ...readLocal(), [id]: null }),
   };
 }
 
-const appraisals = makeStore<SelfAppraisal>("wp.selfAppraisals");
-const decisions = makeStore<Decision>("wp.decisions");
+const appraisals = makeStore<SelfAppraisal>("skynet.selfAppraisals", SEEDED_APPRAISALS);
+const decisions = makeStore<Decision>("skynet.decisions", SEEDED_DECISIONS);
 
 export const useSelfAppraisals = appraisals.use;
 export const saveSelfAppraisal = (a: SelfAppraisal) => {
