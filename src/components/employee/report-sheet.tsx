@@ -7,7 +7,7 @@ import { reasonPerQuestion } from "@/lib/appraisal-review";
 import { QUESTIONS } from "@/data/self-appraisal";
 import { CATEGORY_LABELS } from "@/lib/assessment/roles";
 import { GRADE_MEANING } from "@/lib/assessment/engine";
-import { Card, GradeBadge, Pill, gradeTone, formatDate } from "@/components/ui";
+import { Avatar, Card, GradeBadge, Pill, gradeTone, formatDate } from "@/components/ui";
 import type { Grade } from "@/lib/types";
 
 function GradeBox({ grade, label }: { grade: Grade; label: string }) {
@@ -36,9 +36,7 @@ export function ReportSheet() {
     return (
       <Card className="p-8">
         <div className="flex items-center gap-4">
-          <span aria-hidden="true" className="grid h-12 w-12 place-items-center rounded-full bg-ink text-[15px] font-semibold text-white">
-            {employee.name.split(" ").map((p) => p[0]).join("")}
-          </span>
+          <Avatar employee={employee} size={48} />
           <div>
             <h2 className="text-[20px] font-semibold tracking-tight">{employee.name}</h2>
             <p className="text-[15px] text-ink-muted">{employee.title} · {employee.department} · reports to {employee.manager}</p>

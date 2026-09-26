@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import { CheckCircle, SealCheck, Warning } from "@phosphor-icons/react";
 import { useAssessment } from "@/store/assessment-store";
 import { useSession } from "@/lib/session";
-import { useDecisions, useSelfAppraisals } from "@/lib/self-appraisal";
+import { MAX_SUBMISSIONS, attemptsUsed, useDecisions, useSelfAppraisals } from "@/lib/self-appraisal";
 import { markVisited, useVisited } from "@/lib/updates";
 import { QUESTIONS } from "@/data/self-appraisal";
 import { COMPANY } from "@/data/employees";
 import { roleProfiles } from "@/lib/assessment/roles";
-import { Button, Card, GradeBadge, Pill, formatDate } from "@/components/ui";
+import { Avatar, Button, Card, GradeBadge, Pill, formatDate } from "@/components/ui";
 
 /**
  * What an employee sees of themselves: who they are on record, and where their
@@ -34,9 +34,7 @@ export function ProfileView() {
   return (
     <div className="space-y-8">
       <header className="flex items-center gap-5">
-        <span aria-hidden="true" className="grid h-16 w-16 place-items-center rounded-full bg-ink text-[20px] font-semibold text-white">
-          {employee.name.split(" ").map((p) => p[0]).join("")}
-        </span>
+        <Avatar employee={employee} size={72} />
         <div>
           <h1 className="text-[30px] font-semibold leading-tight tracking-tight">{employee.name}</h1>
           <p className="mt-0.5 text-[15px] text-ink-muted">{employee.title} · {employee.department}</p>
@@ -70,7 +68,7 @@ export function ProfileView() {
           </div>
 
           <ol className="mt-6 space-y-5">
-            <Step n={1} done={!!sa} title="Self-appraisal" detail={sa ? `Submitted ${formatDate(sa.submittedAt)} · self-grade ${sa.grade}` : "Nine questions, about ten minutes."} />
+            <Step n={1} done={!!sa} title="Self-appraisal" detail={sa ? `Submitted ${formatDate(sa.submittedAt)} · self-grade ${sa.grade} · submission ${attemptsUsed(sa)} of ${MAX_SUBMISSIONS}` : `Nine questions, about ten minutes. Up to ${MAX_SUBMISSIONS} submissions per cycle.`} />
             <Step n={2} done={!!d} active={!!sa && !d} title="Manager review" detail={d ? `Decided ${formatDate(d.decidedAt)} by ${d.decidedBy}` : sa ? `With ${employee.manager}. You will see your grade here once it is decided.` : "Starts after you submit."} />
             <Step n={3} done={!!d} title="Your grade" detail={d ? (d.outcome === "override" ? "Set by your manager as the decision of record." : d.outcome === "revised" ? "Verified after a review by your manager." : "Verified by your manager.") : "Shown when the review is complete."} >
               {d && <div className="mt-3"><GradeBadge grade={d.finalGrade} size="lg" label={null} /></div>}

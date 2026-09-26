@@ -119,7 +119,6 @@ function Nav() {
           ))}
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
-          <Link href="/login" className="text-[13.5px] font-medium hover:underline" style={{ color: C.body }}>Sign in</Link>
           <Link href="/login" className="pressable inline-flex items-center gap-2 px-5 py-2.5 text-[13px] font-semibold text-white transition-colors" style={{ background: C.navy }}>
             <Play size={14} weight="fill" /> See the demo
           </Link>

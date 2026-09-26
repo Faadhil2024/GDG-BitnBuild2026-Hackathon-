@@ -12,7 +12,7 @@ import { saveDecision, useDecisions, useSelfAppraisals, type Decision, type Revi
 import { hasUnseenFor, useUpdates, useVisited } from "@/lib/updates";
 import { GRADES, type ContributionCategory, type Grade } from "@/lib/types";
 import { useSession } from "@/lib/session";
-import { Button, GradeBadge, Pill, formatDate } from "@/components/ui";
+import { Avatar, Button, GradeBadge, Pill, formatDate } from "@/components/ui";
 
 export interface EmployerRow {
   id: string;
@@ -128,7 +128,8 @@ export function EmployerTable({ rows }: { rows: EmployerRow[] }) {
             return (
               <tr key={r.id} className="row-link border-t border-line first:border-t-0">
                 <th scope="row" className="whitespace-nowrap px-5 py-3 text-left font-medium">
-                  <Link href={`/employees/${r.id}`} className="pressable inline-flex items-center gap-2 text-accent underline-offset-2 hover:underline" title="Open report">
+                  <Link href={`/employees/${r.id}`} className="pressable inline-flex items-center gap-2.5 text-accent underline-offset-2 hover:underline" title="Open report">
+                    <Avatar employee={r} size={30} />
                     {r.name}
                     {hasUnseenFor(r.id, visited, updates) && <span aria-label="New changes since you last opened this report" className="h-2 w-2 rounded-full bg-accent" />}
                   </Link>

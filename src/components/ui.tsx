@@ -1,5 +1,14 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import type { Confidence, Direction, Grade, Level } from "@/lib/types";
+import type { Confidence, Direction, Employee, Grade, Level } from "@/lib/types";
+import { avatarUrl } from "@/lib/avatar";
+
+/** Stock portrait, decorative (the name is always printed beside it). */
+export function Avatar({ employee, size = 40, className = "" }: { employee: Pick<Employee, "id" | "name">; size?: number; className?: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={avatarUrl(employee)} alt="" width={size} height={size} loading="lazy" className={`shrink-0 rounded-full border border-line bg-canvas object-cover ${className}`} style={{ width: size, height: size }} />
+  );
+}
 
 /** Grade bands share a colour: A = green, B = blue, C = amber, D = red. Colour never appears without the letter. */
 export function gradeTone(grade: Grade) {

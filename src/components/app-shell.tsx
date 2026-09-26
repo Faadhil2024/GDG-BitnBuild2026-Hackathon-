@@ -6,10 +6,12 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CaretDown, SignOut } from "@phosphor-icons/react";
 import { COMPANY } from "@/data/employees";
 import { signOut, useSession } from "@/lib/session";
+import { applyTheme } from "@/lib/theme";
 import { Login } from "./login";
 import { Landing } from "./landing/landing";
 import { SkynetMark } from "./brand";
-import { GlobalAnnouncer, UpdatesMenu } from "./announcer";
+import { Avatar } from "./ui";
+import { GlobalAnnouncer, HeaderControls } from "./announcer";
 
 const CONTAINER = "mx-auto w-full max-w-[1480px] px-8";
 
@@ -25,6 +27,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (session.status === "loading") return;
     if (session.status === "out") {
+      applyTheme("light"); // night mode is a signed-in preference; the door is always lit
       if (path !== "/" && !onLogin) router.replace("/login");
       return;
     }
@@ -86,8 +89,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </ul>
           </nav>
           <div className="flex items-center justify-end gap-3">
-            <UpdatesMenu />
-            <AccountMenu name={a.name} title={employer ? "Employer" : a.title} />
+            <HeaderControls />
+            <AccountMenu name={a.name} title={employer ? "Employer" : a.title} employeeId={a.employeeId} />
           </div>
         </div>
       </header>
@@ -104,7 +107,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   );
 }
 
-function AccountMenu({ name, title }: { name: string; title: string }) {
+function AccountMenu({ name, title, employeeId }: { name: string; title: string; employeeId?: string }) {
   const [open, setOpen] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -118,7 +121,7 @@ function AccountMenu({ name, title }: { name: string; title: string }) {
   return (
     <div ref={wrap} className="relative">
       <button type="button" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((o) => !o)} className="pressable flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1 pr-3 text-[15px] hover:bg-canvas">
-        <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[11px] font-semibold text-white">{initials}</span>
+        {employeeId ? <Avatar employee={{ id: employeeId, name }} size={28} /> : <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[11px] font-semibold text-white">{initials}</span>}
         <span className="font-medium">{name}</span>
         <CaretDown aria-hidden="true" size={12} weight="bold" className="text-ink-faint" />
       </button>

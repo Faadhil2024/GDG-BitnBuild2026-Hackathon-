@@ -12,7 +12,12 @@ export interface SelfAppraisal {
   submittedAt: string;
   /** Produced automatically at submission time. Absent only if no evidence is indexed. */
   ai?: AiReview;
+  /** 1-based. Employees may submit at most MAX_SUBMISSIONS times per cycle. */
+  attempt?: number;
 }
+
+export const MAX_SUBMISSIONS = 2;
+export const attemptsUsed = (a?: SelfAppraisal) => a?.attempt ?? (a ? 1 : 0);
 
 export interface ReviewRound {
   proposedGrade: Grade;
@@ -79,11 +84,19 @@ const appraisals = makeStore<SelfAppraisal>("skynet.selfAppraisals", SEEDED_APPR
 const decisions = makeStore<Decision>("skynet.decisions", SEEDED_DECISIONS);
 
 export const useSelfAppraisals = appraisals.use;
-export const saveSelfAppraisal = (a: SelfAppraisal) => {
-  appraisals.save(a.employeeId, a);
+/** Returns false (and saves nothing) once the submission limit is reached. */
+export const saveSelfAppraisal = (a: SelfAppraisal, previous?: SelfAppraisal): boolean => {
+  const attempt = attemptsUsed(previous) + 1;
+  if (attempt > MAX_SUBMISSIONS) return false;
+  appraisals.save(a.employeeId, { ...a, attempt });
   decisions.remove(a.employeeId); // a fresh submission reopens the review
   const who = getEmployee(a.employeeId)?.name ?? a.employeeId;
-  logUpdate(`${who} submitted a self-appraisal. AI grade issued: ${a.ai?.grade ?? "none — no evidence indexed"}.`, "polite", a.employeeId);
+  logUpdate(
+    `${who} submitted a self-appraisal (submission ${attempt} of ${MAX_SUBMISSIONS}). AI grade issued: ${a.ai?.grade ?? "none — no evidence indexed"}.`,
+    "polite",
+    a.employeeId,
+  );
+  return true;
 };
 export const useDecisions = decisions.use;
 export const saveDecision = (d: Decision) => {

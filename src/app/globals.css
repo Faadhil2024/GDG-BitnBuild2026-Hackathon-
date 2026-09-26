@@ -25,6 +25,30 @@
   --color-na-soft: #eeeafb;
 }
 
+/* Night mode: the same tokens, re-pointed. Product UI only; landing and sign-in carry their own palette. */
+html.dark {
+  --color-canvas: #0f1216;
+  --color-surface: #171b21;
+  --color-ink: #e6e9ef;
+  --color-ink-strong: #ffffff;
+  --color-ink-muted: #a3adbb;
+  --color-ink-faint: #7c879a;
+  --color-line: #262c35;
+  --color-accent: #6d9cff;
+  --color-accent-soft: #1a2640;
+  --color-low: #f08a7e;
+  --color-low-soft: #33201d;
+  --color-moderate: #f0b25a;
+  --color-moderate-soft: #33291a;
+  --color-high: #7ccf97;
+  --color-high-soft: #16301f;
+  --color-frozen: #9aa3b2;
+  --color-frozen-soft: #22272f;
+  --color-na: #b3a4f5;
+  --color-na-soft: #262040;
+}
+html.dark dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+
 html {
   color-scheme: light;
   /* One step up from the browser default so 14px utility text lands at ~15px and body at ~17px. */
