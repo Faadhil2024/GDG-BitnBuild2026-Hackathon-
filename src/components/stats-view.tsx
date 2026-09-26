@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "@phosphor-icons/react";
 import { useSession } from "@/lib/session";
 import { useDecisions, useSelfAppraisals } from "@/lib/self-appraisal";
 import { PROTOCOLS, PROTOCOLS_MET, protocolLabel } from "@/data/rubric";
@@ -116,31 +118,45 @@ export function StatsView({ rows }: { rows: StatRow[] }) {
     );
   }
 
-  // Employee: no colleague data at all. The chart is the grade ladder — what each grade requires.
+  // Employee: no colleague grades. A team trend, then their own grade and report, then the grade ladder.
+  const me = rows.find((r) => r.id === a.employeeId);
   const myDecision = a.employeeId ? decisions[a.employeeId] : undefined;
+  const sa = appraisals[a.employeeId ?? ""];
   const mine = myDecision?.finalGrade;
-  const submitted = !!appraisals[a.employeeId ?? ""];
-  const status = mine ? `Decided by ${myDecision!.decidedBy} · ${protocolLabel(mine)} met` : submitted ? "Self-appraisal submitted · with your manager" : "Submit your self-appraisal to start the review";
+  const shown = mine ?? sa?.ai?.grade;
+  const status = mine
+    ? `Verified by ${myDecision!.decidedBy} · ${protocolLabel(mine)} met`
+    : sa?.ai
+      ? `Scoring via AI · ${protocolLabel(sa.ai.grade)} met · awaiting manager review`
+      : sa
+        ? "Submitted · no evidence indexed yet"
+        : "Submit your self-appraisal to start the review";
 
   return (
     <div className="mx-auto max-w-[1100px] space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p className="text-[13px] font-medium uppercase tracking-[0.12em] text-ink-faint">Your appraisal</p>
-          <h1 className="mt-2 text-[36px] font-semibold leading-none tracking-tight">How grades are earned</h1>
-          <p className="mt-3 max-w-[62ch] text-[17px] leading-relaxed text-ink-muted">
-            Every grade is the number of assessment protocols met on record. Nothing else moves it — not title, not tenure, not how visible you are.
-          </p>
-        </div>
-        <div className="flex items-center gap-4 rounded-lg border border-line bg-surface px-5 py-4">
-          <div className="text-right">
-            <p className="text-[13px] text-ink-faint">Your grade</p>
-            <p className="mt-0.5 text-[15px] font-medium">{mine ? GRADE_MEANING[mine] : "Pending"}</p>
-            <p className="mt-0.5 text-[13px] text-ink-muted">{status}</p>
-          </div>
-          {mine ? <GradeBadge grade={mine} size="lg" label={null} /> : <span aria-hidden="true" className="grid h-14 min-w-14 place-items-center rounded-md border-2 border-dashed border-line text-[22px] font-semibold text-ink-faint">?</span>}
-        </div>
+      <header>
+        <p className="text-[13px] font-medium uppercase tracking-[0.12em] text-ink-faint">Your appraisal</p>
+        <h1 className="mt-2 text-[36px] font-semibold leading-none tracking-tight">How grades are earned</h1>
+        <p className="mt-3 max-w-[62ch] text-[17px] leading-relaxed text-ink-muted">
+          Every grade is the number of assessment protocols met on record. Nothing else moves it — not title, not tenure, not how visible you are.
+        </p>
       </header>
+
+      <TeamTrend department={me?.department ?? "Your team"} />
+
+      <Card className="flex flex-wrap items-center gap-6 p-6">
+        {shown ? <GradeBadge grade={shown} size="lg" label={null} /> : <span aria-hidden="true" className="grid h-14 min-w-14 place-items-center rounded-md border-2 border-dashed border-line text-[22px] font-semibold text-ink-faint">?</span>}
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] text-ink-faint">Your grade</p>
+          <p className="mt-0.5 text-[17px] font-semibold">{shown ? GRADE_MEANING[shown] : "Pending"}</p>
+          <p className="mt-0.5 text-[14px] text-ink-muted">{status}</p>
+        </div>
+        {sa?.ai && a.employeeId && (
+          <Link href={`/employees/${a.employeeId}/report`} className="pressable inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2.5 text-[15px] font-medium text-white hover:bg-blue-800">
+            View report and reasoning <ArrowRight size={16} weight="bold" />
+          </Link>
+        )}
+      </Card>
 
       <Card className="p-8">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
@@ -152,6 +168,73 @@ export function StatsView({ rows }: { rows: StatRow[] }) {
 
       <Rubric />
     </div>
+  );
+}
+
+/* Team trend across the last five cycles. Deterministic synthetic history per department:
+   average protocols met (0–6) for the team and the company. No individual is plotted. */
+const CYCLES = ["FY24 H1", "FY24 H2", "FY25 H1", "FY25 H2", "FY26 H1"];
+function series(seed: string, base: number) {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619);
+  const out: number[] = [];
+  let v = base;
+  for (let i = 0; i < CYCLES.length; i++) {
+    h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0;
+    v = Math.max(1.5, Math.min(5.5, v + ((h % 1000) / 1000 - 0.45) * 1.2));
+    out.push(Math.round(v * 10) / 10);
+  }
+  return out;
+}
+
+function TeamTrend({ department }: { department: string }) {
+  const team = series(department, 3.4);
+  const company = series("Halcyon", 3.6);
+  const W = 720, H = 220, PX = 44, PY = 18, N = 6;
+  const x = (i: number) => PX + (i * (W - PX * 2)) / (CYCLES.length - 1);
+  const y = (v: number) => PY + (H - PY * 2) * (1 - v / N);
+  const path = (s: number[]) => s.map((v, i) => `${i ? "L" : "M"}${x(i)},${y(v)}`).join(" ");
+  const last = team[team.length - 1], prev = team[team.length - 2];
+  const delta = Math.round((last - prev) * 10) / 10;
+  return (
+    <Card className="p-8">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <h2 className="text-[20px] font-semibold tracking-tight">{department}: team trend</h2>
+          <p className="mt-1 text-[14px] text-ink-muted">Average protocols met per person, by cycle. Team against company. No individual grades are shown.</p>
+        </div>
+        <p className="text-[14px]">
+          <span className="font-semibold tabular-nums">{last.toFixed(1)}</span> <span className="text-ink-faint">/ {N} this cycle</span>
+          <span className={`ml-2 font-medium tabular-nums ${delta >= 0 ? "text-high" : "text-low"}`}>{delta >= 0 ? "▲" : "▼"} {Math.abs(delta).toFixed(1)} vs last</span>
+        </p>
+      </div>
+      <figure className="mt-6">
+        <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={`Line chart. ${department} average protocols met by cycle: ${CYCLES.map((c, i) => `${c} ${team[i]}`).join(", ")}. Company: ${CYCLES.map((c, i) => `${c} ${company[i]}`).join(", ")}.`}>
+          {Array.from({ length: N + 1 }, (_, v) => (
+            <g key={v}>
+              <line x1={PX} x2={W - PX} y1={y(v)} y2={y(v)} className="stroke-line" strokeWidth={1} />
+              <text x={PX - 10} y={y(v) + 4} textAnchor="end" className="fill-ink-faint font-mono text-[11px]">{v}</text>
+            </g>
+          ))}
+          {CYCLES.map((c, i) => (
+            <text key={c} x={x(i)} y={H - 2} textAnchor="middle" className="fill-ink-muted text-[12px]">{c}</text>
+          ))}
+          <path d={path(company)} fill="none" className="stroke-ink-faint" strokeWidth={2} strokeDasharray="5 5" strokeLinejoin="round" />
+          <path d={path(team)} fill="none" className="stroke-accent" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+          {team.map((v, i) => (
+            <g key={i}>
+              <circle cx={x(i)} cy={y(v)} r={4} className="fill-accent stroke-surface" strokeWidth={2} />
+              <text x={x(i)} y={y(v) - 10} textAnchor="middle" className="fill-ink font-mono text-[11px] font-semibold">{v.toFixed(1)}</text>
+            </g>
+          ))}
+        </svg>
+        <figcaption className="mt-3 flex flex-wrap items-center gap-6 text-[13px] text-ink-muted">
+          <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="inline-block h-[3px] w-6 rounded bg-accent" /> {department} average</span>
+          <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="inline-block h-0 w-6 border-t-2 border-dashed border-ink-faint" /> Company average</span>
+          <span className="ml-auto text-ink-faint">Y axis: protocols met out of {N} · X axis: appraisal cycle</span>
+        </figcaption>
+      </figure>
+    </Card>
   );
 }
 

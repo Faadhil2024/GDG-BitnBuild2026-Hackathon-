@@ -38,8 +38,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     }
     if (a.role === "employee") {
       const own = `/employees/${a.employeeId}`;
-      if (path === "/" || (path.startsWith("/employees/") && path !== own)) router.replace(own);
+      if (path === "/" || (path.startsWith("/employees/") && !path.startsWith(own))) router.replace(own);
     } else if (path.startsWith("/self-appraisal")) router.replace("/");
+    else if (path.endsWith("/report")) router.replace(path.replace(/\/report$/, ""));
   }, [session, path, onLogin, router]);
 
   if (session.status === "loading") return <div className="min-h-[100dvh]" aria-busy="true" />;

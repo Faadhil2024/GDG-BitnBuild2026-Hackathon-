@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import type { Grade } from "@/lib/types";
+import type { ContributionCategory, Grade } from "@/lib/types";
 import type { AiReview, DisagreementVerdict } from "./appraisal-review";
 import { SEEDED_APPRAISALS, SEEDED_DECISIONS } from "@/data/seeded-appraisals";
 import { getEmployee } from "@/data/employees";
@@ -14,9 +14,23 @@ export interface SelfAppraisal {
   ai?: AiReview;
   /** 1-based. Employees may submit at most MAX_SUBMISSIONS times per cycle. */
   attempt?: number;
+  /** Set when an employee re-evaluation was accepted and the engine re-ran. */
+  reevaluation?: Reevaluation;
+  /** Failed re-evaluation attempts this cycle (two failures escalate to the manager). */
+  reevalFailures?: number;
 }
 
-export const MAX_SUBMISSIONS = 2;
+export interface Reevaluation {
+  from: Grade;
+  to: Grade;
+  categories: ContributionCategory[];
+  statement: string;
+  admittedIds: string[];
+  checks: { category: ContributionCategory; ok: boolean; reason: string }[];
+  at: string;
+}
+
+export const MAX_SUBMISSIONS = 1;
 export const attemptsUsed = (a?: SelfAppraisal) => a?.attempt ?? (a ? 1 : 0);
 
 export interface ReviewRound {
@@ -98,6 +112,27 @@ export const saveSelfAppraisal = (a: SelfAppraisal, previous?: SelfAppraisal): b
   );
   return true;
 };
+/** Accepted re-evaluation: the AI grade on the appraisal moves and the manager is notified. Failures are counted. */
+export const recordReevaluation = (a: SelfAppraisal, r: Reevaluation | null) => {
+  const who = getEmployee(a.employeeId)?.name ?? a.employeeId;
+  if (!r) {
+    appraisals.save(a.employeeId, { ...a, reevalFailures: (a.reevalFailures ?? 0) + 1 });
+    logUpdate(`${who} asked for a re-evaluation. Records not found; grade unchanged.`, "polite", a.employeeId);
+    return;
+  }
+  const ai = a.ai ? { ...a.ai, grade: r.to, gap: a.ai.gap + (GRADE_ORDER.indexOf(r.to) - GRADE_ORDER.indexOf(r.from)) } : a.ai;
+  appraisals.save(a.employeeId, { ...a, ai, reevaluation: r });
+  decisions.remove(a.employeeId); // the grade moved; any earlier decision must be re-made
+  logUpdate(
+    r.to === r.from
+      ? `${who} asked for a re-evaluation. ${r.admittedIds.length} record${r.admittedIds.length > 1 ? "s" : ""} admitted; grade stays ${r.from}.`
+      : `Re-evaluation for ${who}: AI grade changed ${r.from} to ${r.to} after ${r.admittedIds.length} record${r.admittedIds.length > 1 ? "s were" : " was"} located. Manager notified.`,
+    "assertive",
+    a.employeeId,
+  );
+};
+const GRADE_ORDER: Grade[] = ["A+", "A", "B+", "B", "C+", "C", "D"];
+
 export const useDecisions = decisions.use;
 export const saveDecision = (d: Decision) => {
   decisions.save(d.employeeId, d);

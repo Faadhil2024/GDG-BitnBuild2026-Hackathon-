@@ -137,7 +137,7 @@ export function EmployerTable({ rows }: { rows: EmployerRow[] }) {
                 <td className="whitespace-nowrap px-5 py-3 text-ink-muted">{r.department}</td>
                 <td className="whitespace-nowrap px-5 py-3 text-ink-muted">{r.title}</td>
                 <td className="px-5 py-3">{sa ? <GradeBadge grade={sa.grade} size="sm" label={null} /> : <span className="text-[13px] text-ink-faint">Not submitted</span>}</td>
-                <td className="px-5 py-3">{sa && r.aiGrade ? <GradeBadge grade={r.aiGrade} size="sm" label={null} /> : <span className="text-[13px] text-ink-faint">{sa ? "No evidence indexed" : "Graded on submission"}</span>}</td>
+                <td className="px-5 py-3">{sa && (sa.ai?.grade ?? r.aiGrade) ? <GradeBadge grade={sa.ai?.grade ?? r.aiGrade!} size="sm" label={null} /> : <span className="text-[13px] text-ink-faint">{sa ? "No evidence indexed" : "Graded on submission"}</span>}</td>
                 <td className="px-5 py-3">
                   {d ? (
                     <DecisionPill d={d} />

@@ -38,7 +38,7 @@ export function GlobalAnnouncer() {
     if (el) {
       el.textContent = "";
       const t = setTimeout(() => (el.textContent = latest.text), 30);
-      const t2 = setTimeout(() => setToast(null), 9000);
+      const t2 = setTimeout(() => setToast(null), 4000);
       setToast(latest);
       return () => {
         clearTimeout(t);

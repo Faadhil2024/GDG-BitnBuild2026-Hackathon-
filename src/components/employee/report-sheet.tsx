@@ -1,6 +1,7 @@
 "use client";
 
-import { SealCheck, Warning } from "@phosphor-icons/react";
+import { useState } from "react";
+import { ArrowsClockwise, CaretDown, SealCheck, Warning } from "@phosphor-icons/react";
 import { useAssessment } from "@/store/assessment-store";
 import { useDecisions, useSelfAppraisals } from "@/lib/self-appraisal";
 import { reasonPerQuestion } from "@/lib/appraisal-review";
@@ -27,10 +28,13 @@ function GradeBox({ grade, label }: { grade: Grade; label: string }) {
  * each question with the employee's answer and the AI's evidence-bound
  * reasoning beside it, and finally why the grade landed where it did.
  */
-export function ReportSheet() {
+export function ReportSheet({ viewer = "employer" }: { viewer?: "employer" | "employee" }) {
   const { employee, assessment } = useAssessment();
   const sa = useSelfAppraisals()[employee.id];
   const d = useDecisions()[employee.id];
+  const mine = viewer === "employee";
+  // Employees open the question list themselves; the employer sees it laid out.
+  const [showQuestions, setShowQuestions] = useState(!mine);
 
   if (!sa) {
     return (
@@ -83,7 +87,7 @@ export function ReportSheet() {
                 <span className="text-[13px] text-ink-faint">{formatDate(d.decidedAt)} · {d.decidedBy}</span>
               </span>
             ) : (
-              <Pill tone="neutral">Awaiting your decision</Pill>
+              <Pill tone="neutral">{mine ? `Awaiting ${employee.manager}'s review · not yet verified` : "Awaiting your decision"}</Pill>
             )}
           </dd>
         </dl>
@@ -96,11 +100,24 @@ export function ReportSheet() {
       {ai && (
         <div className="border-b border-line bg-canvas/60 px-8 py-4 text-[15px]">
           <span className="font-medium">{GRADE_MEANING[ai.grade]}.</span> <span className="text-ink-muted">{ai.summary}</span>
+          {sa.reevaluation && sa.reevaluation.to !== sa.reevaluation.from && (
+            <span className="ml-2 inline-flex"><Pill tone="accent"><ArrowsClockwise size={12} /> Re-evaluated {sa.reevaluation.from} → {sa.reevaluation.to} · {formatDate(sa.reevaluation.at)}</Pill></span>
+          )}
         </div>
       )}
 
+      {mine && (
+        <button type="button" onClick={() => setShowQuestions((s) => !s)} aria-expanded={showQuestions} aria-controls="report-questions" className="pressable flex w-full items-center justify-between px-8 py-4 text-left hover:bg-canvas/60">
+          <span>
+            <span className="text-[15px] font-semibold">Your answers and the AI reasoning</span>
+            <span className="ml-2 text-[14px] text-ink-muted">{QUESTIONS.length + 1} questions</span>
+          </span>
+          <CaretDown size={18} weight="bold" className={`text-ink-muted transition-transform duration-200 ${showQuestions ? "rotate-180" : ""}`} />
+        </button>
+      )}
+
       {/* Questions */}
-      <ol className="divide-y divide-line">
+      {showQuestions && <ol id="report-questions" className={`divide-y divide-line ${mine ? "animate-fall border-t border-line" : ""}`}>
         {QUESTIONS.map((q, i) => {
           const r = reasons.find((x) => x.questionId === q.id);
           return (
@@ -146,7 +163,7 @@ export function ReportSheet() {
             </div>
           )}
         </li>
-      </ol>
+      </ol>}
 
       {/* Why this grade */}
       {ai && (
