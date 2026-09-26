@@ -1,4 +1,5 @@
 import type { Employee } from "@/lib/types";
+import { generatedEmployees } from "./generated";
 
 export const COMPANY = {
   name: "Halcyon Digital Sdn Bhd",
@@ -67,9 +68,19 @@ export const employees: Employee[] = [
     tenureYears: 7,
     location: "Kuala Lumpur",
   },
+  ...generatedEmployees,
 ];
 
 export const DEMO_EMPLOYEE_ID = "emp-sarah-lim";
+
+/** Named people a reviewer can "view as". Cosmetic in this prototype — it does not gate data. */
+export const VIEWERS = [
+  { name: "Jonathan Lee", title: "Marketing Manager" },
+  { name: "Farah Ismail", title: "Head of Engineering & Product" },
+  { name: "Kevin Ong", title: "Head of Sales & Operations" },
+  { name: "Vikram Pillai", title: "HR Business Partner" },
+  { name: "Sarah Lim", title: "Employee view" },
+];
 
 export function getEmployee(id: string) {
   return employees.find((e) => e.id === id);

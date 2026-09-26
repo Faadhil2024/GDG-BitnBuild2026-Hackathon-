@@ -1,4 +1,5 @@
 import type { Source, SourceSystem } from "@/lib/types";
+import { generatedSources } from "./generated";
 
 export const SYSTEM_LABELS: Record<SourceSystem, string> = {
   slack: "Slack",
@@ -39,7 +40,11 @@ export const sources: Source[] = [
   { id: "src-review-priya", system: "reviews", name: "Sales QBR Q2 2026", ref: "Sales / QBR-2026-Q2 / P. Nair", timestamp: "2026-06-18T10:00:00+08:00" },
   { id: "src-ops-dashboard", system: "reports", name: "Operations KPI Report H1", ref: "OPS-RPT-2026-H1, p.4", timestamp: "2026-06-29T12:00:00+08:00" },
   { id: "src-proj-fulfilment", system: "projects", name: "Fulfilment Re-platform", ref: "Project FR-2026 / members & milestones", timestamp: "2026-05-20T17:00:00+08:00" },
+  ...generatedSources,
 ];
+
+/** Display order for source systems — the order integrations are read in. */
+export const SYSTEM_ORDER: SourceSystem[] = ["hr", "slack", "projects", "reports", "crm", "documents", "reviews", "github"];
 
 export function getSource(id: string) {
   return sources.find((s) => s.id === id);

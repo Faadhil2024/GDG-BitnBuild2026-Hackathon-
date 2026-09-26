@@ -1,4 +1,15 @@
-export type RoleKey = "marketing" | "engineering" | "sales" | "product" | "operations";
+export type RoleKey =
+  | "marketing"
+  | "engineering"
+  | "sales"
+  | "product"
+  | "operations"
+  | "finance"
+  | "hr"
+  | "design"
+  | "support"
+  | "legal"
+  | "data";
 
 export type SourceSystem =
   | "slack"

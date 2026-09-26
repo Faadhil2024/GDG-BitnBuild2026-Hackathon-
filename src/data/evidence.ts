@@ -1,4 +1,5 @@
 import type { Evidence } from "@/lib/types";
+import { generatedEvidence } from "./generated";
 
 const S = "emp-sarah-lim";
 
@@ -373,7 +374,7 @@ export const otherEvidence: Evidence[] = [
   },
 ];
 
-evidence.push(...otherEvidence);
+evidence.push(...otherEvidence, ...generatedEvidence);
 
 export function getEvidence(id: string) {
   return evidence.find((e) => e.id === id);

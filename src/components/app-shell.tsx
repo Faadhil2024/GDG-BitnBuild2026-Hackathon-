@@ -1,42 +1,41 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { COMPANY } from "@/data/employees";
+import { COMPANY, employees } from "@/data/employees";
+import { EmployeeSearch, PillNav, ViewerPill } from "./header-controls";
+
+const CONTAINER = "mx-auto w-full max-w-[1480px] px-8";
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const index = employees.map(({ id, name, title, department }) => ({ id, name, title, department }));
+
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-white">
         Skip to main content
       </a>
-      <header className="border-b border-line bg-surface">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
-              <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-md bg-ink text-xs font-bold text-white">
-                W
-              </span>
-              WholePicture
-            </Link>
-            <span className="hidden text-sm text-ink-faint sm:inline" aria-hidden="true">
-              /
+      <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
+        <div className={`${CONTAINER} grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-6`}>
+          <Link href="/" className="pressable flex w-fit items-center gap-2.5 font-semibold tracking-tight">
+            <span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-lg bg-ink text-sm font-bold text-white">
+              W
             </span>
-            <span className="hidden text-sm text-ink-muted sm:inline">{COMPANY.name}</span>
+            <span>
+              WholePicture
+              <span className="ml-2 hidden text-sm font-normal text-ink-faint lg:inline">{COMPANY.name}</span>
+            </span>
+          </Link>
+          <PillNav />
+          <div className="flex items-center justify-end gap-3">
+            <EmployeeSearch index={index} />
+            <ViewerPill />
           </div>
-          <nav aria-label="Primary" className="flex items-center gap-1 text-sm">
-            <Link href="/" className="pressable rounded-md px-3 py-1.5 text-ink-muted hover:bg-canvas hover:text-ink">
-              Appraisal cycle
-            </Link>
-            <Link href="/employees/emp-sarah-lim" className="pressable rounded-md px-3 py-1.5 text-ink-muted hover:bg-canvas hover:text-ink">
-              Demo case
-            </Link>
-          </nav>
         </div>
       </header>
-      <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-6 py-6">
-        {children}
+      <main id="main" className={`${CONTAINER} flex-1 py-8`}>
+        <div className="animate-rise">{children}</div>
       </main>
       <footer className="border-t border-line bg-surface">
-        <p className="mx-auto max-w-7xl px-6 py-3 text-xs text-ink-faint">
+        <p className={`${CONTAINER} py-4 text-xs text-ink-faint`}>
           Prototype. Uses simulated workplace data only — no real employee accounts, messages or systems are connected. AI output is an
           assessment aid and is not an employment decision.
         </p>

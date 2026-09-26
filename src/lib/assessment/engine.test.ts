@@ -57,6 +57,27 @@ test("other employees resolve to intended levels from their own evidence", () =>
   assert.equal(evidence.filter((e) => e.employeeId === "emp-jonathan-lee").length, 0);
 });
 
+test("workforce dataset is well-formed: 100 employees, unique ids, every evidence item traceable", async () => {
+  const { sources } = await import("@/data/sources");
+  assert.equal(employees.length, 100);
+  assert.equal(new Set(employees.map((e) => e.id)).size, 100);
+  assert.equal(new Set(evidence.map((e) => e.id)).size, evidence.length, "evidence ids unique");
+  const empIds = new Set(employees.map((e) => e.id));
+  const srcIds = new Set(sources.map((s) => s.id));
+  for (const ev of evidence) {
+    assert.ok(empIds.has(ev.employeeId), `${ev.id} points at unknown employee`);
+    assert.ok(srcIds.has(ev.sourceId), `${ev.id} points at unknown source`);
+  }
+  const levels = { Low: 0, Moderate: 0, High: 0, none: 0 };
+  for (const emp of employees) {
+    const ev = evidence.filter((e) => e.employeeId === emp.id && e.discoveredIn === "initial");
+    if (!ev.length) levels.none++;
+    else levels[assess(emp, ev).level]++;
+  }
+  assert.ok(levels.Low > 5 && levels.Moderate > 5 && levels.High > 5, `spread: ${JSON.stringify(levels)}`);
+  assert.ok(new Set(employees.map((e) => e.role)).size >= 10, "technical and non-technical roles represented");
+});
+
 test("challenge with off-topic evidence is rejected", () => {
   const review = reviewChallenge({ category: "delivery_reliability", evidenceIds: ["EV-107"] }, evidence, {});
   assert.equal(review.outcome, "unchanged");

@@ -59,8 +59,8 @@ export function EmployeeWorkspace() {
         </dl>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="space-y-6">
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_520px]">
+        <div className="space-y-8">
           <AssessmentCard />
           {scanning ? (
             <DiscoveryScanner />
@@ -72,7 +72,7 @@ export function EmployeeWorkspace() {
             </>
           )}
         </div>
-        <aside className="space-y-6" aria-label="Evidence and history">
+        <aside className="space-y-8" aria-label="Evidence and history">
           <Timeline />
           <EvidenceFeed />
         </aside>

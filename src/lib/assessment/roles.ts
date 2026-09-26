@@ -96,4 +96,40 @@ export const roleProfiles: Record<RoleKey, RoleProfile> = {
     },
     expected: ["delivery_reliability", "cross_functional"],
   },
+  finance: {
+    role: "finance",
+    label: "Finance",
+    weights: { ...zero, delivery_reliability: 1, revenue_impact: 0.7, cross_functional: 0.8, client_impact: 0.3, mentoring: 0.4, internal_activity: 0.2 },
+    expected: ["delivery_reliability", "revenue_impact", "cross_functional"],
+  },
+  hr: {
+    role: "hr",
+    label: "People & Culture",
+    weights: { ...zero, mentoring: 1, delivery_reliability: 0.8, cross_functional: 0.8, client_impact: 0.4, internal_activity: 0.3 },
+    expected: ["mentoring", "delivery_reliability", "cross_functional"],
+  },
+  design: {
+    role: "design",
+    label: "Design",
+    weights: { ...zero, cross_functional: 1, delivery_reliability: 0.8, client_impact: 0.7, technical_output: 0.3, mentoring: 0.4, internal_activity: 0.2 },
+    expected: ["cross_functional", "delivery_reliability", "client_impact"],
+  },
+  support: {
+    role: "support",
+    label: "Customer Support",
+    weights: { ...zero, client_impact: 1, delivery_reliability: 0.8, cross_functional: 0.5, mentoring: 0.4, internal_activity: 0.2 },
+    expected: ["client_impact", "delivery_reliability"],
+  },
+  legal: {
+    role: "legal",
+    label: "Legal & Compliance",
+    weights: { ...zero, delivery_reliability: 1, cross_functional: 0.8, client_impact: 0.5, mentoring: 0.3, internal_activity: 0.2 },
+    expected: ["delivery_reliability", "cross_functional"],
+  },
+  data: {
+    role: "data",
+    label: "Data & Analytics",
+    weights: { ...zero, technical_output: 1, cross_functional: 0.8, delivery_reliability: 0.8, revenue_impact: 0.4, mentoring: 0.4, internal_activity: 0.2 },
+    expected: ["technical_output", "cross_functional", "delivery_reliability"],
+  },
 };

@@ -28,16 +28,20 @@ export function EvidenceFeed() {
               <button
                 type="button"
                 onClick={(ev) => actions.selectEvidence(e.id, { x: ev.clientX, y: ev.clientY })}
-                className="pressable group flex w-full items-start justify-between gap-3 text-left"
+                className="pressable group flex w-full items-start justify-between gap-4 text-left"
                 aria-label={`View evidence ${e.id}: ${e.summary}`}
               >
-                <div className="min-w-0">
-                  <p className="text-sm leading-snug group-hover:text-accent">{e.summary}</p>
-                  <p className="mt-1 text-xs text-ink-faint">
-                    {src ? SYSTEM_LABELS[src.system] : ""} · <span className="font-mono">{e.id}</span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm leading-snug group-hover:text-accent" title={e.summary}>
+                    {e.summary}
+                  </p>
+                  <p className="mt-1 truncate text-xs text-ink-faint">
+                    {src ? SYSTEM_LABELS[src.system] : ""} · {src?.name} · <span className="font-mono">{e.id}</span>
                   </p>
                 </div>
-                <DirectionPill direction={e.direction} />
+                <span className="shrink-0 pt-0.5">
+                  <DirectionPill direction={e.direction} />
+                </span>
               </button>
             </li>
           );

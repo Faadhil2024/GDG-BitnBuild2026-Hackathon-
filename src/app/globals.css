@@ -20,6 +20,9 @@
   --color-high-soft: #e7f6ee;
   --color-frozen: #4b5563;
   --color-frozen-soft: #eceff3;
+  /* "Not applicable to this role" — deliberately its own hue so it never reads as "neutral". */
+  --color-na: #5b4bb5;
+  --color-na-soft: #eeeafb;
 }
 
 html {

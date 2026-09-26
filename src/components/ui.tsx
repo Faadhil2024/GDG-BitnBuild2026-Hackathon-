@@ -14,29 +14,30 @@ export function LevelBadge({ level, size = "md" }: { level: Level; size?: "sm" |
   );
 }
 
-export function Pill({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "accent" | "low" | "moderate" | "high" | "frozen" }) {
+export function Pill({ children, tone = "neutral" }: { children: ReactNode; tone?: "neutral" | "accent" | "low" | "moderate" | "high" | "frozen" | "na" }) {
   const cls = {
-    neutral: "bg-canvas text-ink-muted border-line",
+    neutral: "bg-surface text-ink-muted border-line",
     accent: "bg-accent-soft text-accent border-transparent",
     low: "bg-low-soft text-low border-transparent",
     moderate: "bg-moderate-soft text-moderate border-transparent",
     high: "bg-high-soft text-high border-transparent",
     frozen: "bg-frozen-soft text-frozen border-transparent",
+    na: "bg-na-soft text-na border-transparent",
   }[tone];
-  return <span className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[11px] font-medium ${cls}`}>{children}</span>;
+  return <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded border px-1.5 py-0.5 text-[11px] font-medium ${cls}`}>{children}</span>;
 }
 
 export function DirectionPill({ direction }: { direction: Direction }) {
-  const map: Record<Direction, { label: string; tone: "high" | "low" | "neutral" | "frozen"; glyph: string }> = {
+  const map: Record<Direction, { label: string; tone: "high" | "low" | "neutral" | "na"; glyph: string }> = {
     strengthens: { label: "Strengthens", tone: "high", glyph: "+" },
     weakens: { label: "Weakens", tone: "low", glyph: "−" },
     neutral: { label: "Neutral", tone: "neutral", glyph: "○" },
-    irrelevant: { label: "Not applicable", tone: "frozen", glyph: "∅" },
+    irrelevant: { label: "Not applicable", tone: "na", glyph: "∅" },
   };
   const m = map[direction];
   return (
     <Pill tone={m.tone}>
-      <span aria-hidden="true">{m.glyph}</span> {m.label}
+      <span aria-hidden="true" className="font-mono">{m.glyph}</span> {m.label}
     </Pill>
   );
 }
@@ -45,7 +46,7 @@ export function ConfidencePill({ confidence }: { confidence: Confidence }) {
   const dots = { high: "●●●", medium: "●●○", low: "●○○" }[confidence];
   return (
     <Pill tone="neutral">
-      <span aria-hidden="true">{dots}</span> {confidence} confidence
+      <span aria-hidden="true" className="font-mono tracking-tighter">{dots}</span> {confidence} confidence
     </Pill>
   );
 }
