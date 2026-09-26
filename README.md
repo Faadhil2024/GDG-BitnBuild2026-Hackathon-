@@ -27,11 +27,67 @@ The LLM is **not** the source of truth. If it cites an unknown evidence ID, retu
 
 ## Run
 
+### Windows
+1. Install nvm:
 ```bash
 npm install
+```
+
+2. Verify:
+```bash
+   node -v
+   npm -v
+```
+
+3. Run:
+```bash
 npm run dev        # http://localhost:3000
 npm test           # engine + challenge rules pinned to the demo story
 npm run build
+```
+
+### Linux (Ubuntu/Mint/Debian)
+
+This project requires **Node.js 20.9+** (Next.js 16 does not support Node 18 or earlier). Most Linux distros ship an older `npm`/Node via `apt`, so install Node through **nvm** instead:
+
+1. Install nvm:
+```bash
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+```
+
+2. Make sure `~/.bashrc` exists and loads nvm (some minimal Linux setups don't have this file by default):
+```bash
+   touch ~/.bashrc
+   cat >> ~/.bashrc << 'EOF'
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+   EOF
+   source ~/.bashrc
+```
+
+3. Install Node 20 and set it as the default for every new terminal:
+```bash
+   nvm install 20
+   nvm alias default 20
+```
+
+4. Open a **brand new terminal** and confirm it loads automatically:
+```bash
+   node -v   # should print v20.x.x with no extra commands
+   npm -v
+```
+
+> **If `nvm` isn't found even after installing:** run `command -v nvm` to check, and manually load it with:
+> ```bash
+> export NVM_DIR="$HOME/.nvm"
+> [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+> ```
+
+5. Run:
+```bash
+npm install
+npm run dev
 ```
 
 Works with **no API key** (fallback mode). For a live model, copy `.env.example` to `.env.local` and set a free-tier key (Groq, Gemini, or OpenRouter).
