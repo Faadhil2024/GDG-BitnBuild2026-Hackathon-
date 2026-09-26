@@ -2,6 +2,8 @@ import { useSyncExternalStore } from "react";
 import type { Grade } from "@/lib/types";
 import type { AiReview, DisagreementVerdict } from "./appraisal-review";
 import { SEEDED_APPRAISALS, SEEDED_DECISIONS } from "@/data/seeded-appraisals";
+import { getEmployee } from "@/data/employees";
+import { logUpdate } from "./updates";
 
 export interface SelfAppraisal {
   employeeId: string;
@@ -80,6 +82,18 @@ export const useSelfAppraisals = appraisals.use;
 export const saveSelfAppraisal = (a: SelfAppraisal) => {
   appraisals.save(a.employeeId, a);
   decisions.remove(a.employeeId); // a fresh submission reopens the review
+  const who = getEmployee(a.employeeId)?.name ?? a.employeeId;
+  logUpdate(`${who} submitted a self-appraisal. AI grade issued: ${a.ai?.grade ?? "none — no evidence indexed"}.`, "polite", a.employeeId);
 };
 export const useDecisions = decisions.use;
-export const saveDecision = (d: Decision) => decisions.save(d.employeeId, d);
+export const saveDecision = (d: Decision) => {
+  decisions.save(d.employeeId, d);
+  const who = getEmployee(d.employeeId)?.name ?? d.employeeId;
+  const text =
+    d.outcome === "override"
+      ? `Human override recorded for ${who}: final grade ${d.finalGrade} set by ${d.decidedBy} after ${d.rounds.length} review round${d.rounds.length === 1 ? "" : "s"}.`
+      : d.outcome === "revised"
+        ? `Grade revised for ${who}: ${d.aiGrade} to ${d.finalGrade}, accepted after ${d.rounds.length} review round${d.rounds.length === 1 ? "" : "s"}.`
+        : `Decision recorded for ${who}: ${d.finalGrade} verified by ${d.decidedBy}.`;
+  logUpdate(text, "assertive", d.employeeId);
+};

@@ -9,6 +9,7 @@ import { CATEGORY_LABELS } from "@/lib/assessment/roles";
 import { CHALLENGEABLE } from "@/lib/assessment/challenge";
 import { evaluateDisagreement, gradeIndex } from "@/lib/appraisal-review";
 import { saveDecision, useDecisions, useSelfAppraisals, type Decision, type ReviewRound } from "@/lib/self-appraisal";
+import { hasUnseenFor, useUpdates, useVisited } from "@/lib/updates";
 import { GRADES, type ContributionCategory, type Grade } from "@/lib/types";
 import { useSession } from "@/lib/session";
 import { Button, GradeBadge, Pill, formatDate } from "@/components/ui";
@@ -37,6 +38,8 @@ export function EmployerTable({ rows }: { rows: EmployerRow[] }) {
   const [q, setQ] = useState("");
   const [dept, setDept] = useState("");
   const [reviewing, setReviewing] = useState<EmployerRow | null>(null);
+  const updates = useUpdates();
+  const visited = useVisited();
 
   const depts = useMemo(() => Array.from(new Set(rows.map((r) => r.department))).sort(), [rows]);
 
@@ -125,8 +128,9 @@ export function EmployerTable({ rows }: { rows: EmployerRow[] }) {
             return (
               <tr key={r.id} className="row-link border-t border-line first:border-t-0">
                 <th scope="row" className="whitespace-nowrap px-5 py-3 text-left font-medium">
-                  <Link href={`/employees/${r.id}`} className="pressable inline-block text-accent underline-offset-2 hover:underline" title="Open report">
+                  <Link href={`/employees/${r.id}`} className="pressable inline-flex items-center gap-2 text-accent underline-offset-2 hover:underline" title="Open report">
                     {r.name}
+                    {hasUnseenFor(r.id, visited, updates) && <span aria-label="New changes since you last opened this report" className="h-2 w-2 rounded-full bg-accent" />}
                   </Link>
                 </th>
                 <td className="whitespace-nowrap px-5 py-3 text-ink-muted">{r.department}</td>

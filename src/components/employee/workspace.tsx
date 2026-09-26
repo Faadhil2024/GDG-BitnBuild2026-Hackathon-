@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { ArrowLeft } from "@phosphor-icons/react";
 import { useAssessment } from "@/store/assessment-store";
 import { useSession } from "@/lib/session";
 import { useSelfAppraisals } from "@/lib/self-appraisal";
+import { markVisited } from "@/lib/updates";
 import { AssessmentCard } from "./assessment-card";
 import { FactorList } from "./factor-list";
 import { ChangePanel } from "./change-panel";
@@ -22,6 +24,11 @@ export function EmployeeWorkspace() {
   const employer = session.status === "in" && session.account.role === "employer";
   const submitted = !!useSelfAppraisals()[employee.id];
   const scanning = state.phase === "discovering";
+
+  // Opening the report acknowledges its changes — the "new" marker on the table clears.
+  useEffect(() => {
+    if (employer) markVisited(`report:${employee.id}`);
+  }, [employer, employee.id]);
 
   if (!employer) return <ProfileView />;
 

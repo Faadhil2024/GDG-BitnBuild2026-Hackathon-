@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { CheckCircle, SealCheck, Warning } from "@phosphor-icons/react";
 import { useAssessment } from "@/store/assessment-store";
 import { useSession } from "@/lib/session";
 import { useDecisions, useSelfAppraisals } from "@/lib/self-appraisal";
+import { markVisited, useVisited } from "@/lib/updates";
 import { QUESTIONS } from "@/data/self-appraisal";
 import { COMPANY } from "@/data/employees";
 import { roleProfiles } from "@/lib/assessment/roles";
@@ -21,6 +23,13 @@ export function ProfileView() {
   const account = session.status === "in" ? session.account : undefined;
   const sa = useSelfAppraisals()[employee.id];
   const d = useDecisions()[employee.id];
+  const visited = useVisited();
+  // "New since you last looked": freeze the flag at first render so it doesn't
+  // vanish before the employee has actually seen it.
+  const [newDecision] = useState(() => typeof window !== "undefined" && !!d && d.decidedAt > (visited[`profile:${employee.id}`] ?? ""));
+  useEffect(() => {
+    markVisited(`profile:${employee.id}`);
+  }, [employee.id]);
 
   return (
     <div className="space-y-8">
@@ -57,6 +66,7 @@ export function ProfileView() {
             {!sa && <Pill tone="moderate">Not submitted</Pill>}
             {sa && !d && <Pill tone="high"><CheckCircle size={12} weight="fill" /> Completed</Pill>}
             {d && (d.outcome === "override" ? <Pill tone="moderate"><Warning size={12} weight="fill" /> Final · manager decision</Pill> : <Pill tone="high"><SealCheck size={12} weight="fill" /> Final · verified</Pill>)}
+            {newDecision && <Pill tone="accent">New</Pill>}
           </div>
 
           <ol className="mt-6 space-y-5">

@@ -8,6 +8,7 @@ import { COMPANY } from "@/data/employees";
 import { signOut, useSession } from "@/lib/session";
 import { Login } from "./login";
 import { SkynetMark } from "./brand";
+import { GlobalAnnouncer, UpdatesMenu } from "./announcer";
 
 const CONTAINER = "mx-auto w-full max-w-[1480px] px-8";
 
@@ -71,11 +72,13 @@ export function AppShell({ children }: { children: ReactNode }) {
               ))}
             </ul>
           </nav>
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end gap-3">
+            <UpdatesMenu />
             <AccountMenu name={a.name} title={employer ? "Employer" : a.title} />
           </div>
         </div>
       </header>
+      <GlobalAnnouncer />
       <main id="main" className={`${CONTAINER} flex-1 py-8`}>
         <div className="animate-rise">{children}</div>
       </main>
