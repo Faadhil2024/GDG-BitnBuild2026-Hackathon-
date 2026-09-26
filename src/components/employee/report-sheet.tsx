@@ -10,11 +10,10 @@ import { GRADE_MEANING } from "@/lib/assessment/engine";
 import { Card, GradeBadge, Pill, gradeTone, formatDate } from "@/components/ui";
 import type { Grade } from "@/lib/types";
 
-function GradeCircle({ grade, label, size = "lg" }: { grade: Grade; label: string; size?: "lg" | "md" }) {
-  const dim = size === "lg" ? "h-28 w-28 text-[44px]" : "h-16 w-16 text-[24px]";
+function GradeBox({ grade, label }: { grade: Grade; label: string }) {
   return (
     <div className="flex flex-col items-center gap-2">
-      <span className={`grid place-items-center rounded-full font-bold tracking-tight shadow-sm ${dim} ${gradeTone(grade)}`}>
+      <span className={`grid h-24 w-24 place-items-center rounded-lg text-[40px] font-bold tracking-tight shadow-sm ${gradeTone(grade)}`}>
         <span className="sr-only">Grade </span>
         {grade}
       </span>
@@ -36,10 +35,19 @@ export function ReportSheet() {
   if (!sa) {
     return (
       <Card className="p-8">
-        <h2 className="text-[17px] font-semibold">Self-appraisal not yet submitted</h2>
-        <p className="mt-1 max-w-[60ch] text-[15px] text-ink-muted">
-          {employee.name} has not submitted this cycle&apos;s self-appraisal. The AI grade is issued at submission, so there is nothing to agree or disagree with yet. The evidence indexed so far is shown below.
-        </p>
+        <div className="flex items-center gap-4">
+          <span aria-hidden="true" className="grid h-12 w-12 place-items-center rounded-full bg-ink text-[15px] font-semibold text-white">
+            {employee.name.split(" ").map((p) => p[0]).join("")}
+          </span>
+          <div>
+            <h2 className="text-[20px] font-semibold tracking-tight">{employee.name}</h2>
+            <p className="text-[15px] text-ink-muted">{employee.title} · {employee.department} · reports to {employee.manager}</p>
+          </div>
+        </div>
+        <div className="mt-6 rounded-md border border-dashed border-line bg-canvas/60 px-5 py-6">
+          <p className="text-[17px] font-semibold">Appraisal not yet submitted</p>
+          <p className="mt-1 max-w-[60ch] text-[15px] text-ink-muted">The report, AI grade and review controls appear here once {employee.name.split(" ")[0]} submits the self-appraisal.</p>
+        </div>
       </Card>
     );
   }
@@ -81,9 +89,9 @@ export function ReportSheet() {
             )}
           </dd>
         </dl>
-        <div className="flex items-start gap-10">
-          {ai ? <GradeCircle grade={ai.grade} label="AI grade" /> : <p className="text-sm text-ink-faint">No evidence indexed</p>}
-          <GradeCircle grade={sa.grade} label="Self-appraisal" size="md" />
+        <div className="flex items-center justify-end gap-4 self-center">
+          {ai ? <GradeBox grade={ai.grade} label="AI grade" /> : <p className="text-sm text-ink-faint">No evidence indexed</p>}
+          <GradeBox grade={sa.grade} label="Self-appraisal" />
         </div>
       </div>
 

@@ -2,7 +2,7 @@
 
 import { useSession } from "@/lib/session";
 import { useDecisions, useSelfAppraisals } from "@/lib/self-appraisal";
-import { GRADE_MEANING } from "@/lib/assessment/engine";
+import { PROTOCOLS, protocolLabel } from "@/data/rubric";
 import { Card, GradeBadge, gradeTone } from "@/components/ui";
 import { GRADES, type Grade } from "@/lib/types";
 
@@ -24,12 +24,7 @@ function GradeBars({ counts, highlight, unit }: { counts: { g: Grade; n: number 
           <span>{Math.round(max / 2)}</span>
           <span>0</span>
         </div>
-        <div
-          className="grid grid-cols-7 items-end gap-5 border-b border-l border-line pl-3"
-          style={{ height: 240 }}
-          role="img"
-          aria-label={`Bar chart, ${unit} per grade: ${counts.map((c) => `${c.g} ${c.n}`).join(", ")}.`}
-        >
+        <div className="grid grid-cols-7 items-end gap-5 border-b border-l border-line pl-3" style={{ height: 240 }} role="img" aria-label={`Bar chart, ${unit} per grade: ${counts.map((c) => `${c.g} ${c.n}`).join(", ")}.`}>
           {counts.map(({ g, n }) => (
             <div key={g} className="flex h-full flex-col items-center justify-end gap-2">
               <span className="font-mono text-[14px] font-medium tabular-nums">{n}</span>
@@ -46,15 +41,35 @@ function GradeBars({ counts, highlight, unit }: { counts: { g: Grade; n: number 
         <span className="w-[2ch]" aria-hidden="true" />
         <div className="grid grid-cols-7 gap-5 pl-3">
           {counts.map(({ g }) => (
-            <div key={g} className="flex flex-col items-center gap-1 text-center">
+            <div key={g} className="flex flex-col items-center gap-1.5 text-center">
               <GradeBadge grade={g} size="sm" label={null} />
-              <span className="hidden text-[12px] leading-tight text-ink-faint lg:block">{GRADE_MEANING[g]}</span>
+              <span className="text-[12px] leading-tight text-ink-faint">{protocolLabel(g)}</span>
             </div>
           ))}
         </div>
       </div>
-      <figcaption className="mt-3 text-[13px] text-ink-faint">Vertical axis: number of {unit}. Horizontal axis: grade band, best to weakest.</figcaption>
+      <figcaption className="mt-3 text-[13px] text-ink-faint">Each bar counts {unit}. Grades read as how many of the six assessment protocols were met.</figcaption>
     </figure>
+  );
+}
+
+function Rubric() {
+  return (
+    <Card className="p-8">
+      <h2 className="text-[17px] font-semibold">What the assessment is based on</h2>
+      <p className="mt-1 max-w-[70ch] text-[14px] text-ink-muted">Six protocols, checked against indexed records only. This is the rubric, not a score.</p>
+      <ol className="mt-5 grid gap-x-10 gap-y-4 md:grid-cols-2">
+        {PROTOCOLS.map((p, i) => (
+          <li key={p.id} className="grid grid-cols-[28px_1fr] gap-3">
+            <span aria-hidden="true" className="font-mono text-[13px] text-ink-faint">{String(i + 1).padStart(2, "0")}</span>
+            <div>
+              <p className="text-[15px] font-medium">{p.title}</p>
+              <p className="mt-0.5 text-[14px] text-ink-muted">{p.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </Card>
   );
 }
 
@@ -66,7 +81,6 @@ export function StatsView({ rows }: { rows: StatRow[] }) {
   const a = session.account;
 
   if (a.role === "employer") {
-    // Only people who have submitted carry an AI grade.
     const graded = rows.filter((r) => appraisals[r.id] && r.grade);
     const counts = GRADES.map((g) => ({ g, n: graded.filter((r) => r.grade === g).length }));
     const completed = Object.keys(decisions).length;
@@ -75,15 +89,15 @@ export function StatsView({ rows }: { rows: StatRow[] }) {
         <div>
           <h1 className="text-[30px] font-semibold tracking-tight">Grade distribution</h1>
           <p className="mt-1.5 max-w-[70ch] text-[15px] text-ink-muted">
-            {graded.length} of {rows.length} employees have submitted and been AI-graded; {completed} of those are completed. Employees who have not submitted have no AI grade and are not counted here.
+            {graded.length} of {rows.length} employees have submitted and been AI-graded; {completed} of those are completed. Employees who have not submitted have no AI grade and are not counted.
           </p>
         </div>
         <dl className="grid grid-cols-2 divide-x divide-line rounded-lg border border-line bg-surface md:grid-cols-4">
           {[
-            { k: "A band", v: graded.filter((r) => r.grade!.startsWith("A")).length, s: "A+ and A" },
-            { k: "B band", v: graded.filter((r) => r.grade!.startsWith("B")).length, s: "B+ and B" },
-            { k: "C band", v: graded.filter((r) => r.grade!.startsWith("C")).length, s: "C+ and C" },
-            { k: "D", v: graded.filter((r) => r.grade === "D").length, s: "Little or no evidence" },
+            { k: "A band", v: graded.filter((r) => r.grade!.startsWith("A")).length, s: "5–6 protocols met" },
+            { k: "B band", v: graded.filter((r) => r.grade!.startsWith("B")).length, s: "3–4 protocols met" },
+            { k: "C band", v: graded.filter((r) => r.grade!.startsWith("C")).length, s: "1–2 protocols met" },
+            { k: "D", v: graded.filter((r) => r.grade === "D").length, s: "No protocol met on record" },
           ].map((x) => (
             <div key={x.k} className="px-6 py-5">
               <dt className="text-[13px] text-ink-faint">{x.k}</dt>
@@ -96,57 +110,48 @@ export function StatsView({ rows }: { rows: StatRow[] }) {
           <h2 className="text-[17px] font-semibold">Employees by AI grade</h2>
           <div className="mt-6"><GradeBars counts={counts} unit="employees" /></div>
         </Card>
+        <Rubric />
       </div>
     );
   }
 
-  // Employee: where they stand, with every number explained.
+  // Employee: only final, manager-decided grades are visible — theirs included.
   const me = rows.find((r) => r.id === a.employeeId);
-  const dept = rows.filter((r) => r.department === me?.department && r.grade);
-  const company = rows.filter((r) => r.grade);
-  const counts = GRADES.map((g) => ({ g, n: dept.filter((r) => r.grade === g).length }));
-  const rank = (pool: StatRow[]) => (me?.score === undefined ? undefined : pool.filter((r) => (r.score ?? -1) > me.score!).length + 1);
-  const deptRank = rank(dept);
-  const companyRank = rank(company);
-  const sameBand = me?.grade ? dept.filter((r) => r.grade === me.grade).length : 0;
+  const myDecision = a.employeeId ? decisions[a.employeeId] : undefined;
+  const deptFinal = rows.filter((r) => r.department === me?.department && decisions[r.id]).map((r) => decisions[r.id].finalGrade);
+  const counts = GRADES.map((g) => ({ g, n: deptFinal.filter((x) => x === g).length }));
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-[30px] font-semibold tracking-tight">Where you stand</h1>
         <p className="mt-1.5 max-w-[70ch] text-[15px] text-ink-muted">
-          Your evidence-based grade compared with colleagues in {me?.department}. Every bar is a count of people; nothing here is a score you were given by a person.
+          Final grades in {me?.department}, as decided by managers this cycle. Your own grade appears once your manager has completed your review.
         </p>
       </div>
 
-      <dl className="grid grid-cols-2 divide-x divide-line rounded-lg border border-line bg-surface md:grid-cols-4">
+      <dl className="grid grid-cols-1 divide-y divide-line rounded-lg border border-line bg-surface md:grid-cols-2 md:divide-x md:divide-y-0">
         <div className="px-6 py-5">
           <dt className="text-[13px] text-ink-faint">Your grade</dt>
-          <dd className="mt-2">{me?.grade ? <GradeBadge grade={me.grade} size="md" label={null} /> : <span className="text-ink-faint">Not yet graded</span>}</dd>
-          <dd className="mt-2 text-[13px] text-ink-muted">{me?.grade ? GRADE_MEANING[me.grade] : "No evidence indexed"}</dd>
+          <dd className="mt-2">{myDecision ? <GradeBadge grade={myDecision.finalGrade} size="md" label={null} /> : <span className="text-[17px] font-medium text-ink-faint">Pending manager review</span>}</dd>
+          <dd className="mt-2 text-[13px] text-ink-muted">
+            {myDecision ? `${protocolLabel(myDecision.finalGrade)} met · decided by ${myDecision.decidedBy}` : appraisals[a.employeeId ?? ""] ? "Self-appraisal submitted · with your manager" : "Submit your self-appraisal to start the review"}
+          </dd>
         </div>
         <div className="px-6 py-5">
-          <dt className="text-[13px] text-ink-faint">In {me?.department}</dt>
-          <dd className="mt-1 text-[32px] font-semibold leading-none tabular-nums">{deptRank ?? "—"}<span className="text-[15px] font-normal text-ink-faint"> / {dept.length}</span></dd>
-          <dd className="mt-2 text-[13px] text-ink-muted">Your position by contribution index among graded colleagues</dd>
-        </div>
-        <div className="px-6 py-5">
-          <dt className="text-[13px] text-ink-faint">Company-wide</dt>
-          <dd className="mt-1 text-[32px] font-semibold leading-none tabular-nums">{companyRank ?? "—"}<span className="text-[15px] font-normal text-ink-faint"> / {company.length}</span></dd>
-          <dd className="mt-2 text-[13px] text-ink-muted">Among all graded employees</dd>
-        </div>
-        <div className="px-6 py-5">
-          <dt className="text-[13px] text-ink-faint">Same grade as you</dt>
-          <dd className="mt-1 text-[32px] font-semibold leading-none tabular-nums">{sameBand}</dd>
-          <dd className="mt-2 text-[13px] text-ink-muted">Colleagues in {me?.department} on {me?.grade ?? "—"}</dd>
+          <dt className="text-[13px] text-ink-faint">Completed in {me?.department}</dt>
+          <dd className="mt-1 text-[32px] font-semibold leading-none tabular-nums">{deptFinal.length}<span className="text-[15px] font-normal text-ink-faint"> / {rows.filter((r) => r.department === me?.department).length}</span></dd>
+          <dd className="mt-2 text-[13px] text-ink-muted">Colleagues whose reviews are final; the chart below counts only these</dd>
         </div>
       </dl>
 
       <Card className="p-8">
-        <h2 className="text-[17px] font-semibold">{me?.department}: colleagues by grade</h2>
-        <p className="mt-1 text-[14px] text-ink-muted">Your band is outlined; the others are faded so the comparison is obvious.</p>
-        <div className="mt-6"><GradeBars counts={counts} highlight={me?.grade} unit="colleagues" /></div>
+        <h2 className="text-[17px] font-semibold">{me?.department}: colleagues by final grade</h2>
+        <p className="mt-1 text-[14px] text-ink-muted">{myDecision ? "Your band is outlined; the others are faded." : "Your band will be outlined here once your grade is final."}</p>
+        <div className="mt-6"><GradeBars counts={counts} highlight={myDecision?.finalGrade} unit="colleagues" /></div>
       </Card>
+
+      <Rubric />
     </div>
   );
 }

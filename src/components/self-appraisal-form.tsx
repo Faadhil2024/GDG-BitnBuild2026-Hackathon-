@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { DEMO_EMPLOYEE_ID, employees } from "@/data/employees";
 import { useSession } from "@/lib/session";
 import { NON_TECHNICAL_SEEDS, pickSeed, QUESTIONS, TECHNICAL_ROLES, TECHNICAL_SEEDS } from "@/data/self-appraisal";
@@ -15,6 +16,7 @@ const blank = () => Object.fromEntries(QUESTIONS.map((q) => [q.id, ""]));
 
 export function SelfAppraisalForm() {
   const session = useSession();
+  const router = useRouter();
   // Bound to the signed-in employee. There is no picking someone else.
   const employeeId = (session.status === "in" && session.account.employeeId) || DEMO_EMPLOYEE_ID;
   const employee = employees.find((e) => e.id === employeeId)!;
@@ -154,7 +156,10 @@ export function SelfAppraisalForm() {
 
       <dialog
         ref={dialog}
-        onClose={() => setConfirm(null)}
+        onClose={() => {
+          setConfirm(null);
+          router.push(`/employees/${employeeId}`);
+        }}
         aria-labelledby="sa-confirm-title"
         className="animate-drawer m-auto w-[min(400px,92vw)] rounded-lg border border-line bg-surface p-8 text-ink shadow-2xl"
       >
@@ -165,7 +170,7 @@ export function SelfAppraisalForm() {
             </span>
             <h2 id="sa-confirm-title" className="mt-4 text-[22px] font-semibold">Completed</h2>
             <p className="mt-1 text-[15px] text-ink-muted">Your self-appraisal was submitted on {formatDate(confirm.at)}.</p>
-            <p className="mt-3 text-[13px] text-ink-faint">It is now with {employee.manager}. You can read what you submitted from your profile.</p>
+            <p className="mt-3 text-[13px] text-ink-faint">It is now with {employee.manager}. You will be taken back to your profile.</p>
             <Button type="button" variant="primary" className="mt-5" onClick={() => setConfirm(null)} autoFocus>
               Done
             </Button>
